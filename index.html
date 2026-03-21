@@ -113,7 +113,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .chat-name{font-size:13px;font-weight:600;}
 .chat-st{font-size:10px;color:var(--rec);display:flex;align-items:center;gap:4px;}
 .chat-st::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--rec);box-shadow:0 0 4px var(--rec);}
-.msgs{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:9px;}
+.msgs{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:9px;min-height:0;}
 .msg{display:flex;flex-direction:column;animation:fadeUp .2s ease both;}
 .msg.user{align-items:flex-end;}
 .msg.bot{align-items:flex-start;}
