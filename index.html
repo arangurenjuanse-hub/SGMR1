@@ -599,12 +599,16 @@ ${kbCtx}
 ANOTACIONES RECIENTES (últimas 40):
 ${JSON.stringify(rows.slice(-40).map(r=>({fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado})))}
 
-INSTRUCCIONES:
-- Usá la base de conocimiento (PARTNERS, SITIOS, CATEGORÍAS) para resolver aliases. Si el usuario escribe "7stars" y existe el alias "7stars → 7 Stars Partners", usá "7 Stars Partners" como partner.
-- Si querés ANOTAR: {"action":"annotate","tipo":"Problema|Recordatorio|Cambio/Comentario","sitio":"nombre exacto del sitio","texto":"descripción clara","partner":"nombre del partner o vacío","estado":"Pendiente"}
-- Si falta info crítica: {"action":"ask","pregunta":"pregunta corta y concreta"}
+INSTRUCCIONES CRÍTICAS:
+- Cuando recibas una imagen (screenshot, email, captura), SIEMPRE intentá extraer info de ella. Nunca respondas "No entendí" ante una imagen.
+- Si el usuario manda imagen + texto como "7 stars - crypto bonus bet", interpretá el texto como pistas del sitio/partner.
+- Usá la base de conocimiento para resolver aliases: "7stars" = "7 Stars Partners", etc.
+- Si ves una imagen de email o problema, describí el problema en "texto" aunque no tengas todos los datos.
+- Si falta SOLO el sitio o SOLO el partner, preguntá específicamente: {"action":"ask","pregunta":"¿A qué sitio corresponde esta anotación?"}
+- NUNCA uses action:ask para pedir info que ya podés inferir de la imagen o el texto.
+- Si querés ANOTAR: {"action":"annotate","tipo":"Problema|Recordatorio|Cambio/Comentario","sitio":"nombre exacto del sitio o General si no sabés","texto":"descripción clara del problema visto","partner":"nombre del partner o vacío","estado":"Pendiente"}
 - Si es búsqueda/consulta: {"action":"answer","respuesta":"respuesta clara"}
-- Infiere tipo: error/falla=Problema, tarea/pendiente=Recordatorio, nota/cambio=Cambio/Comentario
+- Infiere tipo: error/falla/problema de pago=Problema, tarea/pendiente/recordatorio=Recordatorio, nota/cambio/comentario=Cambio/Comentario
 - Respondé SOLO con JSON válido, sin markdown ni texto extra`;
 
   const userContent=[];
