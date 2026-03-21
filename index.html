@@ -618,8 +618,6 @@ INSTRUCCIONES:
     headers:{'Content-Type':'application/json'},
     body:JSON.stringify({apiKey:anthropicKey,payload:{model:'claude-sonnet-4-20250514',max_tokens:600,system:sys,messages:chatHistory}})
   });
-    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:sys,messages:chatHistory})
-  });
   if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
   const data=await res.json();
   const raw=data.content?.find(c=>c.type==='text')?.text||'{}';
