@@ -613,14 +613,11 @@ INSTRUCCIONES:
   chatHistory.push({role:'user',content:userContent});
   if(chatHistory.length>14)chatHistory=chatHistory.slice(-14);
 
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
+  const res=await fetch('https://sgmr.arangurenjuanse.workers.dev/',{
     method:'POST',
-    headers:{
-      'Content-Type':'application/json',
-      'x-api-key':anthropicKey,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-client-side-api-key-usage':'true'
-    },
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({apiKey:anthropicKey,payload:{model:'claude-sonnet-4-20250514',max_tokens:600,system:sys,messages:chatHistory}})
+  });
     body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:600,system:sys,messages:chatHistory})
   });
   if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
