@@ -632,7 +632,7 @@ INSTRUCCIONES CRÍTICAS:
 function processReply(r){
   if(r.action==='annotate'){pendingConfirm=r;showCC(r);}
   else if(r.action==='ask'){addBotMsg(esc(r.pregunta));}
-  else if(r.action==='answer'){addBotMsg(r.respuesta.replace(/\n/g,'<br>'));}
+ else addBotMsg('No entendí. ¿Podés reformular?');
  else addBotMsg('Respuesta inesperada: '+JSON.stringify(r));
 }
 function showCC(r){
