@@ -113,7 +113,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .chat-name{font-size:13px;font-weight:600;}
 .chat-st{font-size:10px;color:var(--rec);display:flex;align-items:center;gap:4px;}
 .chat-st::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--rec);box-shadow:0 0 4px var(--rec);}
-.msgs{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:9px;}
+.msgs{flex:1;overflow-y:auto;padding:13px;display:flex;flex-direction:column;gap:9px;min-height:0;}
 .msg{display:flex;flex-direction:column;animation:fadeUp .2s ease both;}
 .msg.user{align-items:flex-end;}
 .msg.bot{align-items:flex-start;}
@@ -530,16 +530,37 @@ document.addEventListener('paste',e=>{
   Array.from(e.clipboardData?.items||[]).forEach(item=>{
     if(item.type.startsWith('image/')){
       const reader=new FileReader();
-      reader.onload=ev=>{pendingImgs.push({b64:ev.target.result.split(',')[1],dataUrl:ev.target.result,type:item.type});renderStrip();showToast('Imagen pegada ✓','ok');};
+      reader.onload=ev=>{
+        compressImg(ev.target.result,item.type,(b64,dataUrl,type)=>{
+          pendingImgs.push({b64,dataUrl,type});renderStrip();showToast('Imagen pegada ✓','ok');
+        });
+      };
       reader.readAsDataURL(item.getAsFile());
     }
   });
 });
 
+function compressImg(dataUrl,type,cb){
+  const img=new Image();
+  img.onload=()=>{
+    const canvas=document.createElement('canvas');
+    const max=1024;
+    let w=img.width,h=img.height;
+    if(w>max||h>max){if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;}}
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    const compressed=canvas.toDataURL('image/jpeg',0.7);
+    cb(compressed.split(',')[1],compressed,'image/jpeg');
+  };img.src=dataUrl;
+}
 function onAttach(e){
   Array.from(e.target.files).forEach(file=>{
     const reader=new FileReader();
-    reader.onload=ev=>{pendingImgs.push({b64:ev.target.result.split(',')[1],dataUrl:ev.target.result,type:file.type||'image/png'});renderStrip();};
+    reader.onload=ev=>{
+      compressImg(ev.target.result,file.type||'image/png',(b64,dataUrl,type)=>{
+        pendingImgs.push({b64,dataUrl,type});renderStrip();
+      });
+    };
     reader.readAsDataURL(file);
   });e.target.value='';
 }
@@ -591,7 +612,7 @@ async function send(){
 
 async function callAI(text,imgs){
   const kbCtx=buildKBContext();
-  const sys=`Sos un asistente de gestión de anotaciones para sitios web de casino/crypto.
+  const sys=`Sos un asistente de gestión de anotaciones para sitios web de casino/crypto. SIEMPRE respondés SOLO con JSON válido. NUNCA respondés con texto libre.
 
 SITIOS DISPONIBLES: ${sites.join(', ')}
 ${kbCtx}
@@ -599,13 +620,16 @@ ${kbCtx}
 ANOTACIONES RECIENTES (últimas 40):
 ${JSON.stringify(rows.slice(-40).map(r=>({fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado})))}
 
-INSTRUCCIONES:
-- Usá la base de conocimiento (PARTNERS, SITIOS, CATEGORÍAS) para resolver aliases. Si el usuario escribe "7stars" y existe el alias "7stars → 7 Stars Partners", usá "7 Stars Partners" como partner.
-- Si querés ANOTAR: {"action":"annotate","tipo":"Problema|Recordatorio|Cambio/Comentario","sitio":"nombre exacto del sitio","texto":"descripción clara","partner":"nombre del partner o vacío","estado":"Pendiente"}
-- Si falta info crítica: {"action":"ask","pregunta":"pregunta corta y concreta"}
-- Si es búsqueda/consulta: {"action":"answer","respuesta":"respuesta clara"}
-- Infiere tipo: error/falla=Problema, tarea/pendiente=Recordatorio, nota/cambio=Cambio/Comentario
-- Respondé SOLO con JSON válido, sin markdown ni texto extra`;
+REGLAS ABSOLUTAS:
+1. SIEMPRE respondés con uno de estos 3 JSON y nada más:
+   - Para anotar: {"action":"annotate","tipo":"Problema|Recordatorio|Cambio/Comentario","sitio":"nombre exacto","texto":"descripcion","partner":"partner o vacio","estado":"Pendiente"}
+   - Para preguntar algo: {"action":"ask","pregunta":"pregunta corta"}
+   - Para responder consultas: {"action":"answer","respuesta":"texto de respuesta"}
+2. Cuando ves una imagen: SIEMPRE creás una anotación. Describí lo que ves en "texto". Si no sabés el sitio usá "General".
+3. El texto junto a la imagen (ej: "7 stars - crypto bonus bet") indica el partner y/o sitio.
+4. Usá la base de conocimiento para resolver aliases.
+5. Inferí el tipo: error/falla/pago=Problema, tarea/pendiente=Recordatorio, nota/cambio=Cambio/Comentario.
+6. NUNCA escribas texto fuera del JSON. NUNCA uses markdown. SOLO JSON.`;
 
   const userContent=[];
   imgs.forEach(img=>{userContent.push({type:'image',source:{type:'base64',media_type:img.type,data:img.b64}});});
