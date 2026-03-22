@@ -629,7 +629,7 @@ REGLAS ABSOLUTAS:
 3. El texto junto a la imagen (ej: "7 stars - crypto bonus bet") indica el partner y/o sitio.
 4. Usá la base de conocimiento para resolver aliases.
 5. Inferí el tipo: error/falla/pago=Problema, tarea/pendiente=Recordatorio, nota/cambio=Cambio/Comentario.
-6. NUNCA escribas texto fuera del JSON. NUNCA uses markdown. SOLO JSON.\n7. OBLIGATORIO: antes de anotar necesitás saber el sitio exacto (no "General") Y el partner. Si falta cualquiera, usá action:ask y preguntá ambos juntos.
+6. NUNCA escribas texto fuera del JSON. NUNCA uses markdown. SOLO JSON.`;
 
   const userContent=[];
   imgs.forEach(img=>{userContent.push({type:'image',source:{type:'base64',media_type:img.type,data:img.b64}});});
