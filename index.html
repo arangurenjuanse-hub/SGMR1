@@ -106,7 +106,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .expand-row:hover{background:var(--surface2);}
 
 /* CHAT */
-.right{display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);}
+.right{display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow:hidden;min-height:0;}
 .chat-hdr{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .chat-hdr-l{display:flex;align-items:center;gap:9px;}
 .avatar{width:30px;height:30px;background:linear-gradient(135deg,#3ddc84,#00bfa5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;}
@@ -629,7 +629,8 @@ REGLAS ABSOLUTAS:
 3. El texto junto a la imagen (ej: "7 stars - crypto bonus bet") indica el partner y/o sitio.
 4. Usá la base de conocimiento para resolver aliases.
 5. Inferí el tipo: error/falla/pago=Problema, tarea/pendiente=Recordatorio, nota/cambio=Cambio/Comentario.
-6. NUNCA escribas texto fuera del JSON. NUNCA uses markdown. SOLO JSON.\n7. OBLIGATORIO: antes de anotar necesitás saber el sitio exacto (no "General") Y el partner. Si falta cualquiera, usá action:ask y preguntá ambos juntos.
+6. NUNCA escribas texto fuera del JSON. NUNCA uses markdown. SOLO JSON.
+7. OBLIGATORIO: toda anotacion DEBE tener sitio (no General) Y partner. Si falta alguno, usa action:ask y pregunta ambos antes de anotar.\n7. OBLIGATORIO: antes de anotar necesitás saber el sitio exacto (no "General") Y el partner. Si falta cualquiera, usá action:ask y preguntá ambos juntos.
 
   const userContent=[];
   imgs.forEach(img=>{userContent.push({type:'image',source:{type:'base64',media_type:img.type,data:img.b64}});});
