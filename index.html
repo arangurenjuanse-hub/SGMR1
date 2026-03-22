@@ -374,10 +374,55 @@ textarea#msg::placeholder{color:var(--text3);}
 <body>
 
 <div class="hdr">
-  <div class="logo">
-    <div class="logo-mark">SG</div>
-    <span class="logo-name">SGMR</span>
-    <div class="logo-dot"></div>
+  <style>
+    .hdr-tabs{display:flex;gap:2px;margin-left:18px;}
+    .hdr-tab{padding:6px 18px;font-size:16px;font-weight:500;border:none;background:transparent;color:var(--text3);cursor:pointer;border-radius:var(--r) var(--r) 0 0;transition:all .15s;font-family:'Geist',sans-serif;position:relative;}
+    .hdr-tab:hover{color:var(--text2);background:rgba(255,255,255,.04);}
+    .hdr-tab.active{color:var(--text);background:var(--surface2);}
+    .hdr-tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,#5b7cfa,#a855f7);}
+    .view-logs,.view-todo{display:flex;flex:1;min-height:0;overflow:hidden;}
+    .view-todo{flex-direction:column;background:var(--bg);}
+    /* TODO STYLES */
+    .todo-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:20px;}
+    .todo-input-row{display:flex;gap:10px;margin-bottom:20px;flex-shrink:0;}
+    .todo-input-row input{flex:1;padding:12px 16px;font-size:16px;font-family:'Geist',sans-serif;background:var(--surface2);border:1.5px solid var(--border2);border-radius:var(--rl);color:var(--text);outline:none;transition:border-color .15s;}
+    .todo-input-row input:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
+    .todo-input-row input::placeholder{color:var(--text3);}
+    .todo-add-btn{padding:12px 20px;font-size:16px;font-family:'Geist',sans-serif;background:linear-gradient(180deg,#7b9cff,#5b7cfa,#3a5ae8);color:#fff;border:none;border-top:1px solid rgba(255,255,255,.2);border-radius:var(--rl);cursor:pointer;box-shadow:0 4px 0 #1e3ab8;transition:all .1s;font-weight:500;}
+    .todo-add-btn:hover{transform:translateY(-1px);box-shadow:0 5px 0 #1e3ab8;}
+    .todo-add-btn:active{transform:translateY(3px);box-shadow:0 1px 0 #1e3ab8;}
+    .todo-lists{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:20px;}
+    .todo-week-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+    .todo-week-hdr{padding:10px 16px;font-size:16px;font-weight:600;color:var(--text2);background:var(--surface2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .todo-week-badge{font-size:14px;color:var(--text3);font-weight:400;}
+    .todo-item{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid var(--border);transition:background .1s;}
+    .todo-item:last-child{border-bottom:none;}
+    .todo-item:hover{background:var(--surface2);}
+    .todo-check{width:20px;height:20px;border-radius:50%;border:2px solid var(--border2);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+    .todo-check:hover{border-color:var(--accent);}
+    .todo-check.done{background:var(--rec);border-color:var(--rec);}
+    .todo-text{flex:1;font-size:16px;color:var(--text);}
+    .todo-text.done{text-decoration:line-through;color:var(--text3);}
+    .todo-date{font-size:14px;color:var(--text3);flex-shrink:0;}
+    .todo-del{border:none;background:transparent;color:transparent;cursor:pointer;font-size:16px;padding:0 4px;transition:color .15s;}
+    .todo-item:hover .todo-del{color:var(--text3);}
+    .todo-del:hover{color:var(--prob) !important;}
+    .todo-archived-toggle{display:flex;align-items:center;gap:8px;padding:12px 0;cursor:pointer;color:var(--text3);font-size:16px;border:none;background:transparent;font-family:'Geist',sans-serif;flex-shrink:0;}
+    .todo-archived-toggle:hover{color:var(--text2);}
+    .todo-archived-section{border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-top:4px;}
+    .todo-archived-hdr{padding:10px 16px;font-size:16px;font-weight:600;color:var(--text3);background:var(--surface);border-bottom:1px solid var(--border);}
+    .todo-item.archived .todo-text{color:var(--text3);}
+  </style>
+  <div style="display:flex;align-items:center;gap:0">
+    <div class="logo">
+      <div class="logo-mark">SG</div>
+      <span class="logo-name">SGMR</span>
+      <div class="logo-dot"></div>
+    </div>
+    <div class="hdr-tabs">
+      <button class="hdr-tab active" onclick="switchView('logs',this)">📋 Logs</button>
+      <button class="hdr-tab" onclick="switchView('todo',this)">✅ To Do</button>
+    </div>
   </div>
   <div class="hdr-right">
     <div class="stats-pill">
@@ -385,11 +430,11 @@ textarea#msg::placeholder{color:var(--text3);}
       <div class="stat-item"><div class="stat-dot" style="background:var(--rec)"></div><span id="s-rec">0</span></div>
       <div class="stat-item"><div class="stat-dot" style="background:var(--cam)"></div><span id="s-cam">0</span></div>
     </div>
-    <button class="btn sm" onclick="openCfg()">⚙ Config</button>
+    <button class="btn sm" onclick="openCfg()" style="font-size:18px;padding:8px 16px;gap:6px">⚙ Config</button>
   </div>
 </div>
 
-<div class="layout">
+<div class="view-logs" id="view-logs"><div class="layout">
   <!-- LEFT -->
   <div class="left" id="mob-list">
     <div class="mob-list-hdr">
@@ -452,15 +497,31 @@ textarea#msg::placeholder{color:var(--text3);}
     </div>
     <div class="msgs" id="msgs"></div>
     <div class="input-area">
-      <div class="paste-hint">Ctrl+V para pegar imagen · Enter para enviar</div>
+      
       <div class="img-strip" id="img-strip"></div>
       <div class="input-row">
         <div class="input-wrap">
-          <textarea id="msg" rows="1" placeholder="Anotá algo o hacé una pregunta..." oninput="resize(this)" onkeydown="onKey(event)"></textarea>
+          <textarea id="msg" rows="3" placeholder="Anotá algo o hacé una pregunta..." oninput="resize(this)" onkeydown="onKey(event)" style="min-height:72px;max-height:160px"></textarea>
           <button class="attach" title="Adjuntar">📎<input type="file" accept="image/*" multiple onchange="onAttach(event)"/></button>
         </div>
         <button class="send" id="send-btn" onclick="send()">➤</button>
       </div>
+    </div>
+  </div>
+</div></div>
+<div class="view-todo" id="view-todo" style="display:none">
+  <div class="todo-wrap">
+    <div class="todo-input-row">
+      <input type="text" id="todo-inp" placeholder="Nueva tarea..." onkeydown="if(event.key==='Enter')addTodo()"/>
+      <button class="todo-add-btn" onclick="addTodo()">+ Agregar</button>
+    </div>
+    <div class="todo-lists" id="todo-lists"></div>
+    <button class="todo-archived-toggle" id="archived-toggle" onclick="toggleArchived()" style="display:none">
+      <span id="archived-arrow">▶</span> Ver tareas cerradas (<span id="archived-count">0</span>)
+    </button>
+    <div class="todo-archived-section" id="archived-section" style="display:none">
+      <div class="todo-archived-hdr">Tareas cerradas</div>
+      <div id="archived-list"></div>
     </div>
   </div>
 </div>
@@ -475,7 +536,7 @@ textarea#msg::placeholder{color:var(--text3);}
     <div class="modal-body">
       <div class="cfg-tabs">
         <button class="cfg-tab active" onclick="setCfgTab('keys',this)">🔑 API Keys</button>
-        <button class="cfg-tab" onclick="setCfgTab('partners',this)">👤 Partners</button>
+        <button class="cfg-tab" onclick="setCfgTab('partners',this);renderPartnersList()">👤 Partners</button>
         <button class="cfg-tab" onclick="setCfgTab('sites',this);renderSitesList()">🌐 Sitios</button>
         <button class="cfg-tab" onclick="setCfgTab('cats',this)">🏷 Categorías</button>
         <button class="cfg-tab" onclick="setCfgTab('install',this)">📲 Instalar</button>
@@ -619,6 +680,7 @@ function load(){
   setPreset(5,document.querySelector('.preset[data-d="5"]'));
   addBotMsg('👋 Listo para laburar. Tiráme una imagen, una anotación o una pregunta.');
   if(sbUrl&&sbKey)loadSB();
+  loadTodos();
 }
 
 /* ── SUPABASE ── */
@@ -904,7 +966,7 @@ function setCfgTab(name,el){
   document.getElementById('cfg-'+name).classList.add('active');
   renderKB();
 }
-function openCfg(){renderKB();renderSitesList();document.getElementById('overlay-cfg').classList.add('open');}
+function openCfg(){renderKB();renderSitesList();renderPartnersList();document.getElementById('overlay-cfg').classList.add('open');}
 function closeCfg(){document.getElementById('overlay-cfg').classList.remove('open');}
 function closeCfgOut(e){if(e.target.id==='overlay-cfg')closeCfg();}
 function saveCfg(){
@@ -987,6 +1049,160 @@ function closeMobList(){
   document.getElementById('mob-list').classList.remove('mob-open');
   document.getElementById('mob-fab').style.display='';
 }
+// ── VIEW SWITCHER ──
+function switchView(view, el){
+  document.querySelectorAll('.hdr-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('view-logs').style.display = view==='logs' ? 'flex' : 'none';
+  document.getElementById('view-todo').style.display = view==='todo' ? 'flex' : 'none';
+  if(view==='todo') renderTodo();
+}
+
+// ── TODO ──
+let todos = [];
+let archivedVisible = false;
+
+function loadTodos(){
+  try{const d=ls('sgmr_todos');if(d)todos=JSON.parse(d);}catch(e){}
+}
+function saveTodos(){ls('sgmr_todos',JSON.stringify(todos));}
+
+function addTodo(){
+  const inp=document.getElementById('todo-inp');
+  const text=inp.value.trim();
+  if(!text)return;
+  todos.unshift({id:Date.now(),text,done:false,archived:false,created:new Date().toISOString()});
+  saveTodos();inp.value='';renderTodo();
+}
+
+function toggleTodo(id){
+  const t=todos.find(x=>x.id===id);
+  if(!t)return;
+  t.done=!t.done;
+  if(t.done){t.archived=true;t.closedAt=new Date().toISOString();}
+  else{t.archived=false;t.closedAt=null;}
+  saveTodos();renderTodo();
+}
+
+function deleteTodo(id){
+  if(!confirm('Eliminar tarea?'))return;
+  todos=todos.filter(x=>x.id!==id);
+  saveTodos();renderTodo();
+}
+
+function toggleArchived(){
+  archivedVisible=!archivedVisible;
+  document.getElementById('archived-section').style.display=archivedVisible?'block':'none';
+  document.getElementById('archived-arrow').textContent=archivedVisible?'▼':'▶';
+}
+
+function weekKey(dateStr){
+  const d=new Date(dateStr);
+  const day=d.getDay()||7;
+  const mon=new Date(d);mon.setDate(d.getDate()-day+1);
+  const sun=new Date(mon);sun.setDate(mon.getDate()+6);
+  const fmt=x=>x.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
+  return fmt(mon)+' – '+fmt(sun);
+}
+
+function renderTodo(){
+  const active=todos.filter(t=>!t.archived);
+  const archived=todos.filter(t=>t.archived);
+
+  // Group active by week
+  const groups={};
+  active.forEach(t=>{
+    const wk=weekKey(t.created);
+    if(!groups[wk])groups[wk]=[];
+    groups[wk].push(t);
+  });
+
+  const list=document.getElementById('todo-lists');
+  list.innerHTML='';
+
+  if(active.length===0){
+    list.innerHTML='<div style="color:var(--text3);font-size:16px;padding:20px 0;text-align:center">Sin tareas pendientes 🎉</div>';
+  } else {
+    Object.entries(groups).forEach(([wk,items])=>{
+      const grp=document.createElement('div');
+      grp.className='todo-week-group';
+      grp.innerHTML=`<div class="todo-week-hdr">${wk}<span class="todo-week-badge">${items.length} tarea${items.length!==1?'s':''}</span></div>`;
+      items.forEach(t=>{
+        const row=document.createElement('div');
+        row.className='todo-item';
+        const d=new Date(t.created);
+        const dateStr=d.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
+        row.innerHTML=`
+          <div class="todo-check${t.done?' done':''}" onclick="toggleTodo(${t.id})">${t.done?'✓':''}</div>
+          <span class="todo-text${t.done?' done':''}">${t.text}</span>
+          <span class="todo-date">${dateStr}</span>
+          <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>`;
+        grp.appendChild(row);
+      });
+      list.appendChild(grp);
+    });
+  }
+
+  // Archived
+  const toggle=document.getElementById('archived-toggle');
+  const archCount=document.getElementById('archived-count');
+  const archList=document.getElementById('archived-list');
+  toggle.style.display=archived.length?'flex':'none';
+  archCount.textContent=archived.length;
+  archList.innerHTML='';
+  archived.forEach(t=>{
+    const row=document.createElement('div');
+    row.className='todo-item archived';
+    const d=new Date(t.closedAt||t.created);
+    const dateStr=d.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
+    row.innerHTML=`
+      <div class="todo-check done" onclick="toggleTodo(${t.id})" title="Reabrir">✓</div>
+      <span class="todo-text done">${t.text}</span>
+      <span class="todo-date">${dateStr}</span>
+      <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>`;
+    archList.appendChild(row);
+  });
+}
+
+// ── PARTNERS LIST (like sites) ──
+function renderPartnersList(){
+  const el=document.getElementById('kb-partners-list');if(!el)return;
+  el.innerHTML=kbPartners.length?kbPartners.map((p,i)=>`<div class="kb-item" id="partrow_${i}">
+    <span class="kb-full" id="partnertxt_${i}">${p.full||p.alias}</span>
+    <div style="display:flex;gap:4px">
+      <button class="kb-rm" style="color:var(--text3);font-size:14px;padding:2px 5px;border:1px solid var(--border);border-radius:4px;background:var(--surface2)" onclick="editPartner(${i})">✎</button>
+      <button class="kb-rm" onclick="removePartner(${i})">✕</button>
+    </div></div>`).join(''):'<div style="font-size:16px;color:var(--text3);padding:6px 0">Sin partners.</div>';
+}
+
+function addPartner(){
+  const inp=document.getElementById('p-new');
+  const name=inp.value.trim();
+  if(!name)return;
+  if(kbPartners.find(p=>(p.full||p.alias)===name))return showToast('Ya existe','err');
+  kbPartners.push({alias:name.toLowerCase().replace(/\s+/g,'-'),full:name});
+  ls('sgmr_kb_partners',JSON.stringify(kbPartners));
+  inp.value='';renderPartnersList();showToast('Partner agregado','ok');
+}
+
+function removePartner(i){
+  kbPartners.splice(i,1);ls('sgmr_kb_partners',JSON.stringify(kbPartners));renderPartnersList();
+}
+
+function editPartner(i){
+  const txt=document.getElementById('partnertxt_'+i);
+  const cur=kbPartners[i].full||kbPartners[i].alias;
+  const inp=document.createElement('input');
+  inp.type='text';inp.value=cur;inp.className='fc';inp.style.flex='1';inp.style.fontSize='16px';inp.style.padding='3px 7px';
+  txt.replaceWith(inp);inp.focus();
+  inp.onblur=()=>{
+    const v=inp.value.trim();
+    if(v&&v!==cur){kbPartners[i].full=v;kbPartners[i].alias=v.toLowerCase().replace(/\s+/g,'-');ls('sgmr_kb_partners',JSON.stringify(kbPartners));}
+    renderPartnersList();
+  };
+  inp.onkeydown=(e)=>{if(e.key==='Enter')inp.blur();if(e.key==='Escape'){inp.value=cur;inp.blur();}};
+}
+
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
   t.className='toast show'+(type?' '+type:'');
