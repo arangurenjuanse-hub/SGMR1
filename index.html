@@ -477,6 +477,7 @@ textarea#msg::placeholder{color:var(--text3);}
         <button class="cfg-tab" onclick="setCfgTab('partners',this)">👤 Partners</button>
         <button class="cfg-tab" onclick="setCfgTab('sites',this);renderSitesList()">🌐 Sitios</button>
         <button class="cfg-tab" onclick="setCfgTab('cats',this)">🏷 Categorías</button>
+        <button class="cfg-tab" onclick="setCfgTab('install',this)">📲 Instalar</button>
       </div>
 
       <!-- KEYS -->
@@ -511,6 +512,32 @@ textarea#msg::placeholder{color:var(--text3);}
       </div>
 
       <!-- CATS -->
+      <div class="cfg-panel" id="cfg-install">
+        <div style="display:flex;flex-direction:column;gap:14px">
+
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">🖥 Mac / Windows (Chrome)</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">En la barra de direcciones de Chrome, buscá el ícono <strong style="color:var(--text)">⊕</strong> o el monitor con flecha. Hacé click → Instalar. También podés ir a:</div>
+            <div style="font-size:11px;color:var(--text3);background:var(--surface3);padding:8px 10px;border-radius:6px;font-family:'Geist Mono',monospace;margin-bottom:10px">Menú Chrome (⋮) → Guardar y compartir → Instalar página como app...</div>
+            <button class="btn primary" style="width:100%" onclick="window.open('https://arangurenjuanse-hub.github.io/SGMR1/','_blank')">Abrir en pestaña limpia para instalar →</button>
+          </div>
+
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">📱 iPhone / iPad (Safari)</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Abrí la URL en Safari → botón <strong style="color:var(--text)">Compartir</strong> (cuadrado con flecha) → <strong style="color:var(--text)">Agregar a pantalla de inicio</strong>.</div>
+            <button class="btn" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px" onclick="navigator.clipboard.writeText('https://arangurenjuanse-hub.github.io/SGMR1/').then(()=>showToast('URL copiada ✓','ok'))">
+              📋 Copiar URL para Safari
+            </button>
+          </div>
+
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px">
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">🤖 Android (Chrome)</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6">Menú <strong style="color:var(--text)">(⋮)</strong> → <strong style="color:var(--text)">Instalar app</strong> o <strong style="color:var(--text)">Agregar a pantalla de inicio</strong>.</div>
+          </div>
+
+        </div>
+      </div>
+
       <div class="cfg-panel" id="cfg-cats">
         <div class="sec-title">Categorías de problemas / tareas</div>
         <div class="add-row">
