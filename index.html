@@ -205,6 +205,144 @@ textarea#msg::placeholder{color:var(--text3);}
 ::-webkit-scrollbar{width:4px;height:4px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:var(--surface3);border-radius:99px;}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+
+  /* Reset layout to single column, full height */
+  body { overflow: hidden; height: 100dvh; }
+
+  .layout {
+    display: flex;
+    flex-direction: column;
+    height: calc(100dvh - 50px);
+    grid-template-columns: unset;
+  }
+
+  /* HEADER */
+  .hdr { padding: 0 12px; height: 50px; }
+  .logo-name { font-size: 13px; }
+  .stats-pill { gap: 7px; padding: 4px 9px; }
+  .stat-item { font-size: 10px; }
+  .btn.sm { padding: 5px 10px; font-size: 11px; }
+
+  /* CHAT is primary - takes full screen by default */
+  .right {
+    display: flex !important;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    max-height: 100%;
+    order: 1;
+  }
+
+  /* LIST panel - hidden by default, slides up as overlay */
+  .left {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: var(--bg);
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform .3s cubic-bezier(.4,0,.2,1);
+    height: 100dvh;
+  }
+  .left.mob-open {
+    transform: translateY(0);
+  }
+
+  /* List header with close button */
+  .mob-list-hdr {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .mob-list-hdr-title { font-size: 14px; font-weight: 600; }
+
+  /* Toolbar wrapping */
+  .toolbar { gap: 6px; padding: 8px 12px; }
+  .chips { gap: 3px; flex-wrap: wrap; }
+  .chip { padding: 4px 9px; font-size: 10px; }
+  .tb-right { gap: 4px; }
+  .sel { font-size: 10px; padding: 3px 20px 3px 7px; }
+
+  /* Date bar */
+  .date-bar { padding: 5px 12px; gap: 5px; flex-wrap: wrap; }
+  .date-inputs { margin-left: 0; }
+
+  /* Anno list rows */
+  .col-hdrs { display: none; }
+  .anno-row {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 10px 12px;
+    align-items: flex-start;
+    border-bottom: 1px solid var(--border);
+    min-height: unset;
+    position: relative;
+  }
+  .row-bar { width: 3px; height: 100%; position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0; }
+  .anno-row .rc { padding: 0; overflow: visible; white-space: normal; text-overflow: unset; }
+  .anno-row .rc.rtxt { width: 100%; font-size: 12px; line-height: 1.4; padding-left: 8px; }
+  .anno-row .rc.rsite { font-size: 11px; font-weight: 600; color: var(--text); padding-left: 8px; }
+  .anno-row .rc.rpartner { font-size: 10px; color: var(--text2); padding-left: 8px; text-align: left; }
+  .anno-row .rtype { font-size: 9px; padding: 2px 6px; }
+  .anno-row .restado-c { margin-left: auto; }
+  .anno-row .kb-rm { position: absolute; top: 8px; right: 8px; color: transparent; }
+  .anno-row:hover .kb-rm { color: var(--text3); }
+
+  /* Chat header */
+  .chat-hdr { padding: 10px 12px; }
+  .chat-hdr-l { gap: 8px; }
+  .avatar { width: 28px; height: 28px; font-size: 13px; }
+  .chat-name { font-size: 12px; }
+  .chat-st { font-size: 9px; }
+
+  /* Messages */
+  .msgs { padding: 10px 12px; gap: 8px; }
+  .bubble { font-size: 13px; padding: 8px 11px; }
+
+  /* Input */
+  .input-area { padding: 8px 10px 10px; flex-shrink: 0; }
+  .paste-hint { font-size: 9px; margin-bottom: 4px; }
+  textarea#msg { font-size: 14px; padding: 9px 34px 9px 11px; }
+  .send { width: 36px; height: 36px; font-size: 15px; }
+
+  /* FAB button to open list */
+  .mob-fab {
+    display: flex !important;
+    position: fixed;
+    bottom: 80px;
+    right: 16px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    color: var(--text2);
+    font-size: 18px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--sh2);
+    z-index: 100;
+    transition: all .15s;
+  }
+  .mob-fab:active { transform: scale(.92); }
+
+  /* Config button */
+  .hdr-right .btn.sm { padding: 4px 9px; }
+}
+
+/* Hide FAB on desktop */
+.mob-fab { display: none; }
+.mob-list-hdr { display: none; }
 </style>
 </head>
 <body>
@@ -227,7 +365,11 @@ textarea#msg::placeholder{color:var(--text3);}
 
 <div class="layout">
   <!-- LEFT -->
-  <div class="left">
+  <div class="left" id="mob-list">
+    <div class="mob-list-hdr">
+      <span class="mob-list-hdr-title">📋 Anotaciones</span>
+      <button class="btn icon" onclick="closeMobList()">✕</button>
+    </div>
     <div class="toolbar">
       <div class="chips">
         <div class="chip active" onclick="setTipo('todos',this)">Todos</div>
@@ -363,6 +505,7 @@ textarea#msg::placeholder{color:var(--text3);}
 </div>
 
 <div class="toast" id="toast"></div>
+<button class="mob-fab" id="mob-fab" onclick="openMobList()" title="Ver lista">☰</button>
 
 <script>
 /* ── DEFAULT DATA ── */
@@ -783,6 +926,14 @@ function clearAll(){
 
 /* ── TOAST ── */
 let toastT;
+function openMobList(){
+  document.getElementById('mob-list').classList.add('mob-open');
+  document.getElementById('mob-fab').style.display='none';
+}
+function closeMobList(){
+  document.getElementById('mob-list').classList.remove('mob-open');
+  document.getElementById('mob-fab').style.display='';
+}
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
   t.className='toast show'+(type?' '+type:'');
