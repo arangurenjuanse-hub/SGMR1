@@ -51,7 +51,7 @@ body{font-family:'Geist',-apple-system,sans-serif;background:var(--bg);color:var
 .btn.icon{width:30px;height:30px;padding:0;justify-content:center;border-radius:var(--r);}
 
 /* LAYOUT */
-.layout{display:grid;grid-template-columns:1fr 360px;height:calc(100vh - 50px);}
+.layout{display:grid;grid-template-columns:1fr minmax(360px,420px);height:calc(100vh - 50px);}
 
 /* LEFT */
 .left{display:flex;flex-direction:column;overflow:hidden;}
@@ -434,7 +434,7 @@ textarea#msg::placeholder{color:var(--text3);}
   </div>
 </div>
 
-<div class="view-logs" id="view-logs"><div class="layout">
+<div class="view-logs" id="view-logs" style="width:100%;flex:1;overflow:hidden"><div class="layout">
   <!-- LEFT -->
   <div class="left" id="mob-list">
     <div class="mob-list-hdr">
