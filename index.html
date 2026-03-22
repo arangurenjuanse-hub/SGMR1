@@ -70,7 +70,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .date-sep{color:var(--text3);font-size:11px;}
 
 /* COL HEADERS */
-.col-hdrs{display:grid;grid-template-columns:4px 76px 95px 1fr 80px 82px;padding:5px 13px;background:var(--surface);border-bottom:1px solid var(--border);}
+.col-hdrs{display:grid;grid-template-columns:4px 76px 95px 1fr 80px 82px 28px;padding:5px 13px;background:var(--surface);border-bottom:1px solid var(--border);}
 .col-h{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:0 5px;}
 
 /* ANNO LIST */
@@ -81,7 +81,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .day-name{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;}
 .day-line{flex:1;height:1px;background:var(--border);}
 .day-badge{font-size:10px;color:var(--text3);background:var(--surface2);padding:2px 7px;border-radius:99px;border:1px solid var(--border);}
-.anno-row{display:grid;grid-template-columns:4px 76px 95px 1fr 80px 82px;align-items:center;padding:4px 13px;border-bottom:1px solid var(--border);min-height:32px;transition:background .1s;cursor:default;}
+.anno-row{display:grid;grid-template-columns:4px 76px 95px 1fr 80px 82px 28px;align-items:center;padding:4px 13px;border-bottom:1px solid var(--border);min-height:32px;transition:background .1s;cursor:default;}
 .anno-row:hover{background:var(--surface2);}
 .row-bar{width:3px;height:16px;border-radius:2px;}
 .anno-row.prob .row-bar{background:var(--prob);box-shadow:0 0 5px var(--prob-glow);}
@@ -422,7 +422,7 @@ function load(){
 
   buildSiteFilter();renderList();updateStats();
   setPreset(5,document.querySelector('.preset[data-d="5"]'));
-  addBotMsg('¡Hola! Soy tu asistente SGMR.<br><br>📸 <strong>Screenshot</strong> → la analizo automáticamente<br>✍️ <strong>Texto</strong> → lo registro como anotación<br>🔍 <strong>Preguntas</strong> → busco en tu base de datos<br><br>Podés pegar imágenes con <strong>Ctrl+V</strong> o adjuntarlas. ¿Arrancamos?');
+  addBotMsg('👋 Listo para laburar. Tiráme una imagen, una anotación o una pregunta.');
   if(sbUrl&&sbKey)loadSB();
 }
 
@@ -501,7 +501,7 @@ function renderList(){
       const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
       const ecls=r.estado==='En proceso'?'en-proceso':r.estado==='Listo'?'listo':'';
       const row=document.createElement('div');row.className=`anno-row ${cls}`;
-      row.innerHTML=`<div class="row-bar"></div><div class="rc"><span class="rtype ${cls}">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c"><button class="etag ${ecls}" onclick="cycleEstado(${idx})">${esc(r.estado)}</button></div>`;
+      row.innerHTML=`<div class="row-bar"></div><div class="rc"><span class="rtype ${cls}">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c"><button class="etag ${ecls}" onclick="cycleEstado(${idx})">${esc(r.estado)}</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
       sec.appendChild(row);
     });
     scroll.appendChild(sec);
@@ -516,6 +516,12 @@ function updateStats(f){
   document.getElementById('s-cam').textContent=src.filter(r=>r.tipo==='Cambio/Comentario').length;
 }
 function setTipo(t,el){filterTipo=t;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderList();}
+async function deleteRow(idx){
+  if(!confirm('Eliminar esta anotacion?'))return;
+  const row=rows[idx];
+  if(row.id&&sbUrl&&sbKey){try{await fetch(sbUrl+'/rest/v1/anotaciones?id=eq.'+row.id,{method:'DELETE',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}});}catch(e){}}
+  rows.splice(idx,1);ls('sgmr_rows',JSON.stringify(rows));renderList();updateStats();showToast('Eliminado','ok');
+}
 async function cycleEstado(idx){
   const s=['Pendiente','En proceso','Listo'];
   rows[idx].estado=s[(s.indexOf(rows[idx].estado)+1)%3];
