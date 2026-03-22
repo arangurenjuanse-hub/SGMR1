@@ -380,7 +380,7 @@ textarea#msg::placeholder{color:var(--text3);}
     .hdr-tab:hover{color:var(--text2);background:rgba(255,255,255,.04);}
     .hdr-tab.active{color:var(--text);background:var(--surface2);}
     .hdr-tab.active::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,#5b7cfa,#a855f7);}
-    .view-logs,.view-todo{display:flex;flex:1;min-height:0;overflow:hidden;}
+    .view-logs{display:contents;} .view-todo{display:flex;flex:1;min-height:0;overflow:hidden;}
     .view-todo{flex-direction:column;background:var(--bg);}
     /* TODO STYLES */
     .todo-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;padding:20px;}
@@ -434,7 +434,7 @@ textarea#msg::placeholder{color:var(--text3);}
   </div>
 </div>
 
-<div class="view-logs" id="view-logs" style="width:100%;flex:1;overflow:hidden"><div class="layout">
+<div class="view-logs" id="view-logs"><div class="layout">
   <!-- LEFT -->
   <div class="left" id="mob-list">
     <div class="mob-list-hdr">
@@ -1053,7 +1053,7 @@ function closeMobList(){
 function switchView(view, el){
   document.querySelectorAll('.hdr-tab').forEach(t=>t.classList.remove('active'));
   el.classList.add('active');
-  document.getElementById('view-logs').style.display = view==='logs' ? 'flex' : 'none';
+  document.getElementById('view-logs').style.display = view==='logs' ? 'contents' : 'none';
   document.getElementById('view-todo').style.display = view==='todo' ? 'flex' : 'none';
   if(view==='todo') renderTodo();
 }
