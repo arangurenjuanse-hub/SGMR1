@@ -106,7 +106,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .expand-row:hover{background:var(--surface2);}
 
 /* CHAT */
-.right{display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);}
+.right{display:flex;flex-direction:column;background:var(--surface);border-left:1px solid var(--border);overflow:hidden;min-height:0;}
 .chat-hdr{padding:11px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .chat-hdr-l{display:flex;align-items:center;gap:9px;}
 .avatar{width:30px;height:30px;background:linear-gradient(135deg,#3ddc84,#00bfa5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;}
@@ -221,7 +221,7 @@ textarea#msg::placeholder{color:var(--text3);}
       <div class="stat-item"><div class="stat-dot" style="background:var(--rec)"></div><span id="s-rec">0</span></div>
       <div class="stat-item"><div class="stat-dot" style="background:var(--cam)"></div><span id="s-cam">0</span></div>
     </div>
-    <button class="btn sm" onclick="openCfg()">⚙ Config</button>
+    <button class="btn sm" onclick="openCfg()">â Config</button>
   </div>
 </div>
 
@@ -231,9 +231,9 @@ textarea#msg::placeholder{color:var(--text3);}
     <div class="toolbar">
       <div class="chips">
         <div class="chip active" onclick="setTipo('todos',this)">Todos</div>
-        <div class="chip prob" onclick="setTipo('Problema',this)">● Problema</div>
-        <div class="chip rec" onclick="setTipo('Recordatorio',this)">● Recordatorio</div>
-        <div class="chip cam" onclick="setTipo('Cambio/Comentario',this)">● Cambio</div>
+        <div class="chip prob" onclick="setTipo('Problema',this)">â Problema</div>
+        <div class="chip rec" onclick="setTipo('Recordatorio',this)">â Recordatorio</div>
+        <div class="chip cam" onclick="setTipo('Cambio/Comentario',this)">â Cambio</div>
       </div>
       <div class="tb-right">
         <select class="sel" id="f-sitio" onchange="renderList()"><option value="todos">Todos los sitios</option></select>
@@ -246,7 +246,7 @@ textarea#msg::placeholder{color:var(--text3);}
       </div>
     </div>
     <div class="date-bar">
-      <span class="date-lbl">Período</span>
+      <span class="date-lbl">PerÃ­odo</span>
       <div class="presets">
         <button class="preset active" data-d="5" onclick="setPreset(5,this)">5d</button>
         <button class="preset" data-d="7" onclick="setPreset(7,this)">7d</button>
@@ -255,7 +255,7 @@ textarea#msg::placeholder{color:var(--text3);}
       </div>
       <div class="date-inputs">
         <input type="date" id="d-from" onchange="clearPreset();renderList()"/>
-        <span class="date-sep">→</span>
+        <span class="date-sep">â</span>
         <input type="date" id="d-to" onchange="clearPreset();renderList()"/>
       </div>
     </div>
@@ -263,7 +263,7 @@ textarea#msg::placeholder{color:var(--text3);}
       <div></div>
       <div class="col-h" style="padding-left:10px">Tipo</div>
       <div class="col-h">Sitio</div>
-      <div class="col-h">Descripción</div>
+      <div class="col-h">DescripciÃ³n</div>
       <div class="col-h" style="text-align:center">Partner</div>
       <div class="col-h" style="text-align:center">Estado</div>
     </div>
@@ -274,24 +274,24 @@ textarea#msg::placeholder{color:var(--text3);}
   <div class="right">
     <div class="chat-hdr">
       <div class="chat-hdr-l">
-        <div class="avatar">🤖</div>
+        <div class="avatar">ð¤</div>
         <div>
           <div class="chat-name">Asistente SGMR</div>
           <div class="chat-st" id="chat-st">Online</div>
         </div>
       </div>
-      <button class="btn icon" onclick="clearChat()" title="Limpiar">↺</button>
+      <button class="btn icon" onclick="clearChat()" title="Limpiar">âº</button>
     </div>
     <div class="msgs" id="msgs"></div>
     <div class="input-area">
-      <div class="paste-hint">Ctrl+V para pegar imagen · Enter para enviar</div>
+      <div class="paste-hint">Ctrl+V para pegar imagen Â· Enter para enviar</div>
       <div class="img-strip" id="img-strip"></div>
       <div class="input-row">
         <div class="input-wrap">
-          <textarea id="msg" rows="1" placeholder="Anotá algo o hacé una pregunta..." oninput="resize(this)" onkeydown="onKey(event)"></textarea>
-          <button class="attach" title="Adjuntar">📎<input type="file" accept="image/*" multiple onchange="onAttach(event)"/></button>
+          <textarea id="msg" rows="1" placeholder="AnotÃ¡ algo o hacÃ© una pregunta..." oninput="resize(this)" onkeydown="onKey(event)"></textarea>
+          <button class="attach" title="Adjuntar">ð<input type="file" accept="image/*" multiple onchange="onAttach(event)"/></button>
         </div>
-        <button class="send" id="send-btn" onclick="send()">➤</button>
+        <button class="send" id="send-btn" onclick="send()">â¤</button>
       </div>
     </div>
   </div>
@@ -301,20 +301,20 @@ textarea#msg::placeholder{color:var(--text3);}
 <div class="overlay" id="overlay-cfg" onclick="closeCfgOut(event)">
   <div class="modal">
     <div class="modal-hdr">
-      <div class="modal-title">Configuración</div>
-      <button class="btn icon" onclick="closeCfg()">✕</button>
+      <div class="modal-title">ConfiguraciÃ³n</div>
+      <button class="btn icon" onclick="closeCfg()">â</button>
     </div>
     <div class="modal-body">
       <div class="cfg-tabs">
-        <button class="cfg-tab active" onclick="setCfgTab('keys',this)">🔑 API Keys</button>
-        <button class="cfg-tab" onclick="setCfgTab('partners',this)">👤 Partners</button>
-        <button class="cfg-tab" onclick="setCfgTab('sites',this)">🌐 Sitios</button>
-        <button class="cfg-tab" onclick="setCfgTab('cats',this)">🏷 Categorías</button>
+        <button class="cfg-tab active" onclick="setCfgTab('keys',this)">ð API Keys</button>
+        <button class="cfg-tab" onclick="setCfgTab('partners',this)">ð¤ Partners</button>
+        <button class="cfg-tab" onclick="setCfgTab('sites',this)">ð Sitios</button>
+        <button class="cfg-tab" onclick="setCfgTab('cats',this)">ð· CategorÃ­as</button>
       </div>
 
       <!-- KEYS -->
       <div class="cfg-panel active" id="cfg-keys">
-        <div class="key-note">🔒 Las keys se guardan solo en tu browser (localStorage).</div>
+        <div class="key-note">ð Las keys se guardan solo en tu browser (localStorage).</div>
         <div class="fg"><label class="fl">Anthropic API Key</label><input type="password" class="fc" id="cfg-apikey" placeholder="sk-ant-..."/></div>
         <div class="fg"><label class="fl">Supabase Project URL</label><input type="text" class="fc" id="cfg-url" placeholder="https://xxxx.supabase.co"/></div>
         <div class="fg"><label class="fl">Supabase Anon Key</label><input type="password" class="fc" id="cfg-key" placeholder="eyJ..."/></div>
@@ -322,10 +322,10 @@ textarea#msg::placeholder{color:var(--text3);}
 
       <!-- PARTNERS -->
       <div class="cfg-panel" id="cfg-partners">
-        <div class="sec-title">Partners — alias → nombre completo</div>
+        <div class="sec-title">Partners â alias â nombre completo</div>
         <div class="add-row">
           <input type="text" class="fc" id="p-alias" placeholder="Alias (ej: 7stars)"/>
-          <span class="add-arrow">→</span>
+          <span class="add-arrow">â</span>
           <input type="text" class="fc" id="p-full" placeholder="Nombre completo (ej: 7 Stars Partners)"/>
           <button class="btn primary sm" onclick="addKB('partners')">+</button>
         </div>
@@ -337,7 +337,7 @@ textarea#msg::placeholder{color:var(--text3);}
         <div class="sec-title">Sitios web</div>
         <div class="add-row">
           <input type="text" class="fc" id="s-alias" placeholder="Alias (ej: cbb)"/>
-          <span class="add-arrow">→</span>
+          <span class="add-arrow">â</span>
           <input type="text" class="fc" id="s-full" placeholder="Nombre completo (ej: Crypto Bonus Bet)"/>
           <button class="btn primary sm" onclick="addKB('sites')">+</button>
         </div>
@@ -346,11 +346,11 @@ textarea#msg::placeholder{color:var(--text3);}
 
       <!-- CATS -->
       <div class="cfg-panel" id="cfg-cats">
-        <div class="sec-title">Categorías de problemas / tareas</div>
+        <div class="sec-title">CategorÃ­as de problemas / tareas</div>
         <div class="add-row">
           <input type="text" class="fc" id="c-alias" placeholder="Alias (ej: pago)"/>
-          <span class="add-arrow">→</span>
-          <input type="text" class="fc" id="c-full" placeholder="Descripción (ej: Problema de pago con USDT)"/>
+          <span class="add-arrow">â</span>
+          <input type="text" class="fc" id="c-full" placeholder="DescripciÃ³n (ej: Problema de pago con USDT)"/>
           <button class="btn primary sm" onclick="addKB('cats')">+</button>
         </div>
         <div class="kb-list" id="kb-cats"></div>
@@ -366,7 +366,7 @@ textarea#msg::placeholder{color:var(--text3);}
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── DEFAULT DATA ── */
+/* ââ DEFAULT DATA ââ */
 const DEFAULT_SITES=['Crypto Casino Zone','Crypto Bonus Bet','Top Royal Casinos','Sushi Casinos','Lucky Crypto Bonus','Neon Bonuses','Best Casino Vault','Crypto Bonus Dragon','Bonusinos','Top Legit Casinos','General'];
 
 // Pre-set keys
@@ -383,7 +383,7 @@ let filterTipo='todos',datePreset=5;
 let pendingImgs=[],pendingConfirm=null,chatHistory=[];
 let isThinking=false;
 
-/* ── UTILS ── */
+/* ââ UTILS ââ */
 function ls(k,v){if(v===undefined){try{return localStorage.getItem(k)}catch(e){return null}}try{localStorage.setItem(k,v)}catch(e){}}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function pad(n){return String(n).padStart(2,'0');}
@@ -394,16 +394,16 @@ function fmtTime(d){return`${pad(d.getHours())}:${pad(d.getMinutes())}`;}
 function fmtDay(str){const d=parseDate(str);if(isNaN(d.getTime()))return str;const n=new Date(),t=dateKey(n),y=new Date(n);y.setDate(y.getDate()-1);if(str===t)return'Hoy';if(str===dateKey(y))return'Ayer';return d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'short'});}
 function toInputDate(d){return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
 
-/* ── KNOWLEDGE BASE context ── */
+/* ââ KNOWLEDGE BASE context ââ */
 function buildKBContext(){
   let ctx='';
-  if(kbPartners.length){ctx+='\nPARTNERS (alias → nombre real):\n'+kbPartners.map(x=>`  "${x.alias}" → "${x.full}"`).join('\n');}
-  if(kbSites.length){ctx+='\nSITIOS (alias → nombre real):\n'+kbSites.map(x=>`  "${x.alias}" → "${x.full}"`).join('\n');}
-  if(kbCats.length){ctx+='\nCATEGORÍAS (alias → descripción):\n'+kbCats.map(x=>`  "${x.alias}" → "${x.full}"`).join('\n');}
+  if(kbPartners.length){ctx+='\nPARTNERS (alias â nombre real):\n'+kbPartners.map(x=>`  "${x.alias}" â "${x.full}"`).join('\n');}
+  if(kbSites.length){ctx+='\nSITIOS (alias â nombre real):\n'+kbSites.map(x=>`  "${x.alias}" â "${x.full}"`).join('\n');}
+  if(kbCats.length){ctx+='\nCATEGORÃAS (alias â descripciÃ³n):\n'+kbCats.map(x=>`  "${x.alias}" â "${x.full}"`).join('\n');}
   return ctx;
 }
 
-/* ── LOAD ── */
+/* ââ LOAD ââ */
 function load(){
   try{const d=ls('sgmr_rows');if(d)rows=JSON.parse(d);}catch(e){}
   try{const d=ls('sgmr_sites');if(d)sites=JSON.parse(d);}catch(e){}
@@ -422,11 +422,11 @@ function load(){
 
   buildSiteFilter();renderList();updateStats();
   setPreset(5,document.querySelector('.preset[data-d="5"]'));
-  addBotMsg('¡Hola! Soy tu asistente SGMR.<br><br>📸 <strong>Screenshot</strong> → la analizo automáticamente<br>✍️ <strong>Texto</strong> → lo registro como anotación<br>🔍 <strong>Preguntas</strong> → busco en tu base de datos<br><br>Podés pegar imágenes con <strong>Ctrl+V</strong> o adjuntarlas. ¿Arrancamos?');
+  addBotMsg('Â¡Hola! Soy tu asistente SGMR.<br><br>ð¸ <strong>Screenshot</strong> â la analizo automÃ¡ticamente<br>âï¸ <strong>Texto</strong> â lo registro como anotaciÃ³n<br>ð <strong>Preguntas</strong> â busco en tu base de datos<br><br>PodÃ©s pegar imÃ¡genes con <strong>Ctrl+V</strong> o adjuntarlas. Â¿Arrancamos?');
   if(sbUrl&&sbKey)loadSB();
 }
 
-/* ── SUPABASE ── */
+/* ââ SUPABASE ââ */
 async function loadSB(){
   try{
     const r=await fetch(`${sbUrl}/rest/v1/anotaciones?order=created_at.asc`,{headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`}});
@@ -450,7 +450,7 @@ async function patchSB(row){
   try{await fetch(`${sbUrl}/rest/v1/anotaciones?id=eq.${row.id}`,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`,'Content-Type':'application/json'},body:JSON.stringify({estado:row.estado})});}catch(e){}
 }
 
-/* ── LIST ── */
+/* ââ LIST ââ */
 function buildSiteFilter(){
   const sel=document.getElementById('f-sitio');
   sel.innerHTML='<option value="todos">Todos los sitios</option>';
@@ -488,7 +488,7 @@ function renderList(){
   const dates=Object.keys(groups).sort((a,b)=>parseDate(b)-parseDate(a));
 
   const scroll=document.getElementById('anno-scroll');scroll.innerHTML='';
-  if(!filtered.length){scroll.innerHTML='<div class="empty-st"><big>📋</big><span>Sin anotaciones</span></div>';updateStats(filtered);return;}
+  if(!filtered.length){scroll.innerHTML='<div class="empty-st"><big>ð</big><span>Sin anotaciones</span></div>';updateStats(filtered);return;}
 
   dates.forEach(dk=>{
     const grp=groups[dk];
@@ -522,7 +522,7 @@ async function cycleEstado(idx){
   ls('sgmr_rows',JSON.stringify(rows));patchSB(rows[idx]);renderList();
 }
 
-/* ── CHAT ── */
+/* ââ CHAT ââ */
 function resize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
 function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
 
@@ -532,7 +532,7 @@ document.addEventListener('paste',e=>{
       const reader=new FileReader();
       reader.onload=ev=>{
         compressImg(ev.target.result,item.type,(b64,dataUrl,type)=>{
-          pendingImgs.push({b64,dataUrl,type});renderStrip();showToast('Imagen pegada ✓','ok');
+          pendingImgs.push({b64,dataUrl,type});renderStrip();showToast('Imagen pegada â','ok');
         });
       };
       reader.readAsDataURL(item.getAsFile());
@@ -566,7 +566,7 @@ function onAttach(e){
 }
 function renderStrip(){
   const s=document.getElementById('img-strip');s.innerHTML='';
-  pendingImgs.forEach((img,i)=>{const d=document.createElement('div');d.className='img-thumb';d.innerHTML=`<img src="${img.dataUrl}"/><button class="img-rm" onclick="rmImg(${i})">✕</button>`;s.appendChild(d);});
+  pendingImgs.forEach((img,i)=>{const d=document.createElement('div');d.className='img-thumb';d.innerHTML=`<img src="${img.dataUrl}"/><button class="img-rm" onclick="rmImg(${i})">â</button>`;s.appendChild(d);});
 }
 function rmImg(i){pendingImgs.splice(i,1);renderStrip();}
 
@@ -589,7 +589,7 @@ function showTyping(){
 }
 function hideTyping(){const el=document.getElementById('typing-w');if(el)el.remove();}
 function scrollMsgs(){const m=document.getElementById('msgs');m.scrollTop=m.scrollHeight;}
-function clearChat(){document.getElementById('msgs').innerHTML='';chatHistory=[];addBotMsg('Chat limpiado. ¿En qué puedo ayudarte?');}
+function clearChat(){document.getElementById('msgs').innerHTML='';chatHistory=[];addBotMsg('Chat limpiado. Â¿En quÃ© puedo ayudarte?');}
 
 async function send(){
   if(isThinking)return;
@@ -605,35 +605,36 @@ async function send(){
   document.getElementById('chat-st').textContent='Pensando...';
   showTyping();
   try{const r=await callAI(text,imgs);hideTyping();processReply(r);}
-  catch(e){hideTyping();addBotMsg('❌ Error: '+(e.message||'Verificá tu API key en Config.'));}
+  catch(e){hideTyping();addBotMsg('â Error: '+(e.message||'VerificÃ¡ tu API key en Config.'));}
   isThinking=false;document.getElementById('send-btn').disabled=false;
   document.getElementById('chat-st').textContent='Online';
 }
 
 async function callAI(text,imgs){
   const kbCtx=buildKBContext();
-  const sys=`Sos un asistente de gestión de anotaciones para sitios web de casino/crypto. SIEMPRE respondés SOLO con JSON válido. NUNCA respondés con texto libre.
+  const sys=`Sos un asistente de gestiÃ³n de anotaciones para sitios web de casino/crypto. SIEMPRE respondÃ©s SOLO con JSON vÃ¡lido. NUNCA respondÃ©s con texto libre.
 
 SITIOS DISPONIBLES: ${sites.join(', ')}
 ${kbCtx}
 
-ANOTACIONES RECIENTES (últimas 40):
+ANOTACIONES RECIENTES (Ãºltimas 40):
 ${JSON.stringify(rows.slice(-40).map(r=>({fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado})))}
 
 REGLAS ABSOLUTAS:
-1. SIEMPRE respondés con uno de estos 3 JSON y nada más:
+1. SIEMPRE respondÃ©s con uno de estos 3 JSON y nada mÃ¡s:
    - Para anotar: {"action":"annotate","tipo":"Problema|Recordatorio|Cambio/Comentario","sitio":"nombre exacto","texto":"descripcion","partner":"partner o vacio","estado":"Pendiente"}
    - Para preguntar algo: {"action":"ask","pregunta":"pregunta corta"}
    - Para responder consultas: {"action":"answer","respuesta":"texto de respuesta"}
-2. Cuando ves una imagen: SIEMPRE creás una anotación. Describí lo que ves en "texto". Si no sabés el sitio usá "General".
+2. Cuando ves una imagen: SIEMPRE creÃ¡s una anotaciÃ³n. DescribÃ­ lo que ves en "texto". Si no sabÃ©s el sitio usÃ¡ "General".
 3. El texto junto a la imagen (ej: "7 stars - crypto bonus bet") indica el partner y/o sitio.
-4. Usá la base de conocimiento para resolver aliases.
-5. Inferí el tipo: error/falla/pago=Problema, tarea/pendiente=Recordatorio, nota/cambio=Cambio/Comentario.
-6. NUNCA escribas texto fuera del JSON. NUNCA uses markdown. SOLO JSON.\n7. OBLIGATORIO: antes de anotar necesitás saber el sitio exacto (no "General") Y el partner. Si falta cualquiera, usá action:ask y preguntá ambos juntos.
+4. UsÃ¡ la base de conocimiento para resolver aliases.
+5. InferÃ­ el tipo: error/falla/pago=Problema, tarea/pendiente=Recordatorio, nota/cambio=Cambio/Comentario.
+6. NUNCA escribas texto fuera del JSON. NUNCA uses markdown. SOLO JSON.
+7. OBLIGATORIO: toda anotación DEBE tener sitio exacto (no "General") Y partner. Si falta cualquiera, preguntá ambos juntos con action:ask ANTES de anotar.\n7. OBLIGATORIO: antes de anotar necesitÃ¡s saber el sitio exacto (no "General") Y el partner. Si falta cualquiera, usÃ¡ action:ask y preguntÃ¡ ambos juntos.
 
   const userContent=[];
   imgs.forEach(img=>{userContent.push({type:'image',source:{type:'base64',media_type:img.type,data:img.b64}});});
-  userContent.push({type:'text',text:text||'Analizá esta imagen.'});
+  userContent.push({type:'text',text:text||'AnalizÃ¡ esta imagen.'});
   chatHistory.push({role:'user',content:userContent});
   if(chatHistory.length>14)chatHistory=chatHistory.slice(-14);
 
@@ -653,19 +654,19 @@ function processReply(r){
   if(r.action==='annotate'){pendingConfirm=r;showCC(r);}
   else if(r.action==='ask'){addBotMsg(esc(r.pregunta));}
   else if(r.action==='answer'){addBotMsg(r.respuesta.replace(/\n/g,'<br>'));}
-  else addBotMsg('No entendí. ¿Podés reformular?');
+  else addBotMsg('No entendÃ­. Â¿PodÃ©s reformular?');
 }
 function showCC(r){
   const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
-  addBotMsg(`¿Guardo esta anotación?<div class="cc">
+  addBotMsg(`Â¿Guardo esta anotaciÃ³n?<div class="cc">
     <div class="cc-row"><span class="cc-k">tipo</span><span class="cc-v"><span class="rtype ${cls}" style="display:inline-block">${esc(r.tipo)}</span></span></div>
     <div class="cc-row"><span class="cc-k">sitio</span><span class="cc-v">${esc(r.sitio)}</span></div>
     <div class="cc-row"><span class="cc-k">texto</span><span class="cc-v">${esc(r.texto)}</span></div>
     ${r.partner?`<div class="cc-row"><span class="cc-k">partner</span><span class="cc-v">${esc(r.partner)}</span></div>`:''}
     <div class="cc-acts">
-      <button class="cc-btn ok" onclick="confirmSave()">✓ Guardar</button>
-      <button class="cc-btn" onclick="confirmCancel()">✕ Cancelar</button>
-      <button class="cc-btn" onclick="confirmEdit()">✏ Editar</button>
+      <button class="cc-btn ok" onclick="confirmSave()">â Guardar</button>
+      <button class="cc-btn" onclick="confirmCancel()">â Cancelar</button>
+      <button class="cc-btn" onclick="confirmEdit()">â Editar</button>
     </div>
   </div>`);
 }
@@ -676,26 +677,26 @@ async function confirmSave(){
   const saved=await saveSB(row);
   rows.push(row);ls('sgmr_rows',JSON.stringify(rows));
   buildSiteFilter();renderList();updateStats();
-  addBotMsg(`✅ Guardado en <strong>${esc(row.sitio)}</strong>${saved?' y sincronizado en Supabase':' (guardado local)'}.`);
-  showToast('Anotación guardada','ok');
+  addBotMsg(`â Guardado en <strong>${esc(row.sitio)}</strong>${saved?' y sincronizado en Supabase':' (guardado local)'}.`);
+  showToast('AnotaciÃ³n guardada','ok');
 }
-function confirmCancel(){pendingConfirm=null;addBotMsg('Ok, no guardé nada. ¿Algo más?');}
-function confirmEdit(){addBotMsg('Decime qué querés cambiar (tipo, sitio, descripción o partner).');}
+function confirmCancel(){pendingConfirm=null;addBotMsg('Ok, no guardÃ© nada. Â¿Algo mÃ¡s?');}
+function confirmEdit(){addBotMsg('Decime quÃ© querÃ©s cambiar (tipo, sitio, descripciÃ³n o partner).');}
 function handleConfirmReply(text,imgs){
   if(!pendingConfirm)return;
   const t=(text||'').toLowerCase().trim();
   if(!text&&!imgs.length)return;
-  if(/^(si|sí|yes|ok|dale|guardar|guardá|sure)$/.test(t)){confirmSave();}
+  if(/^(si|sÃ­|yes|ok|dale|guardar|guardÃ¡|sure)$/.test(t)){confirmSave();}
   else if(/^(no|cancel|cancelar)$/.test(t)){confirmCancel();}
   else{
     showTyping();
-    callAI(`Anotación actual: ${JSON.stringify(pendingConfirm)}. El usuario pide este cambio: "${text}". Devolvé JSON corregido con action:annotate.`,[])
-      .then(r=>{hideTyping();if(r.action==='annotate'){pendingConfirm=r;showCC(r);}else addBotMsg(r.respuesta||'¿Qué querés cambiar?');})
-      .catch(()=>{hideTyping();addBotMsg('Error. Intentá de nuevo.');});
+    callAI(`AnotaciÃ³n actual: ${JSON.stringify(pendingConfirm)}. El usuario pide este cambio: "${text}". DevolvÃ© JSON corregido con action:annotate.`,[])
+      .then(r=>{hideTyping();if(r.action==='annotate'){pendingConfirm=r;showCC(r);}else addBotMsg(r.respuesta||'Â¿QuÃ© querÃ©s cambiar?');})
+      .catch(()=>{hideTyping();addBotMsg('Error. IntentÃ¡ de nuevo.');});
   }
 }
 
-/* ── CONFIG ── */
+/* ââ CONFIG ââ */
 function setCfgTab(name,el){
   document.querySelectorAll('.cfg-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.cfg-panel').forEach(p=>p.classList.remove('active'));
@@ -715,7 +716,7 @@ function saveCfg(){
   if(sbUrl&&sbKey)loadSB();
 }
 
-/* ── KNOWLEDGE BASE ── */
+/* ââ KNOWLEDGE BASE ââ */
 function addKB(type){
   const alias=document.getElementById(type==='partners'?'p-alias':type==='sites'?'s-alias':'c-alias').value.trim().toLowerCase();
   const full=document.getElementById(type==='partners'?'p-full':type==='sites'?'s-full':'c-full').value.trim();
@@ -727,7 +728,7 @@ function addKB(type){
   document.getElementById(type==='partners'?'p-alias':type==='sites'?'s-alias':'c-alias').value='';
   document.getElementById(type==='partners'?'p-full':type==='sites'?'s-full':'c-full').value='';
   if(type==='sites'){sites.push(full);ls('sgmr_sites',JSON.stringify(sites));buildSiteFilter();}
-  renderKB();showToast(`Agregado: ${alias} → ${full}`,'ok');
+  renderKB();showToast(`Agregado: ${alias} â ${full}`,'ok');
 }
 function removeKB(type,i){
   const store=type==='partners'?kbPartners:type==='sites'?kbSites:kbCats;
@@ -737,17 +738,17 @@ function renderKB(){
   ['partners','sites','cats'].forEach(type=>{
     const store=type==='partners'?kbPartners:type==='sites'?kbSites:kbCats;
     const el=document.getElementById('kb-'+type);if(!el)return;
-    el.innerHTML=store.length?store.map((x,i)=>`<div class="kb-item"><span class="kb-alias">${esc(x.alias)}</span><span class="kb-arrow">→</span><span class="kb-full">${esc(x.full)}</span><button class="kb-rm" onclick="removeKB('${type}',${i})">✕</button></div>`).join(''):'<div style="font-size:11px;color:var(--text3);padding:6px 0;">Sin entradas todavía.</div>';
+    el.innerHTML=store.length?store.map((x,i)=>`<div class="kb-item"><span class="kb-alias">${esc(x.alias)}</span><span class="kb-arrow">â</span><span class="kb-full">${esc(x.full)}</span><button class="kb-rm" onclick="removeKB('${type}',${i})">â</button></div>`).join(''):'<div style="font-size:11px;color:var(--text3);padding:6px 0;">Sin entradas todavÃ­a.</div>';
   });
 }
 function clearAll(){
-  if(!confirm('¿Limpiar todos los datos locales?'))return;
+  if(!confirm('Â¿Limpiar todos los datos locales?'))return;
   rows=[];sites=[...DEFAULT_SITES];
   ls('sgmr_rows','[]');ls('sgmr_sites',JSON.stringify(sites));
   buildSiteFilter();renderList();updateStats();showToast('Datos eliminados');
 }
 
-/* ── TOAST ── */
+/* ââ TOAST ââ */
 let toastT;
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
