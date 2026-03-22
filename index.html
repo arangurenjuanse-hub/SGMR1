@@ -23,7 +23,7 @@
 @keyframes fadeUp{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:.4}50%{opacity:1}}
-body{font-family:'Geist',-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font-size:13px;}
+body{font-family:'Geist',-apple-system,sans-serif;background:var(--bg);color:var(--text);height:100vh;overflow:hidden;font-size:14px;}
 
 /* HEADER */
 .hdr{height:50px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;z-index:100;position:relative;}
@@ -94,9 +94,9 @@ input[type=date]:focus{border-color:var(--accent);}
 .rtype.prob{background:var(--prob-dim);color:var(--prob);}
 .rtype.rec{background:var(--rec-dim);color:var(--rec);}
 .rtype.cam{background:var(--cam-dim);color:var(--cam);}
-.rsite{font-size:12px;color:var(--text);font-weight:500;}
-.rtxt{font-size:12px;color:var(--text);}
-.rpartner{font-size:11px;color:var(--text2);text-align:center;font-weight:500;}
+.rsite{font-size:13px;color:var(--text);font-weight:600;}
+.rtxt{font-size:13px;color:var(--text);}
+.rpartner{font-size:12px;color:var(--text2);text-align:center;font-weight:500;}
 .restado-c{display:flex;justify-content:center;}
 .etag{font-size:10px;font-weight:500;padding:2px 8px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .12s;font-family:'Geist',sans-serif;white-space:nowrap;}
 .etag:hover{border-color:var(--border2);color:var(--text2);}
@@ -119,7 +119,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .msg{display:flex;flex-direction:column;animation:fadeUp .2s ease both;}
 .msg.user{align-items:flex-end;}
 .msg.bot{align-items:flex-start;}
-.bubble{max-width:92%;padding:9px 12px;border-radius:var(--rl);font-size:12.5px;line-height:1.55;word-break:break-word;}
+.bubble{max-width:92%;padding:9px 12px;border-radius:var(--rl);font-size:13.5px;line-height:1.55;word-break:break-word;}
 .msg.user .bubble{background:linear-gradient(135deg,var(--accent),#7c5bf6);color:#fff;border-bottom-right-radius:3px;box-shadow:0 2px 10px rgba(91,124,250,.28);animation:tw .18s ease both;}
 .msg.bot .bubble{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-bottom-left-radius:3px;animation:tw .18s ease both;}
 .bubble img{max-width:100%;border-radius:var(--r);margin-bottom:5px;display:block;}
@@ -211,51 +211,87 @@ textarea#msg::placeholder{color:var(--text3);}
 /* ===== MOBILE ===== */
 @media (max-width: 768px) {
 
-  /* Reset layout to single column, full height */
-  body { overflow: hidden; height: 100dvh; }
-
-  .layout {
-    display: flex;
-    flex-direction: column;
-    height: calc(100dvh - 50px);
-    grid-template-columns: unset;
+  /* Full-screen lock — prevents any scroll or resize */
+  html, body {
+    height: 100%;
+    height: -webkit-fill-available;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
+    top: 0; left: 0;
   }
 
-  /* HEADER */
-  .hdr { padding: 0 12px; height: 50px; }
+  /* Header */
+  .hdr { height: 50px; padding: 0 12px; flex-shrink: 0; }
   .logo-name { font-size: 13px; }
-  .stats-pill { gap: 7px; padding: 4px 9px; }
+  .stats-pill { gap: 6px; padding: 4px 9px; }
   .stat-item { font-size: 10px; }
-  .btn.sm { padding: 5px 10px; font-size: 11px; }
+  .btn.sm { padding: 5px 9px; font-size: 11px; }
 
-  /* CHAT is primary - takes full screen by default */
+  /* Layout: single column, exact height minus header */
+  .layout {
+    display: flex !important;
+    flex-direction: column !important;
+    grid-template-columns: unset !important;
+    height: calc(100% - 50px);
+    overflow: hidden;
+  }
+
+  /* CHAT: primary view, fills everything */
   .right {
     display: flex !important;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    max-height: 100%;
+    flex-direction: column !important;
+    flex: 1 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: hidden !important;
     order: 1;
   }
 
-  /* LIST panel - hidden by default, slides up as overlay */
-  .left {
-    position: fixed;
-    inset: 0;
-    z-index: 200;
-    background: var(--bg);
-    display: flex;
-    flex-direction: column;
-    transform: translateY(100%);
-    transition: transform .3s cubic-bezier(.4,0,.2,1);
-    height: 100dvh;
-  }
-  .left.mob-open {
-    transform: translateY(0);
+  /* MSGS: scrollable area, takes flex space */
+  .msgs {
+    flex: 1 !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    padding: 12px !important;
   }
 
-  /* List header with close button */
+  /* INPUT: always pinned at bottom, never shrinks */
+  .input-area {
+    flex-shrink: 0 !important;
+    padding: 8px 10px 14px !important;
+  }
+  textarea#msg { font-size: 16px !important; }
+  .send { width: 38px !important; height: 38px !important; }
+  .paste-hint { font-size: 9px; margin-bottom: 3px; }
+
+  /* Chat header */
+  .chat-hdr { padding: 10px 12px; flex-shrink: 0; }
+  .avatar { width: 28px; height: 28px; font-size: 13px; }
+  .chat-name { font-size: 12px; }
+  .chat-st { font-size: 9px; }
+
+  /* Bubble */
+  .bubble { font-size: 14px !important; padding: 9px 12px !important; }
+
+  /* LIST PANEL: fullscreen overlay sliding from bottom */
+  .left {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 200;
+    background: var(--bg);
+    display: flex !important;
+    flex-direction: column !important;
+    transform: translateY(100%);
+    transition: transform .28s cubic-bezier(.4,0,.2,1);
+    height: 100% !important;
+    overflow: hidden;
+  }
+  .left.mob-open { transform: translateY(0) !important; }
+
+  /* List header (close button) */
   .mob-list-hdr {
     display: flex !important;
     align-items: center;
@@ -264,82 +300,63 @@ textarea#msg::placeholder{color:var(--text3);}
     border-bottom: 1px solid var(--border);
     flex-shrink: 0;
   }
-  .mob-list-hdr-title { font-size: 14px; font-weight: 600; }
+  .mob-list-hdr-title { font-size: 15px; font-weight: 600; }
 
-  /* Toolbar wrapping */
-  .toolbar { gap: 6px; padding: 8px 12px; }
-  .chips { gap: 3px; flex-wrap: wrap; }
-  .chip { padding: 4px 9px; font-size: 10px; }
+  /* List scroll area */
+  .anno-scroll { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+  /* Toolbar */
+  .toolbar { gap: 5px; padding: 8px 12px; flex-shrink: 0; }
+  .chips { gap: 3px; flex-wrap: nowrap; overflow-x: auto; }
+  .chip { padding: 4px 10px; font-size: 11px; white-space: nowrap; flex-shrink: 0; }
   .tb-right { gap: 4px; }
-  .sel { font-size: 10px; padding: 3px 20px 3px 7px; }
+  .sel { font-size: 10px; padding: 3px 18px 3px 7px; }
 
   /* Date bar */
-  .date-bar { padding: 5px 12px; gap: 5px; flex-wrap: wrap; }
+  .date-bar { padding: 5px 12px; gap: 5px; flex-shrink: 0; }
   .date-inputs { margin-left: 0; }
 
-  /* Anno list rows */
-  .col-hdrs { display: none; }
+  /* Anno rows: card style */
+  .col-hdrs { display: none !important; }
   .anno-row {
     display: flex !important;
-    flex-wrap: wrap;
-    gap: 4px;
-    padding: 10px 12px;
-    align-items: flex-start;
-    border-bottom: 1px solid var(--border);
-    min-height: unset;
+    flex-wrap: wrap !important;
+    gap: 4px 8px !important;
+    padding: 10px 14px 10px 16px !important;
+    grid-template-columns: unset !important;
+    align-items: flex-start !important;
     position: relative;
+    min-height: unset !important;
   }
-  .row-bar { width: 3px; height: 100%; position: absolute; left: 0; top: 0; bottom: 0; border-radius: 0; }
-  .anno-row .rc { padding: 0; overflow: visible; white-space: normal; text-overflow: unset; }
-  .anno-row .rc.rtxt { width: 100%; font-size: 12px; line-height: 1.4; padding-left: 8px; }
-  .anno-row .rc.rsite { font-size: 11px; font-weight: 600; color: var(--text); padding-left: 8px; }
-  .anno-row .rc.rpartner { font-size: 10px; color: var(--text2); padding-left: 8px; text-align: left; }
+  .row-bar { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; height: 100%; border-radius: 0; }
+  .anno-row .rc { padding: 0 !important; overflow: visible !important; white-space: normal !important; text-overflow: unset !important; width: auto !important; }
+  .anno-row .rc.rtxt { width: 100% !important; font-size: 13px !important; line-height: 1.45; order: 3; }
+  .anno-row .rc.rsite { font-size: 12px !important; font-weight: 600; color: var(--text) !important; order: 1; }
+  .anno-row .rc.rpartner { font-size: 11px !important; color: var(--text2) !important; text-align: left !important; order: 2; }
   .anno-row .rtype { font-size: 9px; padding: 2px 6px; }
-  .anno-row .restado-c { margin-left: auto; }
-  .anno-row .kb-rm { position: absolute; top: 8px; right: 8px; color: transparent; }
-  .anno-row:hover .kb-rm { color: var(--text3); }
+  .anno-row .restado-c { margin-left: auto; order: 4; }
+  .anno-row .kb-rm { position: absolute; top: 8px; right: 8px; color: var(--text3) !important; }
 
-  /* Chat header */
-  .chat-hdr { padding: 10px 12px; }
-  .chat-hdr-l { gap: 8px; }
-  .avatar { width: 28px; height: 28px; font-size: 13px; }
-  .chat-name { font-size: 12px; }
-  .chat-st { font-size: 9px; }
-
-  /* Messages */
-  .msgs { padding: 10px 12px; gap: 8px; }
-  .bubble { font-size: 13px; padding: 8px 11px; }
-
-  /* Input */
-  .input-area { padding: 8px 10px 10px; flex-shrink: 0; }
-  .paste-hint { font-size: 9px; margin-bottom: 4px; }
-  textarea#msg { font-size: 14px; padding: 9px 34px 9px 11px; }
-  .send { width: 36px; height: 36px; font-size: 15px; }
-
-  /* FAB button to open list */
+  /* FAB */
   .mob-fab {
     display: flex !important;
     position: fixed;
-    bottom: 80px;
+    bottom: 84px;
     right: 16px;
-    width: 50px;
-    height: 50px;
+    width: 48px; height: 48px;
     border-radius: 50%;
-    background: var(--surface2);
+    background: var(--surface3);
     border: 1px solid var(--border2);
-    color: var(--text2);
-    font-size: 18px;
+    color: var(--text);
+    font-size: 20px;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     box-shadow: var(--sh2);
     z-index: 100;
-    transition: all .15s;
+    transition: transform .12s;
   }
-  .mob-fab:active { transform: scale(.92); }
-
-  /* Config button */
-  .hdr-right .btn.sm { padding: 4px 9px; }
+  .mob-fab:active { transform: scale(.9); }
 }
 
 /* Hide FAB on desktop */
