@@ -530,16 +530,37 @@ document.addEventListener('paste',e=>{
   Array.from(e.clipboardData?.items||[]).forEach(item=>{
     if(item.type.startsWith('image/')){
       const reader=new FileReader();
-      reader.onload=ev=>{pendingImgs.push({b64:ev.target.result.split(',')[1],dataUrl:ev.target.result,type:item.type});renderStrip();showToast('Imagen pegada ✓','ok');};
+      reader.onload=ev=>{
+        compressImg(ev.target.result,item.type,(b64,dataUrl,type)=>{
+          pendingImgs.push({b64,dataUrl,type});renderStrip();showToast('Imagen pegada ✓','ok');
+        });
+      };
       reader.readAsDataURL(item.getAsFile());
     }
   });
 });
 
+function compressImg(dataUrl,type,cb){
+  const img=new Image();
+  img.onload=()=>{
+    const canvas=document.createElement('canvas');
+    const max=1024;
+    let w=img.width,h=img.height;
+    if(w>max||h>max){if(w>h){h=Math.round(h*max/w);w=max;}else{w=Math.round(w*max/h);h=max;}}
+    canvas.width=w;canvas.height=h;
+    canvas.getContext('2d').drawImage(img,0,0,w,h);
+    const compressed=canvas.toDataURL('image/jpeg',0.7);
+    cb(compressed.split(',')[1],compressed,'image/jpeg');
+  };img.src=dataUrl;
+}
 function onAttach(e){
   Array.from(e.target.files).forEach(file=>{
     const reader=new FileReader();
-    reader.onload=ev=>{pendingImgs.push({b64:ev.target.result.split(',')[1],dataUrl:ev.target.result,type:file.type||'image/png'});renderStrip();};
+    reader.onload=ev=>{
+      compressImg(ev.target.result,file.type||'image/png',(b64,dataUrl,type)=>{
+        pendingImgs.push({b64,dataUrl,type});renderStrip();
+      });
+    };
     reader.readAsDataURL(file);
   });e.target.value='';
 }
@@ -632,8 +653,8 @@ INSTRUCCIONES CRÍTICAS:
 function processReply(r){
   if(r.action==='annotate'){pendingConfirm=r;showCC(r);}
   else if(r.action==='ask'){addBotMsg(esc(r.pregunta));}
- else addBotMsg('No entendí. ¿Podés reformular?');
- else addBotMsg('Respuesta inesperada: '+JSON.stringify(r));
+  else if(r.action==='answer'){addBotMsg(r.respuesta.replace(/\n/g,'<br>'));}
+  else addBotMsg('No entendí. ¿Podés reformular?');
 }
 function showCC(r){
   const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
