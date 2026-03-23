@@ -673,13 +673,7 @@ textarea#msg::placeholder{color:var(--text3);}
           <button class="btn primary" onclick="addCatType()" style="align-self:flex-start">+ Agregar tipo</button>
         </div>
       </div>
-        <div class="add-row">
-          <input type="text" class="fc" id="c-alias" placeholder="Alias (ej: pago)"/>
-          <span class="add-arrow">→</span>
-          <input type="text" class="fc" id="c-full" placeholder="Descripción (ej: Problema de pago con USDT)"/>
-          <button class="btn primary sm" onclick="addKB('cats')">+</button>
-        </div>
-        <div class="kb-list" id="kb-cats"></div>
+        
       </div>
     </div>
     <div class="modal-ftr">
@@ -1193,7 +1187,7 @@ function renderKB(){
   ['partners','sites','cats'].forEach(type=>{
     const store=type==='partners'?kbPartners:type==='sites'?kbSites:kbCats;
     const el=document.getElementById('kb-'+type);if(!el)return;
-    el.innerHTML=store.length?store.map((x,i)=>`<div class="kb-item"><span class="kb-alias">${esc(x.alias)}</span><span class="kb-arrow">→</span><span class="kb-full">${esc(x.full)}</span><button class="kb-rm" onclick="removeKB('${type}',${i})">✕</button></div>`).join(''):'<div style="font-size:11px;color:var(--text3);padding:6px 0;">Sin entradas todavía.</div>';
+    el.innerHTML=store.length?store.map((x,i)=>`<div class="kb-item"><span class="kb-alias">${esc(x.alias)}</span><span class="kb-arrow">→</span><span class="kb-full">${esc(x.full)}</span><button class="kb-rm" onclick="removeKB('${type}',${i})">✕</button></div>`).join(''):'';
   });
 }
 function clearAll(){
