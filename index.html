@@ -189,9 +189,9 @@ textarea#msg::placeholder{color:var(--text3);}
 
 /* Config tabs */
 .cfg-tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--surface2);padding:3px;border-radius:var(--r);}
-.cfg-tab{flex:1;padding:6px;text-align:center;font-size:18px;font-weight:500;border-radius:7px;cursor:pointer;color:var(--text3);transition:all .15s;font-family:'Geist',sans-serif;border:none;background:transparent;}
-.cfg-tab:hover{color:var(--text2);}
-.cfg-tab.active{background:var(--surface3);color:var(--text);}
+.cfg-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 16px;font-size:15px;font-weight:500;border:1.5px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer;border-radius:var(--rl);transition:all .15s;font-family:'Geist',sans-serif;min-width:70px;}
+.cfg-tab:hover{background:var(--surface3);color:var(--text2);border-color:var(--border2);}
+.cfg-tab.active{background:var(--surface3);color:var(--text);border-color:rgba(91,124,250,.6);box-shadow:0 0 0 3px rgba(91,124,250,.15);}
 .cfg-panel{display:none;}
 .cfg-panel.active{display:block;}
 
@@ -598,7 +598,7 @@ textarea#msg::placeholder{color:var(--text3);}
         <button class="cfg-tab active" onclick="setCfgTab('keys',this)">🔑 API Keys</button>
         <button class="cfg-tab" onclick="setCfgTab('partners',this);renderPartnersList()">👤 Partners</button>
         <button class="cfg-tab" onclick="setCfgTab('sites',this);renderSitesList()">🌐 Sitios</button>
-        <button class="cfg-tab" onclick="setCfgTab('cats',this)">🏷 Categorías</button>
+        <button class="cfg-tab" onclick="setCfgTab('cats',this);renderCatsList()">🏷 Categorías</button>
         <button class="cfg-tab" onclick="setCfgTab('install',this)">📲 Instalar</button>
       </div>
 
@@ -660,7 +660,19 @@ textarea#msg::placeholder{color:var(--text3);}
       </div>
 
       <div class="cfg-panel" id="cfg-cats">
-        <div class="sec-title">Categorías de problemas / tareas</div>
+        <div class="sec-title">Tipos de evento</div>
+        <div class="kb-list" id="kb-cats-list" style="margin-bottom:12px"></div>
+        <div class="sec-title" style="margin-top:4px">Agregar tipo</div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <input type="text" class="fc" id="cat-name-inp" placeholder="Nombre del tipo (ej: Urgente)"/>
+          <div style="display:flex;align-items:center;gap:8px">
+            <span style="font-size:14px;color:var(--text3);white-space:nowrap">Color:</span>
+            <div id="cat-color-picker" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap"></div>
+            <input type="hidden" id="cat-color-val" value="#ff5c5c"/>
+          </div>
+          <button class="btn primary" onclick="addCatType()" style="align-self:flex-start">+ Agregar tipo</button>
+        </div>
+      </div>
         <div class="add-row">
           <input type="text" class="fc" id="c-alias" placeholder="Alias (ej: pago)"/>
           <span class="add-arrow">→</span>
@@ -1117,7 +1129,7 @@ function setCfgTab(name,el){
   document.getElementById('cfg-'+name).classList.add('active');
   renderKB();
 }
-function openCfg(){renderKB();renderSitesList();renderPartnersList();document.getElementById('overlay-cfg').classList.add('open');}
+function openCfg(){renderKB();renderSitesList();renderPartnersList();renderCatsList();document.getElementById('overlay-cfg').classList.add('open');}
 function closeCfg(){document.getElementById('overlay-cfg').classList.remove('open');}
 function closeCfgOut(e){if(e.target.id==='overlay-cfg')closeCfg();}
 function saveCfg(){
@@ -1459,6 +1471,63 @@ function showScreenshotThumb(src){
     btn.querySelector('span').textContent='📎 Adjuntar screenshot';
   }
 }
+
+// ── CATEGORY TYPES ──
+const CAT_COLORS=[
+  {hex:'#ff5c5c',name:'Rojo'},
+  {hex:'#ff8c42',name:'Naranja'},
+  {hex:'#ffc043',name:'Amarillo'},
+  {hex:'#3ddc84',name:'Verde'},
+  {hex:'#2ec4b6',name:'Teal'},
+  {hex:'#5b7cfa',name:'Azul'},
+  {hex:'#a855f7',name:'Violeta'},
+  {hex:'#f472b6',name:'Rosa'},
+];
+let kbCatTypes=[];
+try{const _d=ls('sgmr_kb_cats');if(_d)kbCatTypes=JSON.parse(_d);}catch(e){}
+if(!kbCatTypes.length)kbCatTypes=[{name:'Problema',color:'#ff5c5c'},{name:'Recordatorio',color:'#3ddc84'},{name:'Cambio/Comentario',color:'#ffc043'}];
+function saveCatTypes(){ls('sgmr_kb_cats',JSON.stringify(kbCatTypes));}
+
+function initColorPicker(){
+  const picker=document.getElementById('cat-color-picker');
+  if(!picker||picker.children.length>0)return;
+  CAT_COLORS.forEach((col,idx)=>{
+    const dot=document.createElement('div');
+    dot.title=col.name;
+    dot.style.cssText='width:22px;height:22px;border-radius:50%;background:'+col.hex+';cursor:pointer;border:2px solid '+(idx===0?'#fff':'transparent')+';transition:all .15s;flex-shrink:0;box-shadow:0 0 6px '+col.hex+'88;';
+    dot.onclick=()=>{
+      document.getElementById('cat-color-val').value=col.hex;
+      picker.querySelectorAll('div').forEach(d=>d.style.borderColor='transparent');
+      dot.style.borderColor='#fff';
+    };
+    picker.appendChild(dot);
+  });
+}
+
+function renderCatsList(){
+  const el=document.getElementById('kb-cats-list');if(!el)return;
+  el.innerHTML=kbCatTypes.length?kbCatTypes.map((cat,i)=>
+    `<div class="kb-item" style="display:flex;align-items:center;gap:10px;padding:10px 14px">
+      <div style="width:14px;height:14px;border-radius:50%;background:${cat.color};flex-shrink:0;box-shadow:0 0 6px ${cat.color}88"></div>
+      <span style="flex:1;font-size:16px">${cat.name}</span>
+      <button class="kb-rm" onclick="removeCatType(${i})">✕</button>
+    </div>`).join('')
+  :'<div style="font-size:16px;color:var(--text3);padding:6px 0">Sin tipos configurados.</div>';
+  initColorPicker();
+}
+
+function addCatType(){
+  const name=document.getElementById('cat-name-inp')?.value.trim();
+  const color=document.getElementById('cat-color-val')?.value||'#ff5c5c';
+  if(!name)return;
+  if(kbCatTypes.find(c=>c.name===name))return showToast('Ya existe','err');
+  kbCatTypes.push({name,color});
+  saveCatTypes();
+  document.getElementById('cat-name-inp').value='';
+  renderCatsList();showToast('Tipo agregado','ok');
+}
+
+function removeCatType(i){kbCatTypes.splice(i,1);saveCatTypes();renderCatsList();}
 
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
