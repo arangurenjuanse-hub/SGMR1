@@ -567,14 +567,13 @@ textarea#msg::placeholder{color:var(--text3);}
 
       <!-- PARTNERS -->
       <div class="cfg-panel" id="cfg-partners">
-        <div class="sec-title">Partners — alias → nombre completo</div>
+        <div class="sec-title">Partners disponibles</div>
+        <div class="kb-list" id="kb-partners-list" style="margin-bottom:12px"></div>
+        <div class="sec-title" style="margin-top:4px">Agregar partner</div>
         <div class="add-row">
-          <input type="text" class="fc" id="p-alias" placeholder="Alias (ej: 7stars)"/>
-          <span class="add-arrow">→</span>
-          <input type="text" class="fc" id="p-full" placeholder="Nombre completo (ej: 7 Stars Partners)"/>
-          <button class="btn primary sm" onclick="addKB('partners')">+</button>
+          <input type="text" class="fc" id="p-new" placeholder="Nombre del partner (ej: 7 Stars Partners)"/>
+          <button class="btn primary sm" onclick="addPartner()">+</button>
         </div>
-        <div class="kb-list" id="kb-partners"></div>
       </div>
 
       <!-- SITES -->
