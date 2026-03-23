@@ -189,7 +189,7 @@ textarea#msg::placeholder{color:var(--text3);}
 
 /* Config tabs */
 .cfg-tabs{display:flex;gap:2px;margin-bottom:16px;background:var(--surface2);padding:3px;border-radius:var(--r);}
-.cfg-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 16px;font-size:15px;font-weight:500;border:1.5px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer;border-radius:var(--rl);transition:all .15s;font-family:'Geist',sans-serif;min-width:70px;}
+.cfg-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 0;font-size:14px;font-weight:500;border:1.5px solid var(--border);background:var(--surface2);color:var(--text3);cursor:pointer;border-radius:var(--rl);transition:all .15s;font-family:'Geist',sans-serif;width:calc(20% - 6px);min-width:60px;}
 .cfg-tab:hover{background:var(--surface3);color:var(--text2);border-color:var(--border2);}
 .cfg-tab.active{background:var(--surface3);color:var(--text);border-color:rgba(91,124,250,.6);box-shadow:0 0 0 3px rgba(91,124,250,.15);}
 .cfg-panel{display:none;}
@@ -595,11 +595,11 @@ textarea#msg::placeholder{color:var(--text3);}
     </div>
     <div class="modal-body">
       <div class="cfg-tabs">
-        <button class="cfg-tab active" onclick="setCfgTab('keys',this)">🔑 API Keys</button>
-        <button class="cfg-tab" onclick="setCfgTab('partners',this);renderPartnersList()">👤 Partners</button>
-        <button class="cfg-tab" onclick="setCfgTab('sites',this);renderSitesList()">🌐 Sitios</button>
-        <button class="cfg-tab" onclick="setCfgTab('cats',this);renderCatsList()">🏷 Categorías</button>
-        <button class="cfg-tab" onclick="setCfgTab('install',this)">📲 Instalar</button>
+        <button class="cfg-tab active" onclick="setCfgTab('keys',this)"><span style="font-size:20px">🔑</span><span>API Keys</span></button>
+        <button class="cfg-tab" onclick="setCfgTab('partners',this);renderPartnersList()"><span style="font-size:20px">👤</span><span>Partners</span></button>
+        <button class="cfg-tab" onclick="setCfgTab('sites',this);renderSitesList()"><span style="font-size:20px">🌐</span><span>Sitios</span></button>
+        <button class="cfg-tab" onclick="setCfgTab('cats',this);renderCatsList()"><span style="font-size:20px">🏷</span><span>Categorías</span></button>
+        <button class="cfg-tab" onclick="setCfgTab('install',this)"><span style="font-size:20px">📲</span><span>Instalar</span></button>
       </div>
 
       <!-- KEYS -->
@@ -683,9 +683,7 @@ textarea#msg::placeholder{color:var(--text3);}
       </div>
     </div>
     <div class="modal-ftr">
-      <button class="btn" onclick="closeCfg()">Cancelar</button>
-      <button class="btn primary" onclick="saveCfg()">Guardar</button>
-    </div>
+      <button class="btn" onclick="closeCfg()">Cancelar</button><button class="btn primary" onclick="saveCfg()">Guardar</button></div>
   </div>
 </div>
 
