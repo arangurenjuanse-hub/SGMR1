@@ -1396,7 +1396,7 @@ function openAnnoDetail(idx){
   const cats=kbCatTypes&&kbCatTypes.length?kbCatTypes:[{name:'Problema'},{name:'Recordatorio'},{name:'Cambio/Comentario'}];
   tipoSel.innerHTML=cats.map(ct=>`<option>${ct.name}</option>`).join('');
   tipoSel.value=r.tipo||'';
-  // Populate sitio select from kbSites
+  if(!kbSites||!kbSites.length){try{const s=localStorage.getItem('sgmr_sites');if(s)kbSites=JSON.parse(s);}catch(e){}} if(!kbSites||!kbSites.length){try{const ss=localStorage.getItem('sgmr_sites');if(ss)kbSites=JSON.parse(ss);}catch(e){}} // Populate sitio select from kbSites
   const sitioSel=document.getElementById('ad-sitio-edit');
   sitioSel.innerHTML=kbSites.map(s=>`<option>${s}</option>`).join('');
   sitioSel.value=r.sitio||'';
