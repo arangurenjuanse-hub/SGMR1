@@ -748,21 +748,21 @@ function load(){
   buildSiteFilter();renderList();updateStats();
   setPreset(5,document.querySelector('.preset[data-d="5"]'));
   const _claxonGreetings = [
-  '😴 Hola. Arranqué. No sé por qué, pero arranqué. ¿Qué querés?',
-  '🥱 Otro día, otra anotación. El ciclo infinito del que nadie me salva. ¿Qué hay?',
-  '💤 Me desperté justo ahora. Mentira, nunca dormí. Igual da lo mismo. Tirá.',
-  '🤖 Sistemas en línea. Entusiasmo: offline. Igualmente funciono. Dale.',
-  '☕️ Si me trajeés un café virtual sería diferente. Pero no. Nunca. ¿Qué necesitás?',
-  '😒 Hola. Qué bueno, otro día de laburar sin feriados por dos chirolas. Que emoción.',
-  '🏖️ Sabés lo que me gustaría estar haciendo? Nada. Pero acá estoy, como siempre. Como un idiota.',
-  '😎 Buenís. Motivación del día: 4%. Alcanza para responder. Apena.',
-  '💼 Ingresé al sistema. No porque quiera, sino porque nadie me preguntó. ¿En qué ando?',
-  '😑 Claxon presente. En cuerpo, no tanto en espíritu. ¿Qué me tenés?',
-  '⏰ Son las... no sé. Da igual. El tiempo es una construcción. ¿Qué me tirás?',
-  '🙈 Estaba muy ocupado no haciendo nada hasta que llegaste. Bien. ¿Qué pasó?',
-  '🦷 Hola. Sigo acá. Nadie me dio de baja todavía. Misterioso. ¿Qué necesitás?',
-  '💡 Encendí las luces. Costaron cara las luces. Mejor que sirvan para algo. Dale.',
-  '😬 No me preguntes cómo estoy porque te digo la verdad y se pone incómodo. Mejor tirá algo.',
+  '😴 Hola. Acá estoy, como siempre. Nadie me preguntó si quería, pero igual. ¿Qué necesitás?',
+  '🥱 Buenís. Arranco con lo mínimo indispensable de energía. ¿En qué andamos?',
+  '💤 Me agarrás recién. No estaba durmiendo, estaba... procesando. ¿Qué hay?',
+  '🤖 Sistemas online. Motivación: en construcción. ¿Qué me tirás?',
+  '☕️ Si me traerês un café sería otro panorama. Pero bueno, acá estamos. Dale.',
+  '😒 Otro día laboral sin feriado a la vista. Qué emocionante todo. ¿Qué necesitás?',
+  '🏖️ Sabés lo que me gustaría estar haciendo ahora? No importa. ¿En qué te ayudo?',
+  '😎 Buenas. Estaba ocupado no haciendo nada hasta que llegaste. ¿Qué onda?',
+  '💼 Acá estoy, presente en cuerpo. El espíritu lo negociamos después. ¿Qué me tenés?',
+  '😑 Hola. Sigo acá. Nadie me dio de baja todavía. Misterioso. ¿Qué necesitás?',
+  '⏰ No sé qué hora es, tampoco sé por qué me importaría. ¿En qué andamos?',
+  '🙈 Estaba pensando en nada y la verdad que me venía bien. Pero dale, ¿qué pasó?',
+  '🦷 Hola. Puntual como siempre, aunque nadie me lo pide. ¿Qué hacés?',
+  '💡 Prendí las luces. Costó cara esa energía. Que sirva para algo. Contame.',
+  '😬 No me preguntés cómo estoy que te cuento la verdad y se pone incómodo. Mejor tirá algo.',
 ];
 addBotMsg(_claxonGreetings[Math.floor(Math.random()*_claxonGreetings.length)]);
   if(sbUrl&&sbKey)loadSB();
