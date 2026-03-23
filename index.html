@@ -933,6 +933,14 @@ function resize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHei
 function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
 
 document.addEventListener('paste',e=>{
+    // Capture pasted image for auto-save to next confirmed annotation
+    const imgItem=[...e.clipboardData.items].find(i=>i.type.startsWith('image'));
+    if(imgItem){
+      const blob=imgItem.getAsFile();
+      const reader=new FileReader();
+      reader.onload=ev=>{window._lastPastedImage=ev.target.result;};
+      reader.readAsDataURL(blob);
+    }
   Array.from(e.clipboardData?.items||[]).forEach(item=>{
     if(item.type.startsWith('image/')){
       const reader=new FileReader();
