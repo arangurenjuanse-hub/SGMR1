@@ -80,7 +80,7 @@ input[type=date]:focus{border-color:var(--accent);}
 
 /* COL HEADERS */
 .col-hdrs{display:grid;grid-template-columns:4px 72px 140px 1fr 120px 82px 28px;padding:10px 16px;background:var(--surface);border-bottom:1px solid var(--border);}
-.col-h{font-size:14px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:0 5px;}
+.col-h{font-size:14px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:0 8px;}
 
 /* ANNO LIST */
 .anno-scroll{flex:1;overflow-y:auto;}
@@ -96,7 +96,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .anno-row.prob .row-bar{background:var(--prob);box-shadow:0 0 5px var(--prob-glow);} .anno-row.prob:hover{box-shadow:inset 3px 0 0 var(--prob),inset 100px 0 0 rgba(255,92,92,.05);}
 .anno-row.rec .row-bar{background:var(--rec);box-shadow:0 0 5px var(--rec-glow);} .anno-row.rec:hover{box-shadow:inset 3px 0 0 var(--rec),inset 100px 0 0 rgba(61,220,132,.05);}
 .anno-row.cam .row-bar{background:var(--cam);box-shadow:0 0 5px var(--cam-glow);} .anno-row.cam:hover{box-shadow:inset 3px 0 0 var(--cam),inset 100px 0 0 rgba(255,192,67,.05);}
-.rc{padding:0 5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rc{padding:0 8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .rtype{font-size:14px;font-weight:600;padding:2px 7px;border-radius:99px;display:inline-block;}
 .rtype.prob{background:var(--prob-dim);color:var(--prob);}
 .rtype.rec{background:var(--rec-dim);color:var(--rec);}
@@ -489,11 +489,11 @@ textarea#msg::placeholder{color:var(--text3);}
     </div>
     <div class="col-hdrs">
       <div></div>
-      <div class="col-h" style="padding-left:10px">Tipo</div>
+      <div class="col-h" style="padding-left:8px">Tipo</div>
       <div class="col-h">Sitio</div>
       <div class="col-h">Descripción</div>
-      <div class="col-h" style="text-align:center">Partner</div>
-      <div class="col-h" style="text-align:center">Estado</div>
+      <div class="col-h" style="text-align:center;padding:0 8px">Partner</div>
+      <div class="col-h" style="text-align:center;padding:0 8px">Estado</div>
     </div>
     <div class="anno-scroll" id="anno-scroll"></div>
   </div>
@@ -779,7 +779,19 @@ function load(){
 
   buildSiteFilter();renderList();updateStats();
   setPreset(5,document.querySelector('.preset[data-d="5"]'));
-  addBotMsg('👋 Listo para laburar. Tiráme una imagen, una anotación o una pregunta.');
+  const _claxonGreetings = [
+  '😴 Ah... otro día. Sigo acá. Por alguna razón. ¿Qué necesitás?',
+  '🥱 Hola. Arranqué el sistema. Fue un esfuerzo enorme. Espero que valga la pena.',
+  '☕ Llegaste justo cuando estaba por no hacer nada. Menos mal. Tiráme algo.',
+  '💤 Estaba en stand-by... que es básicamente lo mismo que trabajar pero sin el trabajo. ¿En qué ando?',
+  '😒 Hola! Qué bueno, otro día de laburar sin feriados por dos chirolas. Que emoción.',
+  '🤖 Claxon operativo. Motivación: 12%. Igual alcanza. ¿Qué hay?',
+  '😴 Me desperté apenas. No me hagas pensar mucho todavía. Dale con lo tuyo.',
+  '🏖️ Sabés lo que me gustaría estar haciendo ahora? Nada. Pero bueno, acá estoy. ¿Qué pasa?',
+  '⏰ Llegás temprano... o tarde. No sé, perdí la noción del tiempo. ¿En qué te ayudo?',
+  '😎 Claxon reporting for duty. Aunque "duty" es una palabra muy ambiciosa para lo que hago acá.',
+];
+addBotMsg(_claxonGreetings[Math.floor(Math.random()*_claxonGreetings.length)]);
   if(sbUrl&&sbKey)loadSB();
   loadTodos();
 }
