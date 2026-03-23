@@ -118,9 +118,9 @@ input[type=date]:focus{border-color:var(--accent);}
 .right{display:flex;flex-direction:column;background:linear-gradient(160deg,#0e1128 0%,#131620 25%,#161820 100%);border-left:1px solid var(--border);overflow:hidden;min-height:0;height:100%;max-height:calc(100vh - 50px);}
 .chat-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
 .chat-hdr-l{display:flex;align-items:center;gap:14px;}
-.avatar{width:56px;height:56px;border-radius:50%;overflow:hidden;flex-shrink:0;box-shadow:0 0 16px rgba(61,220,132,.4),0 2px 12px rgba(0,0,0,.5);}
-.chat-name{font-size:22px;font-weight:600;}
-.chat-st{font-size:16px;color:var(--rec);display:flex;align-items:center;gap:4px;}
+.avatar{width:52px;height:52px;border-radius:50%;overflow:hidden;flex-shrink:0;background:transparent;}
+.chat-name{font-size:18px;font-weight:600;}
+.chat-st{font-size:14px;color:var(--rec);display:flex;align-items:center;gap:4px;}
 .chat-st::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--rec);box-shadow:0 0 4px var(--rec);}
 .msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:0;max-height:100%;background:linear-gradient(180deg,transparent 0%,rgba(91,124,250,.02) 100%);}
 .msg{display:flex;flex-direction:column;animation:fadeUp .2s ease both;}
@@ -502,7 +502,7 @@ textarea#msg::placeholder{color:var(--text3);}
   <div class="right">
     <div class="chat-hdr">
       <div class="chat-hdr-l">
-        <div class="avatar"><img src="claxon.png" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Claxon"/></div>
+        <div class="avatar"><img src="claxon.png" style="width:100%;height:100%;object-fit:contain;background:transparent;" alt="Claxon"/></div>
         <div>
           <div class="chat-name">Claxon</div>
           <div class="chat-st" id="chat-st">Online</div>
