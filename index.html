@@ -398,6 +398,40 @@ textarea#msg::placeholder{color:var(--text3);}
 .anno-editing .anno-field-val.editable{display:block;}
 .anno-not-editing .anno-field-val.editable{display:none;}
 .anno-not-editing .anno-field-val:not(.editable){display:block;}
+
+/* Screenshot thumbnail in detail panel */
+.anno-screenshot-wrap{margin-top:4px;}
+.anno-screenshot-thumb{
+  width:100%;max-height:160px;object-fit:cover;border-radius:var(--r);
+  cursor:zoom-in;border:1px solid var(--border2);
+  transition:opacity .15s;display:block;
+}
+.anno-screenshot-thumb:hover{opacity:.85;}
+.anno-screenshot-upload{
+  display:flex;align-items:center;gap:8px;margin-top:8px;
+  font-size:14px;color:var(--text3);cursor:pointer;
+}
+.anno-screenshot-upload:hover{color:var(--text2);}
+
+/* Lightbox */
+.lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:600;
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+  backdrop-filter:blur(6px);
+}
+.lightbox.open{opacity:1;pointer-events:all;}
+.lightbox img{
+  max-width:90vw;max-height:90vh;object-fit:contain;
+  border-radius:var(--r);box-shadow:0 32px 80px rgba(0,0,0,.8);
+}
+.lightbox-close{
+  position:absolute;top:20px;right:24px;
+  font-size:28px;color:#fff;cursor:pointer;opacity:.7;
+  border:none;background:transparent;
+  transition:opacity .15s;
+}
+.lightbox-close:hover{opacity:1;}
 </style>
 </head>
 <body>
@@ -644,6 +678,10 @@ textarea#msg::placeholder{color:var(--text3);}
 </div>
 
 <div class="toast" id="toast"></div>
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="Screenshot"/>
+</div>
 <div class="anno-detail-overlay anno-not-editing" id="anno-detail-overlay" onclick="closeAnnoDetail(event)">
   <div class="anno-detail-card" id="anno-detail-card">
     <div class="anno-detail-hdr">
@@ -693,7 +731,15 @@ textarea#msg::placeholder{color:var(--text3);}
         <textarea class="anno-field-val editable" id="ad-notas-edit" rows="2" placeholder="Notas adicionales..."></textarea>
       </div>
     </div>
-    <div class="anno-detail-ftr">
+    <div class="anno-field anno-screenshot-wrap" id="ad-screenshot-wrap">
+        <span class="anno-field-label">Screenshot</span>
+        <img id="ad-screenshot-thumb" class="anno-screenshot-thumb" src="" alt="" style="display:none" onclick="openLightbox(this.src)"/>
+        <label class="anno-screenshot-upload" id="ad-screenshot-upload-btn">
+          <span>📎 Adjuntar screenshot</span>
+          <input type="file" id="ad-screenshot-input" accept="image/*" style="display:none" onchange="handleScreenshot(this)"/>
+        </label>
+      </div>
+      <div class="anno-detail-ftr">
       <button class="btn" id="ad-cancel-btn" onclick="cancelAnnoEdit()" style="display:none">Cancelar</button>
       <button class="btn primary" id="ad-save-btn" onclick="saveAnnoEdit()" style="display:none">✓ Guardar</button>
     </div>
@@ -1320,6 +1366,7 @@ function openAnnoDetail(idx){
   document.getElementById('ad-fecha').textContent=r.fecha||'';
   document.getElementById('ad-notas').textContent=r.notas||'Sin notas';
   document.getElementById('ad-notas-edit').value=r.notas||'';
+  showScreenshotThumb(r.screenshot||'');
   const ov=document.getElementById('anno-detail-overlay');
   ov.className='anno-detail-overlay anno-not-editing';
   ov.classList.add('open');
@@ -1365,6 +1412,46 @@ async function saveAnnoEdit(){
   // Re-open with updated data
   setTimeout(()=>openAnnoDetail(_currentDetailIdx),100);
 }
+// ── SCREENSHOT ──
+function openLightbox(src){
+  document.getElementById('lightbox-img').src=src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(e){
+  if(e&&e.target!==document.getElementById('lightbox'))return;
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lightbox-img').src='';
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('lightbox').classList.remove('open');});
+
+function handleScreenshot(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const dataUrl=e.target.result;
+    // Save to row
+    if(_currentDetailIdx>=0){
+      rows[_currentDetailIdx].screenshot=dataUrl;
+      ls('sgmr_rows',JSON.stringify(rows));
+      showScreenshotThumb(dataUrl);
+      showToast('Screenshot guardado ✓','ok');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function showScreenshotThumb(src){
+  const thumb=document.getElementById('ad-screenshot-thumb');
+  const btn=document.getElementById('ad-screenshot-upload-btn');
+  if(src){
+    thumb.src=src;thumb.style.display='block';
+    btn.querySelector('span').textContent='📎 Cambiar screenshot';
+  } else {
+    thumb.style.display='none';
+    btn.querySelector('span').textContent='📎 Adjuntar screenshot';
+  }
+}
+
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
   t.className='toast show'+(type?' '+type:'');
