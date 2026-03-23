@@ -51,7 +51,7 @@ body{font-family:'Geist',-apple-system,sans-serif;background:var(--bg);color:var
 .btn.icon{width:30px;height:30px;padding:0;justify-content:center;border-radius:var(--r);}
 
 /* LAYOUT */
-.layout{display:grid;grid-template-columns:1fr minmax(360px,420px);height:calc(100vh - 50px);}
+.layout{display:grid;grid-template-columns:1fr 440px;height:calc(100vh - 50px);}
 
 /* LEFT */
 .left{display:flex;flex-direction:column;overflow:hidden;}
@@ -90,7 +90,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .day-name{font-size:20px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;}
 .day-line{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
 .day-badge{font-size:14px;color:var(--text3);background:var(--surface2);padding:2px 7px;border-radius:99px;border:1px solid var(--border);}
-.anno-row{display:grid;grid-template-columns:4px 72px 140px 1fr 120px 82px 28px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);min-height:48px;transition:background .1s;cursor:default;}
+.anno-row{display:grid;grid-template-columns:4px 100px 200px 1fr 200px 120px 36px;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);min-height:48px;transition:background .1s;cursor:default;}
 .anno-row:hover{background:var(--surface2);transition:background .1s,box-shadow .15s;}
 .row-bar{width:3px;height:16px;border-radius:2px;}
 .anno-row.prob .row-bar{background:var(--prob);box-shadow:0 0 5px var(--prob-glow);} .anno-row.prob:hover{box-shadow:inset 3px 0 0 var(--prob),inset 100px 0 0 rgba(255,92,92,.05);}
@@ -101,7 +101,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .rtype.prob{background:var(--prob-dim);color:var(--prob);}
 .rtype.rec{background:var(--rec-dim);color:var(--rec);}
 .rtype.cam{background:var(--cam-dim);color:var(--cam);}
-.rsite{font-size:18px;color:var(--text);font-weight:600;}
+.rsite{font-size:16px;color:var(--text);font-weight:600;}
 .rtxt{font-size:16px;color:var(--text);}
 .rpartner{font-size:16px;color:var(--text2);text-align:center;font-weight:500;}
 .restado-c{display:flex;justify-content:center;}
@@ -116,11 +116,11 @@ input[type=date]:focus{border-color:var(--accent);}
 
 /* CHAT */
 .right{display:flex;flex-direction:column;background:linear-gradient(160deg,#0e1128 0%,#131620 25%,#161820 100%);border-left:1px solid var(--border);overflow:hidden;min-height:0;height:100%;max-height:calc(100vh - 50px);}
-.chat-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-.chat-hdr-l{display:flex;align-items:center;gap:9px;}
+.chat-hdr{padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.chat-hdr-l{display:flex;align-items:center;gap:12px;}
 .avatar{width:30px;height:30px;background:linear-gradient(135deg,#3ddc84 0%,#00bfa5 60%,#0097a7 100%);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 0 12px rgba(61,220,132,.4),0 2px 8px rgba(0,0,0,.3);}
-.chat-name{font-size:25px;font-weight:600;}
-.chat-st{font-size:16px;color:var(--rec);display:flex;align-items:center;gap:4px;}
+.chat-name{font-size:18px;font-weight:600;}
+.chat-st{font-size:14px;color:var(--rec);display:flex;align-items:center;gap:4px;}
 .chat-st::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--rec);box-shadow:0 0 4px var(--rec);}
 .msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;min-height:0;max-height:100%;background:linear-gradient(180deg,transparent 0%,rgba(91,124,250,.02) 100%);}
 .msg{display:flex;flex-direction:column;animation:fadeUp .2s ease both;}
@@ -370,8 +370,8 @@ textarea#msg::placeholder{color:var(--text3);}
 .mob-fab { display: none; }
 .mob-list-hdr { display: none; }
 /* Expandable row detail */
-.anno-row{cursor:pointer !important;}
-.anno-row .rtxt{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.anno-row{cursor:pointer !important;} .anno-row:hover{background:var(--surface2);}
+.anno-row .rtxt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.4;}
 .anno-detail-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:400;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;backdrop-filter:blur(4px);}
 .anno-detail-overlay.open{opacity:1;pointer-events:all;}
 .anno-detail-card{background:linear-gradient(145deg,#1c1f3a,#161820);border:1px solid rgba(91,124,250,.3);border-radius:var(--rxl);width:100%;max-width:560px;box-shadow:0 32px 80px rgba(0,0,0,.8);display:flex;flex-direction:column;max-height:90vh;overflow:hidden;}
@@ -505,7 +505,7 @@ textarea#msg::placeholder{color:var(--text3);}
   <div class="right">
     <div class="chat-hdr">
       <div class="chat-hdr-l">
-        <div class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="36" height="36">
+        <div class="avatar"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="46" height="46">
   <defs>
     <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
       <stop offset="0%" stop-color="#3ddc84"/>
