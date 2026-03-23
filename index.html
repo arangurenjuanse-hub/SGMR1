@@ -154,7 +154,7 @@ input[type=date]:focus{border-color:var(--accent);}
 .img-thumb{position:relative;width:46px;height:46px;border-radius:var(--r);overflow:hidden;border:1px solid var(--border2);}
 .img-thumb img{width:100%;height:100%;object-fit:cover;}
 .img-rm{position:absolute;top:2px;right:2px;width:14px;height:14px;border-radius:50%;background:rgba(0,0,0,.75);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;}
-.input-row{display:flex;align-items:flex-end;gap:6px;}
+.input-row{display:flex;align-items:flex-end;gap:8px;}
 .input-wrap{flex:1;position:relative;}
 textarea#msg{width:100%;resize:none;border:1.5px solid var(--border2);border-radius:var(--rl);padding:12px 40px 12px 14px;font-size:16px;font-family:'Geist',sans-serif;line-height:1.4;max-height:100px;overflow-y:auto;outline:none;transition:border-color .15s,box-shadow .15s;background:var(--surface2);color:var(--text);}
 textarea#msg:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);}
@@ -162,7 +162,7 @@ textarea#msg::placeholder{color:var(--text3);}
 .attach{position:absolute;bottom:8px;right:8px;width:20px;height:20px;border:none;background:transparent;cursor:pointer;color:var(--text3);font-size:16px;display:flex;align-items:center;justify-content:center;border-radius:5px;transition:background .1s;}
 .attach:hover{background:var(--surface3);}
 .attach input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-.send{width:34px;height:34px;border-radius:var(--rl);background:linear-gradient(180deg,#7b9cff 0%,#5b7cfa 40%,#3a5ae8 100%);border:none;border-top:1px solid rgba(255,255,255,.25);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all .1s;box-shadow:0 5px 0 #1e3ab8,0 7px 15px rgba(91,124,250,.5);transform:translateY(0);}
+.send{width:38px;height:38px;border-radius:var(--rl);align-self:flex-end;flex-shrink:0;background:linear-gradient(180deg,#7b9cff 0%,#5b7cfa 40%,#3a5ae8 100%);border:none;border-top:1px solid rgba(255,255,255,.25);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;transition:all .1s;box-shadow:0 5px 0 #1e3ab8,0 7px 15px rgba(91,124,250,.5);transform:translateY(0);}
 .send:hover{background:linear-gradient(180deg,#8cacff 0%,#6b8cfa 40%,#4a6af0 100%);box-shadow:0 5px 0 #1e3ab8,0 9px 20px rgba(91,124,250,.6);transform:translateY(-1px);} @keyframes sp{0%,100%{box-shadow:0 2px 8px rgba(91,124,250,.3)}50%{box-shadow:0 2px 16px rgba(91,124,250,.6)}} .send:not(:disabled){animation:sp 2s infinite;}
 .send:disabled{background:var(--surface3);color:var(--text3);cursor:default;box-shadow:none;transform:none;} .send:active:not(:disabled){box-shadow:0 2px 0 #1e3ab8,0 3px 8px rgba(91,124,250,.4);transform:translateY(3px);}
 
@@ -780,16 +780,21 @@ function load(){
   buildSiteFilter();renderList();updateStats();
   setPreset(5,document.querySelector('.preset[data-d="5"]'));
   const _claxonGreetings = [
-  '😴 Ah... otro día. Sigo acá. Por alguna razón. ¿Qué necesitás?',
-  '🥱 Hola. Arranqué el sistema. Fue un esfuerzo enorme. Espero que valga la pena.',
-  '☕ Llegaste justo cuando estaba por no hacer nada. Menos mal. Tiráme algo.',
-  '💤 Estaba en stand-by... que es básicamente lo mismo que trabajar pero sin el trabajo. ¿En qué ando?',
-  '😒 Hola! Qué bueno, otro día de laburar sin feriados por dos chirolas. Que emoción.',
-  '🤖 Claxon operativo. Motivación: 12%. Igual alcanza. ¿Qué hay?',
-  '😴 Me desperté apenas. No me hagas pensar mucho todavía. Dale con lo tuyo.',
-  '🏖️ Sabés lo que me gustaría estar haciendo ahora? Nada. Pero bueno, acá estoy. ¿Qué pasa?',
-  '⏰ Llegás temprano... o tarde. No sé, perdí la noción del tiempo. ¿En qué te ayudo?',
-  '😎 Claxon reporting for duty. Aunque "duty" es una palabra muy ambiciosa para lo que hago acá.',
+  '😴 Hola. Arranqué. No sé por qué, pero arranqué. ¿Qué querés?',
+  '🥱 Otro día, otra anotación. El ciclo infinito del que nadie me salva. ¿Qué hay?',
+  '💤 Me desperté justo ahora. Mentira, nunca dormí. Igual da lo mismo. Tirá.',
+  '🤖 Sistemas en línea. Entusiasmo: offline. Igualmente funciono. Dale.',
+  '☕️ Si me trajeés un café virtual sería diferente. Pero no. Nunca. ¿Qué necesitás?',
+  '😒 Hola. Qué bueno, otro día de laburar sin feriados por dos chirolas. Que emoción.',
+  '🏖️ Sabés lo que me gustaría estar haciendo? Nada. Pero acá estoy, como siempre. Como un idiota.',
+  '😎 Buenís. Motivación del día: 4%. Alcanza para responder. Apena.',
+  '💼 Ingresé al sistema. No porque quiera, sino porque nadie me preguntó. ¿En qué ando?',
+  '😑 Claxon presente. En cuerpo, no tanto en espíritu. ¿Qué me tenés?',
+  '⏰ Son las... no sé. Da igual. El tiempo es una construcción. ¿Qué me tirás?',
+  '🙈 Estaba muy ocupado no haciendo nada hasta que llegaste. Bien. ¿Qué pasó?',
+  '🦷 Hola. Sigo acá. Nadie me dio de baja todavía. Misterioso. ¿Qué necesitás?',
+  '💡 Encendí las luces. Costaron cara las luces. Mejor que sirvan para algo. Dale.',
+  '😬 No me preguntes cómo estoy porque te digo la verdad y se pone incómodo. Mejor tirá algo.',
 ];
 addBotMsg(_claxonGreetings[Math.floor(Math.random()*_claxonGreetings.length)]);
   if(sbUrl&&sbKey)loadSB();
