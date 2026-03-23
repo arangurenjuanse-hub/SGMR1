@@ -714,7 +714,7 @@ textarea#msg::placeholder{color:var(--text3);}
         <div class="anno-field">
           <span class="anno-field-label">Partner</span>
           <span class="anno-field-val" id="ad-partner"></span>
-          <input class="anno-field-val editable" id="ad-partner-edit" type="text"/>
+          <select class="anno-field-val editable fc" id="ad-partner-edit"></select>
         </div>
         <div class="anno-field">
           <span class="anno-field-label">Estado</span>
@@ -726,9 +726,12 @@ textarea#msg::placeholder{color:var(--text3);}
         <div class="anno-field">
           <span class="anno-field-label">Tipo</span>
           <span class="anno-field-val" id="ad-tipo"></span>
-          <select class="anno-field-val editable fc" id="ad-tipo-edit">
-            <option>Problema</option><option>Recordatorio</option><option>Cambio/Comentario</option>
-          </select>
+          <select class="anno-field-val editable fc" id="ad-tipo-edit"></select>
+        </div>
+        <div class="anno-field">
+          <span class="anno-field-label">Sitio</span>
+          <span class="anno-field-val" id="ad-sitio-val"></span>
+          <select class="anno-field-val editable fc" id="ad-sitio-edit"></select>
         </div>
         <div class="anno-field">
           <span class="anno-field-label">Fecha</span>
@@ -1379,6 +1382,23 @@ function openAnnoDetail(idx){
   document.getElementById('ad-partner-edit').value=r.partner||'';
   document.getElementById('ad-estado').textContent=r.estado||'';
   document.getElementById('ad-estado-edit').value=r.estado||'Pendiente';
+  // Populate partner select from kbPartners
+  const partSel=document.getElementById('ad-partner-edit');
+  partSel.innerHTML='<option value="">Sin partner</option>'+
+    kbPartners.map(p=>`<option value="${p.full||p.alias}">${p.full||p.alias}</option>`).join('');
+  partSel.value=r.partner||'';
+  // Populate tipo select from kbCatTypes
+  const tipoSel=document.getElementById('ad-tipo-edit');
+  const cats=kbCatTypes&&kbCatTypes.length?kbCatTypes:[{name:'Problema'},{name:'Recordatorio'},{name:'Cambio/Comentario'}];
+  tipoSel.innerHTML=cats.map(ct=>`<option>${ct.name}</option>`).join('');
+  tipoSel.value=r.tipo||'';
+  // Populate sitio select from kbSites
+  const sitioSel=document.getElementById('ad-sitio-edit');
+  sitioSel.innerHTML=kbSites.map(s=>`<option>${s}</option>`).join('');
+  sitioSel.value=r.sitio||'';
+  // Update sitio display val
+  const sitioVal=document.getElementById('ad-sitio-val');
+  if(sitioVal)sitioVal.textContent=r.sitio||'';
   document.getElementById('ad-tipo').textContent=r.tipo||'';
   document.getElementById('ad-tipo-edit').value=r.tipo||'Problema';
   document.getElementById('ad-fecha').textContent=r.fecha||'';
@@ -1417,7 +1437,9 @@ async function saveAnnoEdit(){
   if(_currentDetailIdx<0)return;
   const r=rows[_currentDetailIdx];
   r.texto=document.getElementById('ad-texto-edit').value.trim();
-  r.partner=document.getElementById('ad-partner-edit').value.trim();
+  r.partner=document.getElementById('ad-partner-edit').value;
+  const sitioEditEl=document.getElementById('ad-sitio-edit');
+  if(sitioEditEl)r.sitio=sitioEditEl.value;
   r.estado=document.getElementById('ad-estado-edit').value;
   r.tipo=document.getElementById('ad-tipo-edit').value;
   r.notas=document.getElementById('ad-notas-edit').value.trim();
