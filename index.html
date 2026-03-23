@@ -797,7 +797,7 @@ function load(){
   try{const d=ls('sgmr_rows');if(d)rows=JSON.parse(d);}catch(e){}
   try{const d=ls('sgmr_sites');if(d)sites=JSON.parse(d);}catch(e){}
   try{const d=ls('sgmr_kb_partners');if(d)kbPartners=JSON.parse(d);}catch(e){}
-  try{const d=ls('sgmr_kb_sites');if(d)kbSites=JSON.parse(d);}catch(e){}
+  try{const d=ls('sgmr_sites');if(d)kbSites=JSON.parse(d);}catch(e){}
   try{const d=ls('sgmr_kb_cats');if(d)kbCats=JSON.parse(d);}catch(e){}
 
   // Use preset keys if no saved ones
@@ -1155,6 +1155,8 @@ function removeKB(type,i){
   store.splice(i,1);ls(`sgmr_kb_${type}`,JSON.stringify(store));renderKB();
 }
 function renderSitesList(){
+  try{const _s=ls('sgmr_sites');if(_s){const _parsed=JSON.parse(_s);if(_parsed.length>kbSites.length||kbSites.length===0)kbSites=_parsed;}}catch(e){}
+
   const el=document.getElementById('kb-sites-list');if(!el)return;
   el.innerHTML=kbSites.length?kbSites.map((s,i)=>
     `<div class="kb-item" id="siterow_${i}">
@@ -1397,6 +1399,7 @@ function openAnnoDetail(idx){
   tipoSel.innerHTML=cats.map(ct=>`<option>${ct.name}</option>`).join('');
   tipoSel.value=r.tipo||'';
   if(!kbSites||!kbSites.length){try{const s=localStorage.getItem('sgmr_sites');if(s)kbSites=JSON.parse(s);}catch(e){}} if(!kbSites||!kbSites.length){try{const ss=localStorage.getItem('sgmr_sites');if(ss)kbSites=JSON.parse(ss);}catch(e){}} // Populate sitio select from kbSites
+  try{const _s=ls('sgmr_sites');if(_s)kbSites=JSON.parse(_s);}catch(e){}
   const sitioSel=document.getElementById('ad-sitio-edit');
   sitioSel.innerHTML=kbSites.map(s=>`<option>${s}</option>`).join('');
   sitioSel.value=r.sitio||'';
