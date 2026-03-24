@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<!-- v1774311741174 -->
-
+<!-- v1774220211555 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -1098,8 +1097,8 @@ async function confirmSave(){
   if(window._lastPastedImage){row.screenshot=window._lastPastedImage;window._lastPastedImage=null;} rows.push(row);
   generateSummary(row.texto,row.tipo,row.sitio).then(s=>{
     if(!s)return;
-    const _idx=rows.findIndex(x=>x.id===row.id);
-    if(_idx>=0){rows[_idx].summary=s;ls('sgmr_rows',JSON.stringify(rows));renderList();}
+    const _i=rows.findIndex(x=>x.id===row.id);
+    if(_i>=0){rows[_i].summary=s;ls('sgmr_rows',JSON.stringify(rows));renderList();}
   });ls('sgmr_rows',JSON.stringify(rows));
   buildSiteFilter();renderList();updateStats();
   addBotMsg(`✅ Guardado en <strong>${esc(row.sitio)}</strong>${saved?' y sincronizado en Supabase':' (guardado local)'}.`);
@@ -1590,34 +1589,33 @@ function getTipoColor(tipo){
   return'#888';
 }
 
-const _TG_TOKEN='8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
-const _TG_CHAT='832763879';
+const _TG='8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
+const _TGC='832763879';
 
 async function sendTelegram(ev,idx){
   ev.stopPropagation();
   const r=rows[idx];if(!r)return;
   const fecha=r.fecha||new Date().toLocaleDateString('es-AR');
   const note=r.summary||r.texto||'-';
-  const lines=[
-    '📋 *SGMR Notification*',
-    '',
+  const msg=[
+    '📋 *SGMR Notification*','',
     '📅 *Date:* '+fecha,
     '🌐 *Site:* '+(r.sitio||'-'),
     '🤝 *Partner:* '+(r.partner||'-'),
     '🏷 *Category:* '+(r.tipo||'-'),
     '📝 *Note:* '+note
-  ];
+  ].join('\n');
   try{
-    const res=await fetch('https://api.telegram.org/bot'+_TG_TOKEN+'/sendMessage',{
+    const res=await fetch('https://api.telegram.org/bot'+_TG+'/sendMessage',{
       method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({chat_id:_TG_CHAT,text:lines.join('\n'),parse_mode:'Markdown'})
+      body:JSON.stringify({chat_id:_TGC,text:msg,parse_mode:'Markdown'})
     });
     const data=await res.json();
     if(data.ok){
       rows[idx].tgSent=true;rows[idx].tgSentAt=new Date().toISOString();
       ls('sgmr_rows',JSON.stringify(rows));renderList();updateStats();
       showToast('Enviado a Sigmundur ✅','ok');
-    } else showToast('Error Telegram: '+data.description,'err');
+    }else showToast('Error: '+data.description,'err');
   }catch(e){showToast('Error: '+e.message,'err');}
 }
 
@@ -1628,7 +1626,7 @@ async function generateSummary(texto,tipo,sitio){
       method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({apiKey:anthropicKey,payload:{
         model:'claude-sonnet-4-20250514',max_tokens:60,
-        messages:[{role:'user',content:'Resumí en máximo 8 palabras en español para título corto de anotación. Solo el texto, sin comillas ni punto final. Tipo: '+tipo+' Sitio: '+sitio+' Descripción: '+texto}]
+        messages:[{role:'user',content:'Resumí en máximo 8 palabras en español para título corto de anotación. Solo el texto, sin comillas ni punto. Tipo: '+tipo+' Sitio: '+sitio+' Desc: '+texto}]
       }})
     });
     const data=await res.json();
@@ -1642,27 +1640,6 @@ function showToast(msg,type){
 }
 
 load();
-
-// Robust init
-function _initApp(){
-  try{load();}catch(e){console.error('load err',e);}
-  // Double fallback — ensure data renders even if load() had issues
-  setTimeout(function(){
-    try{
-      if(!anthropicKey){anthropicKey=ls('sgmr_akey')||'';}
-      if(!sbUrl){sbUrl=ls('sgmr_sb_url')||'';sbKey=ls('sgmr_sb_key')||'';}
-      if(rows.length===0){
-        const _d=ls('sgmr_rows');
-        if(_d){rows=JSON.parse(_d);}
-      }
-      renderList();updateStats();buildSiteFilter();
-      if(rows.length===0&&sbUrl&&sbKey)loadSB();
-    }catch(e){console.error('fallback err',e);}
-  },300);
-}
-if(document.readyState==='loading'){
-  document.addEventListener('DOMContentLoaded',_initApp);
-}else{
-  _initApp();
-}
 </script>
+</body>
+</html>
