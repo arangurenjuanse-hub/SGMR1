@@ -1441,6 +1441,9 @@ function openAnnoDetail(idx){
   tipoSel.value=r.tipo||'';
   if(!kbSites||!kbSites.length){try{const s=localStorage.getItem('sgmr_sites');if(s)kbSites=JSON.parse(s);}catch(e){}} if(!kbSites||!kbSites.length){try{const ss=localStorage.getItem('sgmr_sites');if(ss)kbSites=JSON.parse(ss);}catch(e){}} // Populate sitio select from kbSites
   try{const _s=ls('sgmr_sites');if(_s)kbSites=JSON.parse(_s);}catch(e){}
+  try{var _rS=ls('sgmr_sites');if(_rS)kbSites=JSON.parse(_rS);}catch(e){}
+  try{var _rP=ls('sgmr_kb_partners');if(_rP)kbPartners=JSON.parse(_rP);}catch(e){}
+  try{var _rC=ls('sgmr_kb_cats');if(_rC)kbCatTypes=JSON.parse(_rC);}catch(e){}
   const sitioSel=document.getElementById('ad-sitio-edit');
   sitioSel.innerHTML=kbSites.map(s=>`<option>${s}</option>`).join('');
   sitioSel.value=r.sitio||'';
