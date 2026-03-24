@@ -794,9 +794,8 @@ function buildKBContext(){
 /* ── LOAD ── */
 function load(){
   try{const d=ls('sgmr_rows');if(d)rows=JSON.parse(d);}catch(e){}
-  try{const d=ls('sgmr_sites');if(d)sites=JSON.parse(d);}catch(e){}
-  try{const d=ls('sgmr_kb_partners');if(d)kbPartners=JSON.parse(d);}catch(e){}
-  try{const d=ls('sgmr_sites');if(d)kbSites=JSON.parse(d);}catch(e){}
+  try{var _sd=ls('sgmr_sites');if(_sd){kbSites=JSON.parse(_sd);sites=kbSites;}}catch(e){}
+  try{var _pd=ls('sgmr_kb_partners');if(_pd)kbPartners=JSON.parse(_pd);}catch(e){}
   try{const d=ls('sgmr_kb_cats');if(d)kbCats=JSON.parse(d);}catch(e){}
 
   // Use preset keys if no saved ones
@@ -859,9 +858,11 @@ async function patchSB(row){
 
 /* ── LIST ── */
 function buildSiteFilter(){
-  const sel=document.getElementById('f-sitio');
+  var sel=document.getElementById('f-sitio');
+  if(!sel)return;
   sel.innerHTML='<option value="todos">Todos los sitios</option>';
-  sites.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);});
+  var list=kbSites.length?kbSites:sites;
+  list.forEach(function(s){var o=document.createElement('option');o.value=s;o.textContent=s;sel.appendChild(o);});
 }
 function setPreset(days,el){
   document.querySelectorAll('.preset').forEach(b=>b.classList.remove('active'));
@@ -1186,20 +1187,19 @@ function editSite(i){
 }
 
 function addSite(){
-  const inp=document.getElementById('s-new');
-  const name=inp.value.trim();
+  var inp=document.getElementById('s-new');
+  var name=inp.value.trim();
   if(!name)return;
-  if(sites.includes(name))return showToast('Ya existe','err');
-  sites.push(name);ls('sgmr_sites',JSON.stringify(sites));inp.value='';
+  if(kbSites.includes(name))return showToast('Ya existe','err');
+  kbSites.push(name);sites=kbSites;ls('sgmr_sites',JSON.stringify(kbSites));inp.value='';
   buildSiteFilter();renderSitesList();showToast('Sitio agregado','ok');
-
   saveConfigToSB();
 }
 function removeSite(i){
-  kbSites.splice(i,1);
+  kbSites.splice(i,1);sites=kbSites;
   ls('sgmr_sites',JSON.stringify(kbSites));
   saveConfigToSB();
-  renderSitesList();
+  buildSiteFilter();renderSitesList();
   showToast('Sitio eliminado','ok');
 }
 function renderKB(){
@@ -1429,22 +1429,24 @@ function openAnnoDetail(idx){
   document.getElementById('ad-estado').textContent=r.estado||'';
   document.getElementById('ad-estado-edit').value=r.estado||'Pendiente';
   // Populate partner select from kbPartners
-  const partSel=document.getElementById('ad-partner-edit');
-  partSel.innerHTML='<option value="">Sin partner</option>'+
-    kbPartners.map(p=>`<option value="${p.full||p.alias}">${p.full||p.alias}</option>`).join('');
+  var partSel=document.getElementById('ad-partner-edit');
+  var partOpts='<option value="">Sin partner</option>';
+  kbPartners.forEach(function(p){var n=p.full||p.alias;partOpts+='<option value="'+n+'">'+n+'</option>';});
+  if(r.partner&&!kbPartners.find(function(p){return (p.full||p.alias)===r.partner;}))partOpts+='<option value="'+r.partner+'">'+r.partner+'</option>';
+  partSel.innerHTML=partOpts;
   partSel.value=r.partner||'';
   // Populate tipo select from kbCatTypes
-  const tipoSel=document.getElementById('ad-tipo-edit');
-  const cats=kbCatTypes&&kbCatTypes.length?kbCatTypes:[{name:'Problema'},{name:'Recordatorio'},{name:'Cambio/Comentario'}];
-  tipoSel.innerHTML=cats.map(ct=>`<option>${ct.name}</option>`).join('');
-  tipoSel.value=r.tipo||'';
-  if(!kbSites||!kbSites.length){try{const s=localStorage.getItem('sgmr_sites');if(s)kbSites=JSON.parse(s);}catch(e){}} if(!kbSites||!kbSites.length){try{const ss=localStorage.getItem('sgmr_sites');if(ss)kbSites=JSON.parse(ss);}catch(e){}} // Populate sitio select from kbSites
-  try{const _s=ls('sgmr_sites');if(_s)kbSites=JSON.parse(_s);}catch(e){}
-  try{var _rS=ls('sgmr_sites');if(_rS)kbSites=JSON.parse(_rS);}catch(e){}
-  try{var _rP=ls('sgmr_kb_partners');if(_rP)kbPartners=JSON.parse(_rP);}catch(e){}
-  try{var _rC=ls('sgmr_kb_cats');if(_rC)kbCatTypes=JSON.parse(_rC);}catch(e){}
-  const sitioSel=document.getElementById('ad-sitio-edit');
-  sitioSel.innerHTML=kbSites.map(s=>`<option>${s}</option>`).join('');
+  var tipoSel=document.getElementById('ad-tipo-edit');
+  tipoSel.innerHTML='<option value="Problema">Problema</option><option value="Recordatorio">Recordatorio</option><option value="Cambio/Comentario">Cambio/Comentario</option>';
+  tipoSel.value=r.tipo||'Problema';
+  // Fuente unica: leer siempre fresco de localStorage
+  try{var _ls=ls('sgmr_sites');if(_ls){kbSites=JSON.parse(_ls);sites=kbSites;}}catch(e){}
+  try{var _lp=ls('sgmr_kb_partners');if(_lp)kbPartners=JSON.parse(_lp);}catch(e){}
+  var sitioSel=document.getElementById('ad-sitio-edit');
+  var sitioOpts='<option value="">-- Seleccionar sitio --</option>';
+  kbSites.forEach(function(s){sitioOpts+='<option value="'+s+'">'+s+'</option>';});
+  if(r.sitio&&kbSites.indexOf(r.sitio)===-1)sitioOpts+='<option value="'+r.sitio+'">'+r.sitio+'</option>';
+  sitioSel.innerHTML=sitioOpts;
   sitioSel.value=r.sitio||'';
   // Update sitio display val
   const sitioVal=document.getElementById('ad-sitio-val');
