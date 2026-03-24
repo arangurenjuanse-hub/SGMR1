@@ -1681,11 +1681,12 @@ function generateSummary(r,eventSummary){
   var parts=d.split('/');
   var fechaFmt=parts.length>=2?(parts[0]+'/'+parts[1]):d;
   var tipo=r.tipo==='Problema'?'Problem':r.tipo==='Recordatorio'?'Reminder':'Update';
-  var msg='\uD83D\uDCCB SGMR1 Report\n';
-  msg+='Web: '+r.sitio+'\n';
-  if(r.partner)msg+='Partner: '+r.partner+'\n';
-  msg+='Category: '+tipo+'\n';
-  msg+='Event: '+(eventSummary||r.texto||'');
+  var msg=fechaFmt+'\n';
+  msg+='<b>Web:</b> '+r.sitio+'\n';
+  if(r.partner)msg+='<b>Partner:</b> '+r.partner+'\n';
+  msg+='<b>Category:</b> '+tipo+'\n';
+  msg+='\n';
+  msg+='<b>Event:</b> '+(eventSummary||r.texto||'');
   return msg;
 }
 function generateAISummary(r,cb){
@@ -1709,7 +1710,6 @@ function sendTelegram(idx){
   if(!r)return;
   _tgPreviewIdx=idx;
   _tgPreviewImg=null;
-  showToast('Generando resumen...','ok');
   generateAISummary(r,function(summary){
     var msg=generateSummary(r,summary);
     var ov=document.getElementById('tg-preview-overlay');
@@ -1749,7 +1749,6 @@ function sendTelegram(idx){
       reader.readAsDataURL(file);
     };
     ov.classList.add('open');
-    showToast('','ok');
   });
 }
 function closeTgPreview(){
@@ -1765,7 +1764,7 @@ function confirmTgSend(test){
   var BOT=test?'8290249003:AAGT4vDIM6XnExlqex7a7_k2JkmCzulXw18':'8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
   var CHAT=test?'1842693553':'832763879';
   var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg})})
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg,parse_mode:'HTML'})})
   .then(function(res){return res.json();})
   .then(function(data){
     if(data.ok){
