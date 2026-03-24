@@ -1666,41 +1666,55 @@ function removeCatType(i){
   showToast('Tipo eliminado','ok');
 }
 
-function generateSummary(r){
+function generateSummary(r,eventSummary){
   var d=r.fecha||'';
   var parts=d.split('/');
   var fechaFmt=parts.length>=2?(parts[0]+'/'+parts[1]):d;
   var tipo=r.tipo==='Problema'?'Problem':r.tipo==='Recordatorio'?'Reminder':'Update';
-  var texto=r.texto||'';
-  var short=texto.length>120?texto.slice(0,120)+'...':	exto;
-  var msg='📋 *SGMR1 Report*\n';
-  msg+='Date: '+fechaFmt+'\n';
-  msg+='Site: '+esc(r.sitio)+'\n';
+  var msg='\uD83D\uDCCB *SGMR1 Report*\n';
+  msg+='Web: '+r.sitio+'\n';
   if(r.partner)msg+='Partner: '+r.partner+'\n';
   msg+='Category: '+tipo+'\n';
-  msg+='Note: '+short;
+  msg+='Event: '+(eventSummary||r.texto||'');
   return msg;
+}
+function generateAISummary(r,cb){
+  var akey=anthropicKey||PRESET_AKEY;
+  if(!akey){cb(r.texto||'');return;}
+  var prompt='You work in the online casino affiliate industry. Summarize the following event in 1-2 clear sentences in English. Be direct and informative — no suspensive points, no ellipsis, no incomplete sentences. Give only the essential information someone needs to understand what happened or was agreed.\n\nEvent details:\nSite: '+r.sitio+'\nPartner: '+(r.partner||'N/A')+'\nCategory: '+r.tipo+'\nNote: '+(r.texto||'')+'\n\nRespond with only the summary sentence(s), nothing else.';
+  fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':akey,'anthropic-version':'2023-06-01','Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:120,messages:[{role:'user',content:prompt}]})
+  }).then(function(res){return res.json();})
+  .then(function(data){
+    var summary=data.content&&data.content[0]?data.content[0].text:(r.texto||'');
+    cb(summary);
+  }).catch(function(){cb(r.texto||'');});
 }
 function sendTelegram(idx){
   var r=rows[idx];
   if(!r)return;
-  var BOT='8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
-  var CHAT='832763879';
-  var msg=generateSummary(r);
-  var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg,parse_mode:'Markdown'})})
-  .then(function(res){return res.json();})
-  .then(function(data){
-    if(data.ok){
-      rows[idx].tgSent=true;
-      ls('sgmr_rows',JSON.stringify(rows));
-      renderList();
-      showToast('Enviado a Telegram','ok');
-    } else {
-      showToast('Error Telegram: '+data.description,'err');
-    }
-  })
-  .catch(function(e){showToast('Error: '+e.message,'err');});
+  showToast('Generando resumen...','ok');
+  generateAISummary(r,function(summary){
+    var BOT='8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
+    var CHAT='832763879';
+    var msg=generateSummary(r,summary);
+    var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
+    fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg,parse_mode:'Markdown'})})
+    .then(function(res){return res.json();})
+    .then(function(data){
+      if(data.ok){
+        rows[idx].tgSent=true;
+        ls('sgmr_rows',JSON.stringify(rows));
+        renderList();
+        showToast('Enviado a Telegram','ok');
+      } else {
+        showToast('Error Telegram: '+data.description,'err');
+      }
+    })
+    .catch(function(e){showToast('Error: '+e.message,'err');});
+  });
 }
 
 function saveConfigToSB(){
