@@ -918,10 +918,10 @@ function renderList(){
 }
 
 function updateStats(f){
-  const src=f||rows;
-  document.getElementById('s-prob').textContent=src.filter(r=>r.tipo==='Problema').length;
-  document.getElementById('s-rec').textContent=src.filter(r=>r.tipo==='Recordatorio').length;
-  document.getElementById('s-cam').textContent=src.filter(r=>r.tipo==='Cambio/Comentario').length;
+  var src=f||rows;
+  var ep=document.getElementById('s-prob');if(ep)ep.textContent=src.filter(function(r){return r.tipo==='Problema';}).length;
+  var er=document.getElementById('s-rec');if(er)er.textContent=src.filter(function(r){return r.tipo==='Recordatorio';}).length;
+  var ec=document.getElementById('s-cam');if(ec)ec.textContent=src.filter(function(r){return r.tipo==='Cambio/Comentario';}).length;
 }
 function setTipo(t,el){filterTipo=t;document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));el.classList.add('active');renderList();}
 async function deleteRow(idx){
