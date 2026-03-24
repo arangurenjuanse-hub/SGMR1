@@ -1763,7 +1763,9 @@ function confirmTgSend(test){
   .then(function(data){
     if(data.ok){
       if(!test){rows[idx].tgSent=true;ls('sgmr_rows',JSON.stringify(rows));patchSB(rows[idx]);renderList();}
-      closeTgPreview();
+      var chk2=document.getElementById("tg-include-img");
+  var sendImg=chk2&&chk2.checked&&window._tgPendingRow&&window._tgPendingRow.screenshot;
+  closeTgPreview();
       showToast(test?'Test enviado a vos':'Enviado a Sigmundur','ok');
     } else {
       showToast('Error: '+data.description,'err');
@@ -1858,6 +1860,12 @@ function bindDrag(container){
       _dragFrom=null;
     });
   });
+}
+function dataURLtoBlob(dataUrl){
+  var arr=dataUrl.split(",");var mime=arr[0].match(/:(.*?);/)[1];
+  var bstr=atob(arr[1]);var n=bstr.length;var u8=new Uint8Array(n);
+  while(n--){u8[n]=bstr.charCodeAt(n);}
+  return new Blob([u8],{type:mime});
 }
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
