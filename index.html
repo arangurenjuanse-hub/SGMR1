@@ -109,6 +109,9 @@ input[type=date]:focus{border-color:var(--accent);}
 .etag:hover{border-color:var(--border2);color:var(--text2);}
 .etag.en-proceso{background:var(--cam-dim);color:var(--cam);border-color:var(--cam);}
 .etag.listo{background:var(--rec-dim);color:var(--rec);border-color:var(--rec);}
+.tg-btn{font-size:13px;font-weight:600;padding:2px 9px;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .12s;font-family:'Geist',sans-serif;white-space:nowrap;}
+.tg-btn:hover{border-color:#2AABEE;color:#2AABEE;}
+.tg-btn.tg-sent{background:rgba(42,171,238,.12);color:#2AABEE;border-color:#2AABEE;}
 .empty-st{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:8px;color:var(--text3);}
 .empty-st big{font-size:30px;opacity:.25;}
 .expand-row{display:flex;align-items:center;justify-content:center;padding:10px;font-size:16px;font-weight:500;color:var(--accent);background:var(--surface);border:none;width:100%;cursor:pointer;font-family:'Geist',sans-serif;transition:background .15s;border-top:1px dashed var(--border);}
@@ -908,7 +911,7 @@ function renderList(){
       const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
       const ecls=r.estado==='En proceso'?'en-proceso':r.estado==='Listo'?'listo':'';
       const row=document.createElement('div');row.className=`anno-row ${cls}`;row.onclick=(e)=>{if(e.target.closest('.kb-rm,.etag'))return;openAnnoDetail(idx);};
-      row.innerHTML=`<div class="row-bar"></div><div class="rc"><span class="rtype ${cls}">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c"><button class="etag ${ecls}" onclick="cycleEstado(${idx})">${esc(r.estado)}</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
+      row.innerHTML=`<div class="row-bar"></div><div class="rc"><span class="rtype ${cls}">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(${idx})" title="${r.tgSent?'Enviado':'Enviar a Telegram'}">${r.tgSent?'&#10003; Sent':'&#9992; TG'}</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
       sec.appendChild(row);
     });
     scroll.appendChild(sec);
@@ -1093,7 +1096,7 @@ function showCC(r){
 async function confirmSave(){
   if(!pendingConfirm)return;
   const r=pendingConfirm;pendingConfirm=null;
-  const row={fecha:nowFecha(),tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner||'',estado:r.estado||'Pendiente'};
+  var autoTipo=r.tipo;if(!autoTipo||autoTipo==='Cambio/Comentario'){var txt=(r.texto||r.sitio||'').toLowerCase();if(txt.indexOf('problem')>-1||txt.indexOf('error')>-1||txt.indexOf('fall')>-1||txt.indexOf('issue')>-1||txt.indexOf('bug')>-1)autoTipo='Problema';else if(txt.indexOf('recordar')>-1||txt.indexOf('reminder')>-1||txt.indexOf('pending')>-1||txt.indexOf('pendiente')>-1)autoTipo='Recordatorio';else autoTipo=autoTipo||'Cambio/Comentario';}var autoNombre=r.texto?r.texto.slice(0,40):r.sitio;const row={fecha:nowFecha(),tipo:autoTipo,sitio:r.sitio,texto:r.texto,partner:r.partner||'',estado:r.estado||'Pendiente',nombre:autoNombre,tgSent:false};
   const saved=await saveSB(row);
   if(window._lastPastedImage){row.screenshot=window._lastPastedImage;window._lastPastedImage=null;} rows.push(row);ls('sgmr_rows',JSON.stringify(rows));
   buildSiteFilter();renderList();updateStats();
@@ -1573,6 +1576,42 @@ function addCatType(){
 
 function removeCatType(i){kbCatTypes.splice(i,1);saveCatTypes();renderCatsList();}
 
+function generateSummary(r){
+  var d=r.fecha||'';
+  var parts=d.split('/');
+  var fechaFmt=parts.length>=2?(parts[0]+'/'+parts[1]):d;
+  var tipo=r.tipo==='Problema'?'Problem':r.tipo==='Recordatorio'?'Reminder':'Update';
+  var texto=r.texto||'';
+  var short=texto.length>120?texto.slice(0,120)+'...':	exto;
+  var msg='📋 *SGMR1 Report*\n';
+  msg+='Date: '+fechaFmt+'\n';
+  msg+='Site: '+esc(r.sitio)+'\n';
+  if(r.partner)msg+='Partner: '+r.partner+'\n';
+  msg+='Category: '+tipo+'\n';
+  msg+='Note: '+short;
+  return msg;
+}
+function sendTelegram(idx){
+  var r=rows[idx];
+  if(!r)return;
+  var BOT='8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
+  var CHAT='832763879';
+  var msg=generateSummary(r);
+  var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg,parse_mode:'Markdown'})})
+  .then(function(res){return res.json();})
+  .then(function(data){
+    if(data.ok){
+      rows[idx].tgSent=true;
+      ls('sgmr_rows',JSON.stringify(rows));
+      renderList();
+      showToast('Enviado a Telegram','ok');
+    } else {
+      showToast('Error Telegram: '+data.description,'err');
+    }
+  })
+  .catch(function(e){showToast('Error: '+e.message,'err');});
+}
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
   t.className='toast show'+(type?' '+type:'');
