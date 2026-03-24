@@ -1710,8 +1710,7 @@ function generateAISummary(r,cb){
 }
 var _tgPreviewIdx=null;
 var _tgPreviewImg=null;
-function sendTelegram(ev,idx){
-  try{if(ev){ev.stopPropagation();ev.preventDefault();}}catch(e){}
+function sendTelegram(idx,_x){
   var r=rows[idx];if(!r)return;
   window._tgPendingIdx=idx;
   var fecha=r.fecha||new Date().toLocaleDateString("es-AR");
