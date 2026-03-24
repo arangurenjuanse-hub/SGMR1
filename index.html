@@ -432,9 +432,6 @@ textarea#msg::placeholder{color:var(--text3);}
   transition:opacity .15s;
 }
 .lightbox-close:hover{opacity:1;}
-.tg-btn{border:none;background:transparent;cursor:pointer;padding:2px 6px;font-size:18px;transition:all .15s;opacity:.4;border-radius:6px;}
-.tg-btn:hover{opacity:1;transform:scale(1.2);}
-.tg-btn.tg-sent{opacity:1;}
 </style>
 </head>
 <body>
@@ -911,7 +908,7 @@ function renderList(){
       const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
       const ecls=r.estado==='En proceso'?'en-proceso':r.estado==='Listo'?'listo':'';
       const row=document.createElement('div');row.className=`anno-row ${cls}`;row.onclick=(e)=>{if(e.target.closest('.kb-rm,.etag'))return;openAnnoDetail(idx);};
-      row.innerHTML=`<div class="row-bar"></div><div class="rc"><span class="rtype ${cls}">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc" style="display:flex;justify-content:center;align-items:center"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(event,idx)">${r.tgSent?'[OK]':'[Send]'}</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
+      row.innerHTML=`<div class="row-bar"></div><div class="rc"><span class="rtype ${cls}">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c"><button class="etag ${ecls}" onclick="cycleEstado(${idx})">${esc(r.estado)}</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
       sec.appendChild(row);
     });
     scroll.appendChild(sec);
@@ -932,7 +929,11 @@ async function deleteRow(idx){
   if(row.id&&sbUrl&&sbKey){try{await fetch(sbUrl+'/rest/v1/anotaciones?id=eq.'+row.id,{method:'DELETE',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}});}catch(e){}}
   rows.splice(idx,1);ls('sgmr_rows',JSON.stringify(rows));renderList();updateStats();showToast('Eliminado','ok');
 }
-async 
+async function cycleEstado(idx){
+  const s=['Pendiente','En proceso','Listo'];
+  rows[idx].estado=s[(s.indexOf(rows[idx].estado)+1)%3];
+  ls('sgmr_rows',JSON.stringify(rows));patchSB(rows[idx]);renderList();
+}
 
 /* ── CHAT ── */
 function resize(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,100)+'px';}
@@ -1094,12 +1095,7 @@ async function confirmSave(){
   const r=pendingConfirm;pendingConfirm=null;
   const row={fecha:nowFecha(),tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner||'',estado:r.estado||'Pendiente'};
   const saved=await saveSB(row);
-  if(window._lastPastedImage){row.screenshot=window._lastPastedImage;window._lastPastedImage=null;} rows.push(row);
-  generateSummary(row.texto,row.tipo,row.sitio).then(function(s){
-    if(!s)return;
-    var _i=rows.findIndex(function(x){return x.id===row.id;});
-    if(_i>=0){rows[_i].summary=s;ls('sgmr_rows',JSON.stringify(rows));renderList();}
-  });ls('sgmr_rows',JSON.stringify(rows));
+  if(window._lastPastedImage){row.screenshot=window._lastPastedImage;window._lastPastedImage=null;} rows.push(row);ls('sgmr_rows',JSON.stringify(rows));
   buildSiteFilter();renderList();updateStats();
   addBotMsg(`✅ Guardado en <strong>${esc(row.sitio)}</strong>${saved?' y sincronizado en Supabase':' (guardado local)'}.`);
   showToast('Anotación guardada','ok');
@@ -1577,40 +1573,6 @@ function addCatType(){
 
 function removeCatType(i){kbCatTypes.splice(i,1);saveCatTypes();renderCatsList();}
 
-function getTipoColor(t){
-  if(!t)return null;
-  try{var cc=(typeof kbCatTypes!=="undefined"?kbCatTypes:[]).find(function(x){return x.name===t;});
-  if(cc)return cc.color;}catch(e){}
-  if(/problema/i.test(t))return"var(--prob)";
-  if(/recordatorio/i.test(t))return"var(--rec)";
-  if(/cambio/i.test(t))return"var(--cam)";
-  return null;
-}
-var _TG="8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10";
-var _TGC="832763879";
-function sendTelegram(ev,idx){
-  ev.stopPropagation();
-  var r=rows[idx];if(!r)return;
-  var fecha=r.fecha||new Date().toLocaleDateString("es-AR");
-  var note=r.summary||r.texto||"-";
-  var msg="*SGMR Notification*\n\n*Date:* "+fecha+"\n*Site:* "+(r.sitio||"-")+"\n*Partner:* "+(r.partner||"-")+"\n*Category:* "+(r.tipo||"-")+"\n*Note:* "+note;
-  fetch("https://api.telegram.org/bot"+_TG+"/sendMessage",{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({chat_id:_TGC,text:msg,parse_mode:"Markdown"})
-  }).then(function(res){return res.json();}).then(function(data){
-    if(data.ok){rows[idx].tgSent=true;rows[idx].tgSentAt=new Date().toISOString();
-    ls("sgmr_rows",JSON.stringify(rows));renderList();updateStats();showToast("Enviado a Sigmundur","ok");}
-    else showToast("Error: "+data.description,"err");
-  }).catch(function(e){showToast("Error: "+e.message,"err");});
-}
-function generateSummary(texto,tipo,sitio){
-  if(!anthropicKey||!texto)return Promise.resolve("");
-  return fetch("https://sgmr.arangurenjuanse.workers.dev/",{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({apiKey:anthropicKey,payload:{model:"claude-sonnet-4-20250514",max_tokens:60,
-    messages:[{role:"user",content:"Resume en max 8 palabras espanol titulo corto anotacion. Solo texto sin comillas. Tipo:"+tipo+" Sitio:"+sitio+" Desc:"+texto}]}}) 
-  }).then(function(r){return r.json();}).then(function(d){return(d.content&&d.content[0]&&d.content[0].text)||"";}).catch(function(){return"";});
-}
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
   t.className='toast show'+(type?' '+type:'');
