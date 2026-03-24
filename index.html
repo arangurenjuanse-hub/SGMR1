@@ -796,7 +796,7 @@ function load(){
   try{const d=ls('sgmr_rows');if(d)rows=JSON.parse(d);}catch(e){}
   try{var _sd=ls('sgmr_sites');if(_sd){kbSites=JSON.parse(_sd);sites=kbSites;}}catch(e){}
   try{var _pd=ls('sgmr_kb_partners');if(_pd)kbPartners=JSON.parse(_pd);}catch(e){}
-  try{const d=ls('sgmr_kb_cats');if(d)kbCats=JSON.parse(d);}catch(e){}
+  try{var _cd=ls('sgmr_kb_cats');if(_cd)kbCatTypes=JSON.parse(_cd);}catch(e){}
 
   // Use preset keys if no saved ones
   anthropicKey=ls('sgmr_akey')||PRESET_AKEY;
@@ -1436,9 +1436,12 @@ function openAnnoDetail(idx){
   partSel.innerHTML=partOpts;
   partSel.value=r.partner||'';
   // Populate tipo select from kbCatTypes
+  try{var _ct=ls('sgmr_kb_cats');if(_ct)kbCatTypes=JSON.parse(_ct);}catch(e){}
   var tipoSel=document.getElementById('ad-tipo-edit');
-  tipoSel.innerHTML='<option value="Problema">Problema</option><option value="Recordatorio">Recordatorio</option><option value="Cambio/Comentario">Cambio/Comentario</option>';
-  tipoSel.value=r.tipo||'Problema';
+  var tipoList=kbCatTypes&&kbCatTypes.length?kbCatTypes:[{name:'Problema'},{name:'Recordatorio'},{name:'Cambio/Comentario'}];
+  tipoSel.innerHTML=tipoList.map(function(ct){return '<option value="'+ct.name+'">'+ct.name+'</option>';}).join('');
+  if(r.tipo&&!tipoList.find(function(ct){return ct.name===r.tipo;}))tipoSel.innerHTML+='<option value="'+r.tipo+'">'+r.tipo+'</option>';
+  tipoSel.value=r.tipo||tipoList[0].name;
   // Fuente unica: leer siempre fresco de localStorage
   try{var _ls=ls('sgmr_sites');if(_ls){kbSites=JSON.parse(_ls);sites=kbSites;}}catch(e){}
   try{var _lp=ls('sgmr_kb_partners');if(_lp)kbPartners=JSON.parse(_lp);}catch(e){}
