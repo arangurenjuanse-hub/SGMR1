@@ -1704,20 +1704,179 @@ function generateAISummary(r,cb){
 }
 var _tgPreviewIdx=null;
 var _tgPreviewImg=null;
-function sendTelegram(idx,_x){
+function sendTelegram(idx,_unused){
   if(window.event){window.event.stopPropagation();window.event.preventDefault();}
   var r=rows[idx];if(!r)return;
   var fecha=r.fecha||new Date().toLocaleDateString("es-AR");
   var note=r.summary||r.texto||"-";
-  var msg="SGMR Notification\n\nDate: "+fecha+"\nSite: "+(r.sitio||"-")+"\nPartner: "+(r.partner||"-")+"\nCategory: "+(r.tipo||"-")+"\nNote: "+note;
+  var msg="*SGMR Notification*\n\n"
+    +"*Date:* "+fecha+"\n"
+    +"*Site:* "+(r.sitio||"-")+"\n"
+    +"*Partner:* "+(r.partner||"-")+"\n"
+    +"*Category:* "+(r.tipo||"-")+"\n"
+    +"*Note:* "+note;
   fetch("https://api.telegram.org/bot8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10/sendMessage",{
-    method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({chat_id:"832763879",text:msg})
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({chat_id:"832763879",text:msg,parse_mode:"Markdown"})
   }).then(function(res){return res.json();}).then(function(data){
     if(data.ok){
-      rows[idx].tgSent=true;rows[idx].tgSentAt=new Date().toISOString();
-      ls("sgmr_rows",JSON.stringify(rows));renderList();updateStats();
+      rows[idx].tgSent=true;
+      rows[idx].tgSentAt=new Date().toISOString();
+      ls("sgmr_rows",JSON.stringify(rows));
+      renderList();updateStats();
       showToast("Enviado a Sigmundur","ok");
     }else{showToast("Error: "+data.description,"err");}
   }).catch(function(e){showToast("Error: "+e.message,"err");});
 }
+function closeTgPreview(){
+  document.getElementById('tg-preview-overlay').classList.remove('open');
+  _tgPreviewIdx=null;
+  _tgPreviewImg=null;
+}
+function confirmTgSend(test){
+  var idx=_tgPreviewIdx;
+  if(idx===null||idx===undefined)return;
+  var plainMsg=document.getElementById('tg-preview-text').value.trim();
+  if(!plainMsg)return;
+  var htmlMsg=plainMsg
+    .replace('Web: ','<b>Web:</b> ')
+    .replace('Partner: ','<b>Partner:</b> ')
+    .replace('Category: ','<b>Category:</b> ')
+    .replace('Event: ','<b>Event:</b> ');
+  var BOT=test?'8290249003:AAGT4vDIM6XnExlqex7a7_k2JkmCzulXw18':'8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
+  var CHAT=test?'1842693553':'832763879';
+  var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:htmlMsg,parse_mode:'HTML'})})
+  .then(function(res){return res.json();})
+  .then(function(data){
+    if(data.ok){
+      if(!test){rows[idx].tgSent=true;ls('sgmr_rows',JSON.stringify(rows));patchSB(rows[idx]);renderList();}
+      closeTgPreview();
+      showToast(test?'Test enviado a vos':'Enviado a Sigmundur','ok');
+    } else {
+      showToast('Error: '+data.description,'err');
+    }
+  })
+  .catch(function(e){showToast('Error: '+e.message,'err');});
+}
+
+function saveConfigToSB(){
+  if(!sbUrl||!sbKey)return;
+  var pairs=[
+    {key:'sgmr_sites',value:JSON.stringify(kbSites)},
+    {key:'sgmr_kb_partners',value:JSON.stringify(kbPartners)},
+    {key:'sgmr_kb_cats',value:JSON.stringify(kbCatTypes||[])}
+  ];
+  pairs.forEach(function(p){
+    fetch(sbUrl+'/rest/v1/config',{
+      method:'POST',
+      headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify({key:p.key,value:p.value,updated_at:new Date().toISOString()})
+    }).catch(function(){});
+  });
+}
+
+function loadConfigFromSB(){
+  if(!sbUrl||!sbKey)return;
+  fetch(sbUrl+'/rest/v1/config?select=key,value',{
+    headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
+  }).then(function(r){return r.json();}).then(function(data){
+    if(!data||!data.length)return;
+    data.forEach(function(row){
+      if(row.key&&row.value){
+        ls(row.key,row.value);
+        if(row.key==='sgmr_sites'){try{kbSites=JSON.parse(row.value);}catch(e){}}
+        if(row.key==='sgmr_kb_partners'){try{kbPartners=JSON.parse(row.value);}catch(e){}}
+        if(row.key==='sgmr_kb_cats'){try{kbCatTypes=JSON.parse(row.value);}catch(e){}}
+      }
+    });
+  }).catch(function(){});
+}
+
+function getTipoColor(tipo){
+  if(!tipo)return null;
+  try{
+    var cats=kbCatTypes||[];
+    if(!cats.length){var _c2=ls('sgmr_kb_cats');if(_c2)cats=JSON.parse(_c2);}
+    var found=cats.find(function(x){return x.name===tipo;});
+    if(found&&found.color)return found.color;
+  }catch(e){}
+  if(/problema/i.test(tipo))return'var(--prob)';
+  if(/recordatorio/i.test(tipo))return'var(--rec)';
+  if(/cambio/i.test(tipo))return'var(--cam)';
+  return null;
+}
+var _dragFrom=null;
+function bindDrag(container){
+  var items=container.querySelectorAll('[draggable]');
+  items.forEach(function(el){
+    el.addEventListener('dragstart',function(e){
+      _dragFrom=parseInt(el.dataset.idx);
+      e.dataTransfer.effectAllowed='move';
+      setTimeout(function(){el.style.opacity='0.4';},0);
+    });
+    el.addEventListener('dragend',function(){
+      el.style.opacity='';
+      container.querySelectorAll('.drag-over').forEach(function(x){x.classList.remove('drag-over');});
+    });
+    el.addEventListener('dragover',function(e){
+      e.preventDefault();
+      el.classList.add('drag-over');
+    });
+    el.addEventListener('dragleave',function(){
+      el.classList.remove('drag-over');
+    });
+    el.addEventListener('drop',function(e){
+      e.preventDefault();
+      el.classList.remove('drag-over');
+      var toIdx=parseInt(el.dataset.idx);
+      var list=el.dataset.list;
+      if(_dragFrom===null||_dragFrom===toIdx){_dragFrom=null;return;}
+      if(list==='partners'){
+        var item=kbPartners.splice(_dragFrom,1)[0];
+        kbPartners.splice(toIdx,0,item);
+        ls('sgmr_kb_partners',JSON.stringify(kbPartners));
+        saveConfigToSB();renderPartnersList();
+      } else if(list==='sites'){
+        var item2=kbSites.splice(_dragFrom,1)[0];
+        kbSites.splice(toIdx,0,item2);sites=kbSites;
+        ls('sgmr_sites',JSON.stringify(kbSites));
+        saveConfigToSB();renderSitesList();buildSiteFilter();
+      }
+      _dragFrom=null;
+    });
+  });
+}
+function showToast(msg,type){
+  const t=document.getElementById('toast');t.textContent=msg;
+  t.className='toast show'+(type?' '+type:'');
+  clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+load();
+</script>
+<div class="tg-preview-overlay" id="tg-preview-overlay">
+  <div class="tg-preview-box">
+    <div class="tg-preview-title">📋 Preview del mensaje</div>
+    <div>
+      <div class="tg-preview-label" style="margin-bottom:6px">Mensaje</div>
+      <textarea class="tg-preview-textarea" id="tg-preview-text"></textarea>
+    </div>
+    <div>
+      <div class="tg-preview-label" style="margin-bottom:6px">Screenshot (opcional)</div>
+      <div class="tg-preview-screen">
+        <img id="tg-preview-thumb" class="tg-preview-thumb" style="display:none"/>
+        <label class="btn sm" style="cursor:pointer;font-size:13px;padding:5px 12px">📎 Adjuntar<input type="file" id="tg-preview-file" accept="image/*" style="display:none"/></label>
+        <span id="tg-preview-fname" style="font-size:13px;color:var(--text3)"></span>
+      </div>
+    </div>
+    <div class="tg-preview-actions">
+      <button class="btn sm" onclick="closeTgPreview()">Cancelar</button>
+      <button class="btn sm" onclick="confirmTgSend(true)" style="border-color:#2AABEE;color:#2AABEE">👁 Test (yo)</button>
+      <button class="btn sm primary" onclick="confirmTgSend(false)">✈ Enviar a Sigmundur</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>
