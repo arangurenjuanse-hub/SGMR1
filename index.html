@@ -1671,7 +1671,7 @@ function generateSummary(r,eventSummary){
   var parts=d.split('/');
   var fechaFmt=parts.length>=2?(parts[0]+'/'+parts[1]):d;
   var tipo=r.tipo==='Problema'?'Problem':r.tipo==='Recordatorio'?'Reminder':'Update';
-  var msg='\uD83D\uDCCB *SGMR1 Report*\n';
+  var msg='\uD83D\uDCCB SGMR1 Report\n';
   msg+='Web: '+r.sitio+'\n';
   if(r.partner)msg+='Partner: '+r.partner+'\n';
   msg+='Category: '+tipo+'\n';
@@ -1701,7 +1701,7 @@ function sendTelegram(idx){
     var CHAT='832763879';
     var msg=generateSummary(r,summary);
     var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
-    fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg,parse_mode:'Markdown'})})
+    fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg})})
     .then(function(res){return res.json();})
     .then(function(data){
       if(data.ok){
