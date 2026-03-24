@@ -1722,6 +1722,20 @@ function sendTelegram(idx){
     fname.textContent='';
     _tgPreviewImg=null;
     finp.value='';
+    // Mostrar screenshot existente del evento
+    var existRow=document.getElementById('tg-existing-scr');
+    var existThumb=document.getElementById('tg-existing-thumb');
+    var existChk=document.getElementById('tg-use-existing');
+    if(r.screenshot){
+      existThumb.src=r.screenshot;
+      existRow.style.display='flex';
+      existChk.checked=true;
+      _tgPreviewImg=r.screenshot;
+    } else {
+      existRow.style.display='none';
+      existChk.checked=false;
+    }
+    existChk.onchange=function(){_tgPreviewImg=existChk.checked?r.screenshot:null;};
     finp.onchange=function(){
       var file=finp.files[0];
       if(!file)return;
@@ -1869,9 +1883,14 @@ load();
     </div>
     <div>
       <div class="tg-preview-label" style="margin-bottom:6px">Screenshot (opcional)</div>
+      <div id="tg-existing-scr" style="display:none;align-items:center;gap:10px;margin-bottom:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px">
+        <img id="tg-existing-thumb" style="width:40px;height:40px;object-fit:cover;border-radius:5px;border:1px solid var(--border)"/>
+        <span style="font-size:13px;color:var(--text2);flex:1">Screenshot del evento</span>
+        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);cursor:pointer"><input type="checkbox" id="tg-use-existing" checked style="cursor:pointer"/> Incluir</label>
+      </div>
       <div class="tg-preview-screen">
         <img id="tg-preview-thumb" class="tg-preview-thumb" style="display:none"/>
-        <label class="btn sm" style="cursor:pointer;font-size:13px;padding:5px 12px">📎 Adjuntar<input type="file" id="tg-preview-file" accept="image/*" style="display:none"/></label>
+        <label class="btn sm" style="cursor:pointer;font-size:13px;padding:5px 12px">📎 Adjuntar nuevo<input type="file" id="tg-preview-file" accept="image/*" style="display:none"/></label>
         <span id="tg-preview-fname" style="font-size:13px;color:var(--text3)"></span>
       </div>
     </div>
