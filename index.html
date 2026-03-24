@@ -1642,16 +1642,26 @@ function showToast(msg,type){
 
 load();
 
-// Safety fallback
-setTimeout(function(){
-  if(!rows||rows.length===0){
+// Robust init
+function _initApp(){
+  try{load();}catch(e){console.error('load err',e);}
+  // Double fallback — ensure data renders even if load() had issues
+  setTimeout(function(){
     try{
-      const _d=ls('sgmr_rows');
-      if(_d){rows=JSON.parse(_d);renderList();updateStats();}
-    }catch(e){}
-  }
-},800);
-
+      if(!anthropicKey){anthropicKey=ls('sgmr_akey')||'';}
+      if(!sbUrl){sbUrl=ls('sgmr_sb_url')||'';sbKey=ls('sgmr_sb_key')||'';}
+      if(rows.length===0){
+        const _d=ls('sgmr_rows');
+        if(_d){rows=JSON.parse(_d);}
+      }
+      renderList();updateStats();buildSiteFilter();
+      if(rows.length===0&&sbUrl&&sbKey)loadSB();
+    }catch(e){console.error('fallback err',e);}
+  },300);
+}
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded',_initApp);
+}else{
+  _initApp();
+}
 </script>
-</body>
-</html>
