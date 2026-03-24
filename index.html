@@ -1641,6 +1641,17 @@ function showToast(msg,type){
 }
 
 load();
+
+// Safety fallback
+setTimeout(function(){
+  if(!rows||rows.length===0){
+    try{
+      const _d=ls('sgmr_rows');
+      if(_d){rows=JSON.parse(_d);renderList();updateStats();}
+    }catch(e){}
+  }
+},800);
+
 </script>
 </body>
 </html>
