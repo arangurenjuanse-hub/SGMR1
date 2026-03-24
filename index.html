@@ -1682,12 +1682,17 @@ function generateSummary(r,eventSummary){
   var fechaFmt=parts.length>=2?(parts[0]+'/'+parts[1]):d;
   var tipo=r.tipo==='Problema'?'Problem':r.tipo==='Recordatorio'?'Reminder':'Update';
   var msg=fechaFmt+'\n';
-  msg+='<b>Web:</b> '+r.sitio+'\n';
-  if(r.partner)msg+='<b>Partner:</b> '+r.partner+'\n';
-  msg+='<b>Category:</b> '+tipo+'\n';
+  msg+='Web: '+r.sitio+'\n';
+  if(r.partner)msg+='Partner: '+r.partner+'\n';
+  msg+='Category: '+tipo+'\n';
   msg+='\n';
-  msg+='<b>Event:</b> '+(eventSummary||r.texto||'');
+  msg+='Event: '+(eventSummary||r.texto||'');
   return msg;
+}
+function msgToHtml(plain){
+  return plain
+    .replace(/^(Web:|Partner:|Category:|Event:)/gm,function(m){return '<b>'+m.slice(0,-1)+'</b>:';})
+    .replace(/\n/g,'\n');
 }
 function generateAISummary(r,cb){
   var akey=anthropicKey||PRESET_AKEY;
@@ -1748,6 +1753,9 @@ function sendTelegram(idx){
       };
       reader.readAsDataURL(file);
     };
+    // Cerrar detalle del evento si esta abierto
+    var annoOv=document.getElementById('anno-detail-overlay');
+    if(annoOv)annoOv.classList.remove('open');
     ov.classList.add('open');
   });
 }
@@ -1759,8 +1767,9 @@ function closeTgPreview(){
 function confirmTgSend(test){
   var idx=_tgPreviewIdx;
   if(idx===null||idx===undefined)return;
-  var msg=document.getElementById('tg-preview-text').value.trim();
-  if(!msg)return;
+  var plainMsg=document.getElementById('tg-preview-text').value.trim();
+  if(!plainMsg)return;
+  var msg=msgToHtml(plainMsg);
   var BOT=test?'8290249003:AAGT4vDIM6XnExlqex7a7_k2JkmCzulXw18':'8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
   var CHAT=test?'1842693553':'832763879';
   var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
