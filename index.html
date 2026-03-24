@@ -447,6 +447,12 @@ textarea#msg::placeholder{color:var(--text3);}
 .tg-preview-screen{display:flex;align-items:center;gap:8px;}
 .tg-preview-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:4px;}
 .tg-preview-thumb{width:48px;height:48px;object-fit:cover;border-radius:6px;border:1px solid var(--border);}
+.tg-preview-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:9999;align-items:center;justify-content:center;padding:16px;}
+.tg-preview-overlay.open{display:flex;}
+.tg-preview-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;width:100%;max-width:480px;padding:20px;display:flex;flex-direction:column;gap:14px;}
+.tg-preview-title{font-size:15px;font-weight:700;color:var(--text);}
+.tg-preview-textarea{width:100%;min-height:140px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;padding:10px;resize:vertical;box-sizing:border-box;}
+.tg-preview-footer{display:flex;gap:10px;justify-content:flex-end;}
 </style>
 </head>
 <body>
@@ -1704,20 +1710,40 @@ function generateAISummary(r,cb){
 }
 var _tgPreviewIdx=null;
 var _tgPreviewImg=null;
-function sendTelegram(idx,isTest){
+function sendTelegram(idx,_x){
   if(window.event){window.event.stopPropagation();window.event.preventDefault();}
   var r=rows[idx];if(!r)return;
-  var chatId=isTest?"832763879":"832763879";
+  window._tgPendingIdx=idx;
   var fecha=r.fecha||new Date().toLocaleDateString("es-AR");
   var note=r.summary||r.texto||"-";
   var msg="SGMR Notification\n\nDate: "+fecha+"\nSite: "+(r.sitio||"-")+"\nPartner: "+(r.partner||"-")+"\nCategory: "+(r.tipo||"-")+"\nNote: "+note;
+  var ta=document.getElementById("tg-preview-text");
+  if(ta)ta.value=msg;
+  var overlay=document.getElementById("tg-preview-overlay");
+  if(overlay)overlay.classList.add("open");
+}
+
+function closeTgPreview(){
+  var overlay=document.getElementById("tg-preview-overlay");
+  if(overlay)overlay.classList.remove("open");
+  window._tgPendingIdx=null;
+}
+
+function confirmTgSend(){
+  var idx=window._tgPendingIdx;
+  if(idx==null)return;
+  var ta=document.getElementById("tg-preview-text");
+  var msg=ta?ta.value:"";
+  if(!msg)return;
+  closeTgPreview();
   fetch("https://api.telegram.org/bot8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10/sendMessage",{
     method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({chat_id:chatId,text:msg})
+    body:JSON.stringify({chat_id:"832763879",text:msg})
   }).then(function(res){return res.json();}).then(function(data){
     if(data.ok){
-      if(!isTest){rows[idx].tgSent=true;rows[idx].tgSentAt=new Date().toISOString();ls("sgmr_rows",JSON.stringify(rows));renderList();updateStats();}
-      showToast(isTest?"Test enviado":"Enviado a Sigmundur","ok");
+      rows[idx].tgSent=true;rows[idx].tgSentAt=new Date().toISOString();
+      ls("sgmr_rows",JSON.stringify(rows));renderList();updateStats();
+      showToast("Enviado a Sigmundur","ok");
     }else{showToast("Error: "+data.description,"err");}
   }).catch(function(e){showToast("Error: "+e.message,"err");});
 }
@@ -1867,6 +1893,16 @@ load();
       <button class="btn sm" onclick="closeTgPreview()">Cancelar</button>
       <button class="btn sm" onclick="confirmTgSend(true)" style="border-color:#2AABEE;color:#2AABEE">👁 Test (yo)</button>
       <button class="btn sm primary" onclick="confirmTgSend(false)">✈ Enviar a Sigmundur</button>
+    </div>
+  </div>
+</div>
+<div class="tg-preview-overlay" id="tg-preview-overlay">
+  <div class="tg-preview-box">
+    <div class="tg-preview-title">Vista previa del mensaje</div>
+    <textarea class="tg-preview-textarea" id="tg-preview-text"></textarea>
+    <div class="tg-preview-footer">
+      <button class="btn" onclick="closeTgPreview()">Cancelar</button>
+      <button class="btn primary" onclick="confirmTgSend()">Enviar a Sigmundur</button>
     </div>
   </div>
 </div>
