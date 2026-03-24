@@ -40,9 +40,9 @@ body{font-family:'Geist',-apple-system,sans-serif;background:var(--bg);color:var
 .logo-name{font-size:32px;font-weight:600;letter-spacing:-.3px;}
 .logo-dot{width:6px;height:6px;border-radius:50%;background:var(--rec);box-shadow:0 0 6px var(--rec);animation:pulse 2s infinite;}
 .hdr-right{display:flex;align-items:center;gap:8px;}
-.stats-pill{display:flex;gap:10px;padding:5px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;}
-.stat-item{display:flex;align-items:center;gap:4px;font-size:16px;font-weight:500;color:var(--text2);}
-.stat-dot{width:6px;height:6px;border-radius:50%;}
+
+
+
 .btn{display:inline-flex;align-items:center;gap:5px;padding:8px 16px;font-size:20px;font-weight:500;font-family:'Geist',sans-serif;border-radius:var(--r);border:1px solid var(--border2);background:var(--surface2);color:var(--text2);cursor:pointer;transition:all .15s;}
 .btn:hover{background:var(--surface3);color:var(--text);}
 .btn.primary{background:linear-gradient(180deg,#7b9cff 0%,#5b7cfa 40%,#3a5ae8 100%);color:#fff;border:none;border-top:1px solid rgba(255,255,255,.2);box-shadow:0 4px 0 #1e3ab8,0 6px 14px rgba(91,124,250,.4);transform:translateY(0);transition:all .1s;}
@@ -245,8 +245,8 @@ textarea#msg::placeholder{color:var(--text3);}
   /* Header */
   .hdr { height: 50px; padding: 0 12px; flex-shrink: 0; }
   .logo-name { font-size: 13px; }
-  .stats-pill { gap: 6px; padding: 4px 9px; }
-  .stat-item { font-size: 10px; }
+  
+  
   .btn.sm { padding: 5px 9px; font-size: 11px; }
 
   /* Layout: single column, exact height minus header */
@@ -488,11 +488,7 @@ textarea#msg::placeholder{color:var(--text3);}
     </div>
   </div>
   <div class="hdr-right">
-    <div class="stats-pill">
-      <div class="stat-item"><div class="stat-dot" style="background:var(--prob)"></div><span id="s-prob">0</span></div>
-      <div class="stat-item"><div class="stat-dot" style="background:var(--rec)"></div><span id="s-rec">0</span></div>
-      <div class="stat-item"><div class="stat-dot" style="background:var(--cam)"></div><span id="s-cam">0</span></div>
-    </div>
+    
     <button class="btn sm" onclick="openCfg()" style="font-size:18px;padding:8px 16px;gap:6px">⚙ Config</button>
   </div>
 </div>
@@ -912,7 +908,7 @@ function renderList(){
       const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
       const ecls=r.estado==='En proceso'?'en-proceso':r.estado==='Listo'?'listo':'';
       const row=document.createElement('div');row.className=`anno-row ${cls}`;row.onclick=(e)=>{if(e.target.closest('.kb-rm,.etag'))return;openAnnoDetail(idx);};
-      row.innerHTML=`<div class="row-bar"></div><div class="rc"><span class="rtype ${cls}">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(${idx})" title="${r.tgSent?'Enviado':'Enviar a Telegram'}">${r.tgSent?'&#10003; Sent':'&#9992; TG'}</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
+      row.innerHTML=`<div class="row-bar" style="background:${getTipoColor(r.tipo)||''};opacity:.9"></div><div class="rc"><span class="rtype ${cls}" style="background:${getTipoColor(r.tipo)}22;color:${getTipoColor(r.tipo)};border-color:${getTipoColor(r.tipo)}55">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(${idx})" title="${r.tgSent?'Enviado':'Enviar a Telegram'}">${r.tgSent?'&#10003; Sent':'&#9992; TG'}</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
       sec.appendChild(row);
     });
     scroll.appendChild(sec);
@@ -1200,10 +1196,11 @@ function addSite(){
   saveConfigToSB();
 }
 function removeSite(i){
-  sites.splice(i,1);ls('sgmr_sites',JSON.stringify(sites));
-  buildSiteFilter();renderSitesList();showToast('Sitio eliminado','ok');
-
+  kbSites.splice(i,1);
+  ls('sgmr_sites',JSON.stringify(kbSites));
   saveConfigToSB();
+  renderSitesList();
+  showToast('Sitio eliminado','ok');
 }
 function renderKB(){
   ['partners','sites','cats'].forEach(type=>{
@@ -1395,9 +1392,11 @@ function addPartner(){
 }
 
 function removePartner(i){
-  kbPartners.splice(i,1);ls('sgmr_kb_partners',JSON.stringify(kbPartners));renderPartnersList();
-
+  kbPartners.splice(i,1);
+  ls('sgmr_kb_partners',JSON.stringify(kbPartners));
   saveConfigToSB();
+  renderPartnersList();
+  showToast('Partner eliminado','ok');
 }
 
 function editPartner(i){
@@ -1615,8 +1614,12 @@ function addCatType(){
   renderCatsList();showToast('Tipo agregado','ok');
 }
 
-function removeCatType(i){kbCatTypes.splice(i,1);saveCatTypes();renderCatsList();
+function removeCatType(i){
+  kbCatTypes.splice(i,1);
+  ls('sgmr_kb_cats',JSON.stringify(kbCatTypes));
   saveConfigToSB();
+  renderCatsList();
+  showToast('Tipo eliminado','ok');
 }
 
 function generateSummary(r){
@@ -1687,6 +1690,20 @@ function loadConfigFromSB(){
       }
     });
   }).catch(function(){});
+}
+
+function getTipoColor(tipo){
+  if(!tipo)return null;
+  try{
+    var cats=kbCatTypes||[];
+    if(!cats.length){var _c2=ls('sgmr_kb_cats');if(_c2)cats=JSON.parse(_c2);}
+    var found=cats.find(function(x){return x.name===tipo;});
+    if(found&&found.color)return found.color;
+  }catch(e){}
+  if(/problema/i.test(tipo))return'var(--prob)';
+  if(/recordatorio/i.test(tipo))return'var(--rec)';
+  if(/cambio/i.test(tipo))return'var(--cam)';
+  return null;
 }
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
