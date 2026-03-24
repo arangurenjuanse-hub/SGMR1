@@ -1236,9 +1236,31 @@ let todos = [];
 let archivedVisible = false;
 
 function loadTodos(){
-  try{const d=ls('sgmr_todos');if(d)todos=JSON.parse(d);}catch(e){}
+  try{var d=ls('sgmr_todos');if(d)todos=JSON.parse(d);}catch(e){}
+  if(sbUrl&&sbKey){
+    fetch(sbUrl+'/rest/v1/todos?select=*&order=created.desc',{
+      headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
+    }).then(function(r){return r.json();}).then(function(data){
+      if(data&&data.length){
+        todos=data.map(function(t){return{id:t.id,text:t.text,done:t.done,archived:t.archived,created:t.created,closedAt:t.closed_at};});
+        ls('sgmr_todos',JSON.stringify(todos));
+        renderTodo();
+      }
+    }).catch(function(){});
+  }
 }
-function saveTodos(){ls('sgmr_todos',JSON.stringify(todos));}
+function saveTodos(){
+  ls('sgmr_todos',JSON.stringify(todos));
+  if(sbUrl&&sbKey){
+    todos.forEach(function(t){
+      fetch(sbUrl+'/rest/v1/todos',{
+        method:'POST',
+        headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'},
+        body:JSON.stringify({id:String(t.id),text:t.text,done:t.done,archived:t.archived,created:t.created,closed_at:t.closedAt||null})
+      }).catch(function(){});
+    });
+  }
+}
 
 function addTodo(){
   const inp=document.getElementById('todo-inp');
@@ -1259,8 +1281,15 @@ function toggleTodo(id){
 
 function deleteTodo(id){
   if(!confirm('Eliminar tarea?'))return;
-  todos=todos.filter(x=>x.id!==id);
-  saveTodos();renderTodo();
+  todos=todos.filter(function(x){return x.id!==id;});
+  saveTodos();
+  if(sbUrl&&sbKey){
+    fetch(sbUrl+'/rest/v1/todos?id=eq.'+id,{
+      method:'DELETE',
+      headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
+    }).catch(function(){});
+  }
+  renderTodo();
 }
 
 function toggleArchived(){
