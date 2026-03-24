@@ -1707,6 +1707,7 @@ function sendTelegram(idx){
       if(data.ok){
         rows[idx].tgSent=true;
         ls('sgmr_rows',JSON.stringify(rows));
+        patchSB(rows[idx]);
         renderList();
         showToast('Enviado a Telegram','ok');
       } else {
