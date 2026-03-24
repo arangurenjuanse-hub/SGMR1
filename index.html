@@ -812,7 +812,8 @@ function load(){
   document.getElementById('cfg-url').value=sbUrl;
   document.getElementById('cfg-key').value=sbKey;
 
-  buildSiteFilter();renderList();updateStats();
+  buildSiteFilter();loadConfigFromSB();
+  renderList();updateStats();
   setPreset(5,document.querySelector('.preset[data-d="5"]'));
   const _claxonGreetings = [
   '😴 Hola. Acá estoy, como siempre. Nadie me preguntó si quería, pero igual. ¿Qué necesitás?',
@@ -1137,6 +1138,8 @@ function saveCfg(){
   ls('sgmr_akey',anthropicKey);ls('sgmr_sb_url',sbUrl);ls('sgmr_sb_key',sbKey);
   closeCfg();showToast('Config guardada','ok');
   if(sbUrl&&sbKey)loadSB();
+
+  saveConfigToSB();
 }
 
 /* ── KNOWLEDGE BASE ── */
@@ -1193,10 +1196,14 @@ function addSite(){
   if(sites.includes(name))return showToast('Ya existe','err');
   sites.push(name);ls('sgmr_sites',JSON.stringify(sites));inp.value='';
   buildSiteFilter();renderSitesList();showToast('Sitio agregado','ok');
+
+  saveConfigToSB();
 }
 function removeSite(i){
   sites.splice(i,1);ls('sgmr_sites',JSON.stringify(sites));
   buildSiteFilter();renderSitesList();showToast('Sitio eliminado','ok');
+
+  saveConfigToSB();
 }
 function renderKB(){
   ['partners','sites','cats'].forEach(type=>{
@@ -1389,6 +1396,8 @@ function addPartner(){
 
 function removePartner(i){
   kbPartners.splice(i,1);ls('sgmr_kb_partners',JSON.stringify(kbPartners));renderPartnersList();
+
+  saveConfigToSB();
 }
 
 function editPartner(i){
@@ -1603,7 +1612,9 @@ function addCatType(){
   renderCatsList();showToast('Tipo agregado','ok');
 }
 
-function removeCatType(i){kbCatTypes.splice(i,1);saveCatTypes();renderCatsList();}
+function removeCatType(i){kbCatTypes.splice(i,1);saveCatTypes();renderCatsList();
+  saveConfigToSB();
+}
 
 function generateSummary(r){
   var d=r.fecha||'';
@@ -1640,6 +1651,39 @@ function sendTelegram(idx){
     }
   })
   .catch(function(e){showToast('Error: '+e.message,'err');});
+}
+
+function saveConfigToSB(){
+  if(!sbUrl||!sbKey)return;
+  var pairs=[
+    {key:'sgmr_sites',value:JSON.stringify(kbSites)},
+    {key:'sgmr_kb_partners',value:JSON.stringify(kbPartners)},
+    {key:'sgmr_kb_cats',value:JSON.stringify(kbCatTypes||[])}
+  ];
+  pairs.forEach(function(p){
+    fetch(sbUrl+'/rest/v1/config',{
+      method:'POST',
+      headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify({key:p.key,value:p.value,updated_at:new Date().toISOString()})
+    }).catch(function(){});
+  });
+}
+
+function loadConfigFromSB(){
+  if(!sbUrl||!sbKey)return;
+  fetch(sbUrl+'/rest/v1/config?select=key,value',{
+    headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
+  }).then(function(r){return r.json();}).then(function(data){
+    if(!data||!data.length)return;
+    data.forEach(function(row){
+      if(row.key&&row.value){
+        ls(row.key,row.value);
+        if(row.key==='sgmr_sites'){try{kbSites=JSON.parse(row.value);}catch(e){}}
+        if(row.key==='sgmr_kb_partners'){try{kbPartners=JSON.parse(row.value);}catch(e){}}
+        if(row.key==='sgmr_kb_cats'){try{kbCatTypes=JSON.parse(row.value);}catch(e){}}
+      }
+    });
+  }).catch(function(){});
 }
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
