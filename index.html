@@ -1681,18 +1681,12 @@ function generateSummary(r,eventSummary){
   var parts=d.split('/');
   var fechaFmt=parts.length>=2?(parts[0]+'/'+parts[1]):d;
   var tipo=r.tipo==='Problema'?'Problem':r.tipo==='Recordatorio'?'Reminder':'Update';
-  var msg=fechaFmt+'\n';
+  var msg='\uD83D\uDCCB SGMR1 Report\n';
   msg+='Web: '+r.sitio+'\n';
   if(r.partner)msg+='Partner: '+r.partner+'\n';
   msg+='Category: '+tipo+'\n';
-  msg+='\n';
   msg+='Event: '+(eventSummary||r.texto||'');
   return msg;
-}
-function msgToHtml(plain){
-  return plain
-    .replace(/^(Web:|Partner:|Category:|Event:)/gm,function(m){return '<b>'+m.slice(0,-1)+'</b>:';})
-    .replace(/\n/g,'\n');
 }
 function generateAISummary(r,cb){
   var akey=anthropicKey||PRESET_AKEY;
@@ -1715,6 +1709,7 @@ function sendTelegram(idx){
   if(!r)return;
   _tgPreviewIdx=idx;
   _tgPreviewImg=null;
+  showToast('Generando resumen...','ok');
   generateAISummary(r,function(summary){
     var msg=generateSummary(r,summary);
     var ov=document.getElementById('tg-preview-overlay');
@@ -1727,20 +1722,6 @@ function sendTelegram(idx){
     fname.textContent='';
     _tgPreviewImg=null;
     finp.value='';
-    // Mostrar screenshot existente del evento
-    var existRow=document.getElementById('tg-existing-scr');
-    var existThumb=document.getElementById('tg-existing-thumb');
-    var existChk=document.getElementById('tg-use-existing');
-    if(r.screenshot){
-      existThumb.src=r.screenshot;
-      existRow.style.display='flex';
-      existChk.checked=false;
-      _tgPreviewImg=null;
-    } else {
-      existRow.style.display='none';
-      existChk.checked=false;
-    }
-    existChk.onchange=function(){_tgPreviewImg=existChk.checked?r.screenshot:null;};
     finp.onchange=function(){
       var file=finp.files[0];
       if(!file)return;
@@ -1753,10 +1734,8 @@ function sendTelegram(idx){
       };
       reader.readAsDataURL(file);
     };
-    // Cerrar detalle del evento si esta abierto
-    var annoOv=document.getElementById('anno-detail-overlay');
-    if(annoOv)annoOv.classList.remove('open');
     ov.classList.add('open');
+    showToast('','ok');
   });
 }
 function closeTgPreview(){
@@ -1767,13 +1746,12 @@ function closeTgPreview(){
 function confirmTgSend(test){
   var idx=_tgPreviewIdx;
   if(idx===null||idx===undefined)return;
-  var plainMsg=document.getElementById('tg-preview-text').value.trim();
-  if(!plainMsg)return;
-  var msg=msgToHtml(plainMsg);
+  var msg=document.getElementById('tg-preview-text').value.trim();
+  if(!msg)return;
   var BOT=test?'8290249003:AAGT4vDIM6XnExlqex7a7_k2JkmCzulXw18':'8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
   var CHAT=test?'1842693553':'832763879';
   var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg,parse_mode:'HTML'})})
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:msg})})
   .then(function(res){return res.json();})
   .then(function(data){
     if(data.ok){
@@ -1891,14 +1869,9 @@ load();
     </div>
     <div>
       <div class="tg-preview-label" style="margin-bottom:6px">Screenshot (opcional)</div>
-      <div id="tg-existing-scr" style="display:none;align-items:center;gap:10px;margin-bottom:8px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px">
-        <img id="tg-existing-thumb" style="width:40px;height:40px;object-fit:cover;border-radius:5px;border:1px solid var(--border)"/>
-        <span style="font-size:13px;color:var(--text2);flex:1">Screenshot del evento</span>
-        <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text);cursor:pointer"><input type="checkbox" id="tg-use-existing" checked style="cursor:pointer"/> Incluir</label>
-      </div>
       <div class="tg-preview-screen">
         <img id="tg-preview-thumb" class="tg-preview-thumb" style="display:none"/>
-        <label class="btn sm" style="cursor:pointer;font-size:13px;padding:5px 12px">📎 Adjuntar nuevo<input type="file" id="tg-preview-file" accept="image/*" style="display:none"/></label>
+        <label class="btn sm" style="cursor:pointer;font-size:13px;padding:5px 12px">📎 Adjuntar<input type="file" id="tg-preview-file" accept="image/*" style="display:none"/></label>
         <span id="tg-preview-fname" style="font-size:13px;color:var(--text3)"></span>
       </div>
     </div>
