@@ -1729,8 +1729,8 @@ function sendTelegram(idx){
     if(r.screenshot){
       existThumb.src=r.screenshot;
       existRow.style.display='flex';
-      existChk.checked=true;
-      _tgPreviewImg=r.screenshot;
+      existChk.checked=false;
+      _tgPreviewImg=null;
     } else {
       existRow.style.display='none';
       existChk.checked=false;
