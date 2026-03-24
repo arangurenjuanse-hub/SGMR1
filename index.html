@@ -1718,7 +1718,7 @@ function sendTelegram(idx,_unused){
   fetch("https://api.telegram.org/bot8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10/sendMessage",{
     method:"POST",
     headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({chat_id:"832763879",text:msg,parse_mode:"Markdown"})
+    body:JSON.stringify({chat_id:"832763879",text:msg})
   }).then(function(res){return res.json();}).then(function(data){
     if(data.ok){
       rows[idx].tgSent=true;
@@ -1747,7 +1747,7 @@ function confirmTgSend(test){
   var BOT=test?'8290249003:AAGT4vDIM6XnExlqex7a7_k2JkmCzulXw18':'8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
   var CHAT=test?'1842693553':'832763879';
   var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:htmlMsg,parse_mode:'HTML'})})
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:htmlMsg})})
   .then(function(res){return res.json();})
   .then(function(data){
     if(data.ok){
