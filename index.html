@@ -851,7 +851,7 @@ async function loadSB(){
     if(!r.ok)return;
     const data=await r.json();
     if(Array.isArray(data)&&data.length>0){
-      rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado}));
+      var _ssLookup={};try{var _lsR=ls("sgmr_rows");if(_lsR)JSON.parse(_lsR).forEach(function(x){if(x.screenshot)_ssLookup[x.id]=x.screenshot;});}catch(e){}rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,screenshot:_ssLookup[r.id]||null}));
       ls('sgmr_rows',JSON.stringify(rows));buildSiteFilter();renderList();updateStats();
     }
   }catch(e){}
