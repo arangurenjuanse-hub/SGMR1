@@ -1710,22 +1710,28 @@ function sendTelegram(idx,_x){
   window._tgPendingRow=rows[idx];
   var r=rows[idx];if(!r)return;
   var fecha=r.fecha||new Date().toLocaleDateString("es-AR");
-  var note=r.summary||r.texto||"-";
-  var msg="SGMR Notification\n\nDate: "+fecha+"\nSite: "+(r.sitio||"-")+"\nPartner: "+(r.partner||"-")+"\nCategory: "+(r.tipo||"-")+"\nNote: "+note;
-  var ta=document.getElementById("tg-preview-text");
-  if(ta)ta.value=msg;
-  var imgSection=document.getElementById("tg-img-section");
-  var thumb=document.getElementById("tg-preview-thumb");
-  var chk=document.getElementById("tg-include-img");
-  if(r.screenshot&&imgSection&&thumb){
-    thumb.src=r.screenshot;
-    imgSection.style.display="block";
-    if(chk)chk.checked=true;
-  }else if(imgSection){
-    imgSection.style.display="none";
+  var noteRaw=r.summary||r.texto||"-";
+  function buildAndOpenPreview(noteEn){
+    var msg="SGMR Notification\n\nDate: "+fecha+"\nSite: "+(r.sitio||"-")+"\nPartner: "+(r.partner||"-")+"\nCategory: "+(r.tipo||"-")+"\nNote: "+noteEn;
+    var ta=document.getElementById("tg-preview-text");
+    if(ta)ta.value=msg;
+    var imgSection=document.getElementById("tg-img-section");
+    var thumb=document.getElementById("tg-preview-thumb");
+    var chk=document.getElementById("tg-include-img");
+    if(r.screenshot&&imgSection&&thumb){thumb.src=r.screenshot;imgSection.style.display="block";if(chk)chk.checked=true;}
+    else if(imgSection){imgSection.style.display="none";}
+    var overlay=document.getElementById("tg-preview-overlay");
+    if(overlay)overlay.classList.add("open");
   }
-  var overlay=document.getElementById("tg-preview-overlay");
-  if(overlay)overlay.classList.add("open");
+  if(anthropicKey&&noteRaw&&noteRaw!=="-"){
+    fetch("https://sgmr.arangurenjuanse.workers.dev/",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({apiKey:anthropicKey,payload:{model:"claude-haiku-4-5-20251001",max_tokens:150,
+        messages:[{role:"user",content:"Translate this text to English. Return only the translation, no explanation: "+noteRaw}]}})
+    }).then(function(r2){return r2.json();})
+    .then(function(data){var translated=(data.content&&data.content[0]&&data.content[0].text)||noteRaw;buildAndOpenPreview(translated);})
+    .catch(function(){buildAndOpenPreview(noteRaw);});
+  }else{buildAndOpenPreview(noteRaw);}
 }
 function closeTgPreview(){
   document.getElementById('tg-preview-overlay').classList.remove('open');
