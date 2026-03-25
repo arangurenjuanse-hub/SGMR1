@@ -851,7 +851,7 @@ async function loadSB(){
     if(!r.ok)return;
     const data=await r.json();
     if(Array.isArray(data)&&data.length>0){
-      var _ssLookup={};try{var _lsR=ls("sgmr_rows");if(_lsR)JSON.parse(_lsR).forEach(function(x){if(x.screenshot)_ssLookup[x.id]=x.screenshot;});}catch(e){}rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,screenshot:_ssLookup[r.id]||null}));
+      var _ssLookup={};try{var _lsR=ls("sgmr_rows");if(_lsR)JSON.parse(_lsR).forEach(function(x){if(x.screenshot)_ssLookup[x.id]=x.screenshot;});}catch(e){}rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,tgSent:r.tg_sent||false,tgSentAt:r.tg_sent_at||null,screenshot:_ssLookup[r.id]||null}));
       ls('sgmr_rows',JSON.stringify(rows));buildSiteFilter();loadSBScreenshots(function(){renderList();updateStats();});
     }
   }catch(e){}
@@ -877,7 +877,7 @@ async function uploadScreenshot(base64,rowId,cb){
 async function saveSB(row){
   if(!sbUrl||!sbKey)return false;
   try{
-    var payload={fecha:row.fecha,tipo:row.tipo,sitio:row.sitio,texto:row.texto,partner:row.partner||'',estado:row.estado,nombre:row.nombre||'',tg_sent:row.tgSent||false};
+    var payload={fecha:row.fecha,tipo:row.tipo,sitio:row.sitio,texto:row.texto,partner:row.partner||'',estado:row.estado,tg_sent:row.tgSent||false,tg_sent_at:row.tgSentAt||null,nombre:row.nombre||'',tg_sent:row.tgSent||false};
     var res=await fetch(sbUrl+'/rest/v1/anotaciones',{method:'POST',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(payload)});
     if(!res.ok)return false;
     var data=await res.json();
