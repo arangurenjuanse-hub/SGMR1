@@ -1734,24 +1734,25 @@ function closeTgPreview(){
 }
 function confirmTgSend(isTest){
   var idx=window._tgPendingIdx;
-  if(idx==null)return;
+  if(idx==null||idx===undefined)return;
   var ta=document.getElementById("tg-preview-text");
   var msg=ta?ta.value:"";if(!msg)return;
   var chk=document.getElementById("tg-include-img");
   var useImg=chk&&chk.checked&&window._tgPendingRow&&window._tgPendingRow.screenshot;
-  var chatId=isTest?"832763879":"832763879";
+  var botToken=isTest?"8733472218:AAEherUtJPVxwhGpmlhRBaotePFbR9vbnGI":"8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10";
+  var chatId=isTest?"1842693553":"832763879";
+  var base="https://api.telegram.org/bot"+botToken+"/";
   closeTgPreview();
-  var bot="https://api.telegram.org/bot8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10/";
   if(useImg){
     var blob=dataURLtoBlob(window._tgPendingRow.screenshot);
     var fd=new FormData();
     fd.append("chat_id",chatId);fd.append("caption",msg);fd.append("photo",blob,"screenshot.jpg");
-    fetch(bot+"sendPhoto",{method:"POST",body:fd})
+    fetch(base+"sendPhoto",{method:"POST",body:fd})
     .then(function(r){return r.json();}).then(function(data){
       if(data.ok){_markSent(idx,isTest);}else{showToast("Error: "+data.description,"err");}
     }).catch(function(e){showToast("Error: "+e.message,"err");});
   }else{
-    fetch(bot+"sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},
+    fetch(base+"sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({chat_id:chatId,text:msg})})
     .then(function(r){return r.json();}).then(function(data){
       if(data.ok){_markSent(idx,isTest);}else{showToast("Error: "+data.description,"err");}
