@@ -851,7 +851,7 @@ async function loadSB(){
     if(!r.ok)return;
     const data=await r.json();
     if(Array.isArray(data)&&data.length>0){
-      var _ssLookup={};try{var _lsR=ls("sgmr_rows");if(_lsR)JSON.parse(_lsR).forEach(function(x){if(x.screenshot)_ssLookup[x.id]=x.screenshot;});}catch(e){}rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,screenshot:_ssLookup[r.id]||null}));
+      rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado}));
       ls('sgmr_rows',JSON.stringify(rows));buildSiteFilter();renderList();updateStats();
     }
   }catch(e){}
@@ -952,7 +952,7 @@ function renderList(){
       const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
       const ecls=r.estado==='En proceso'?'en-proceso':r.estado==='Listo'?'listo':'';
       const row=document.createElement('div');row.className=`anno-row ${cls}`;row.onclick=(e)=>{if(e.target.closest('.kb-rm,.etag'))return;openAnnoDetail(idx);};
-      row.innerHTML=`<div class="row-bar" style="background:${getTipoColor(r.tipo)||''};opacity:.9"></div><div class="rc"><span class="rtype ${cls}" style="background:${getTipoColor(r.tipo)}22;color:${getTipoColor(r.tipo)};border-color:${getTipoColor(r.tipo)}55">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c" style="display:flex;gap:4px"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="event.stopPropagation();sendTelegram(${idx},false)" title="${r.tgSent?'Enviado':'Enviar a Sigmundur'}">${r.tgSent?'&#10003; Sent':'&#9992; TG'}</button><button class="tg-btn" onclick="sendTelegram(${idx},true)" title="Test: enviar a mi mismo" style="font-size:11px;opacity:.6">&#128272;</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
+      row.innerHTML=`<div class="row-bar" style="background:${getTipoColor(r.tipo)||''};opacity:.9"></div><div class="rc"><span class="rtype ${cls}" style="background:${getTipoColor(r.tipo)}22;color:${getTipoColor(r.tipo)};border-color:${getTipoColor(r.tipo)}55">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c" style="display:flex;gap:4px"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(${idx},false)" title="${r.tgSent?'Enviado':'Enviar a Sigmundur'}">${r.tgSent?'&#10003; Sent':'&#9992; TG'}</button><button class="tg-btn" onclick="sendTelegram(${idx},true)" title="Test: enviar a mi mismo" style="font-size:11px;opacity:.6">&#128272;</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
       sec.appendChild(row);
     });
     scroll.appendChild(sec);
@@ -1061,7 +1061,7 @@ async function send(){
   const inp=document.getElementById('msg');
   const text=inp.value.trim(),imgs=[...pendingImgs];
   if(!text&&!imgs.length)return;
-  let userHtml='';(imgs||[]).forEach(img=>{userHtml+=`<img src="${img.dataUrl}"/>\n`;});
+  let userHtml='';imgs.forEach(img=>{userHtml+=`<img src="${img.dataUrl}"/>\n`;});
   if(text)userHtml+=esc(text);
   addUserMsg(userHtml);
   inp.value='';inp.style.height='auto';pendingImgs=[];renderStrip();
@@ -1105,7 +1105,7 @@ REGLAS ABSOLUTAS:
   const res=await fetch('https://sgmr.arangurenjuanse.workers.dev/',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({apiKey:anthropicKey,payload:{model:'claude-haiku-4-5-20251001',max_tokens:600,system:sys,messages:chatHistory}})
+    body:JSON.stringify({apiKey:anthropicKey,payload:{model:'claude-sonnet-4-20250514',max_tokens:600,system:sys,messages:chatHistory}})
   });
   if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
   const data=await res.json();
@@ -1704,63 +1704,72 @@ function generateAISummary(r,cb){
 }
 var _tgPreviewIdx=null;
 var _tgPreviewImg=null;
-function sendTelegram(idx,_x){
-  window._tgPendingIdx=idx;
-  window._tgPendingRow=rows[idx];
-  var r=rows[idx];if(!r)return;
-  var fecha=r.fecha||new Date().toLocaleDateString("es-AR");
-  var note=r.summary||r.texto||"-";
-  var msg="SGMR Notification\n\nDate: "+fecha+"\nSite: "+(r.sitio||"-")+"\nPartner: "+(r.partner||"-")+"\nCategory: "+(r.tipo||"-")+"\nNote: "+note;
-  var ta=document.getElementById("tg-preview-text");
-  if(ta)ta.value=msg;
-  var imgSection=document.getElementById("tg-img-section");
-  var thumb=document.getElementById("tg-preview-thumb");
-  var chk=document.getElementById("tg-include-img");
-  if(r.screenshot&&imgSection&&thumb){
-    thumb.src=r.screenshot;
-    imgSection.style.display="block";
-    if(chk)chk.checked=true;
-  }else if(imgSection){
-    imgSection.style.display="none";
-  }
-  var overlay=document.getElementById("tg-preview-overlay");
-  if(overlay)overlay.classList.add("open");
+function sendTelegram(idx){
+  var r=rows[idx];
+  if(!r)return;
+  _tgPreviewIdx=idx;
+  _tgPreviewImg=null;
+  showToast('Generando resumen...','ok');
+  generateAISummary(r,function(summary){
+    var msg=generateSummary(r,summary);
+    var ov=document.getElementById('tg-preview-overlay');
+    var ta=document.getElementById('tg-preview-text');
+    var thumb=document.getElementById('tg-preview-thumb');
+    var fname=document.getElementById('tg-preview-fname');
+    var finp=document.getElementById('tg-preview-file');
+    ta.value=msg;
+    thumb.style.display='none';
+    fname.textContent='';
+    _tgPreviewImg=null;
+    finp.value='';
+    finp.onchange=function(){
+      var file=finp.files[0];
+      if(!file)return;
+      var reader=new FileReader();
+      reader.onload=function(e){
+        _tgPreviewImg=e.target.result;
+        thumb.src=_tgPreviewImg;
+        thumb.style.display='block';
+        fname.textContent=file.name;
+      };
+      reader.readAsDataURL(file);
+    };
+    var annoOv=document.getElementById('anno-detail-overlay');
+    if(annoOv)annoOv.classList.remove('open');
+    ov.classList.add('open');
+    showToast('','ok');
+  });
 }
 function closeTgPreview(){
   document.getElementById('tg-preview-overlay').classList.remove('open');
   _tgPreviewIdx=null;
   _tgPreviewImg=null;
 }
-function confirmTgSend(isTest){
-  var idx=window._tgPendingIdx;
-  if(idx==null)return;
-  var ta=document.getElementById("tg-preview-text");
-  var msg=ta?ta.value:"";if(!msg)return;
-  var chk=document.getElementById("tg-include-img");
-  var useImg=chk&&chk.checked&&window._tgPendingRow&&window._tgPendingRow.screenshot;
-  var chatId=isTest?"832763879":"832763879";
-  closeTgPreview();
-  var bot="https://api.telegram.org/bot8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10/";
-  if(useImg){
-    var blob=dataURLtoBlob(window._tgPendingRow.screenshot);
-    var fd=new FormData();
-    fd.append("chat_id",chatId);fd.append("caption",msg);fd.append("photo",blob,"screenshot.jpg");
-    fetch(bot+"sendPhoto",{method:"POST",body:fd})
-    .then(function(r){return r.json();}).then(function(data){
-      if(data.ok){_markSent(idx,isTest);}else{showToast("Error: "+data.description,"err");}
-    }).catch(function(e){showToast("Error: "+e.message,"err");});
-  }else{
-    fetch(bot+"sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({chat_id:chatId,text:msg})})
-    .then(function(r){return r.json();}).then(function(data){
-      if(data.ok){_markSent(idx,isTest);}else{showToast("Error: "+data.description,"err");}
-    }).catch(function(e){showToast("Error: "+e.message,"err");});
-  }
-}
-function _markSent(idx,isTest){
-  if(!isTest){rows[idx].tgSent=true;rows[idx].tgSentAt=new Date().toISOString();
-  ls("sgmr_rows",JSON.stringify(rows));renderList();updateStats();}
-  showToast(isTest?"Test enviado":"Enviado a Sigmundur","ok");
+function confirmTgSend(test){
+  var idx=_tgPreviewIdx;
+  if(idx===null||idx===undefined)return;
+  var plainMsg=document.getElementById('tg-preview-text').value.trim();
+  if(!plainMsg)return;
+  var htmlMsg=plainMsg
+    .replace('Web: ','<b>Web:</b> ')
+    .replace('Partner: ','<b>Partner:</b> ')
+    .replace('Category: ','<b>Category:</b> ')
+    .replace('Event: ','<b>Event:</b> ');
+  var BOT=test?'8290249003:AAGT4vDIM6XnExlqex7a7_k2JkmCzulXw18':'8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
+  var CHAT=test?'1842693553':'832763879';
+  var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:htmlMsg,parse_mode:'HTML'})})
+  .then(function(res){return res.json();})
+  .then(function(data){
+    if(data.ok){
+      if(!test){rows[idx].tgSent=true;ls('sgmr_rows',JSON.stringify(rows));patchSB(rows[idx]);renderList();}
+      closeTgPreview();
+      showToast(test?'Test enviado a vos':'Enviado a Sigmundur','ok');
+    } else {
+      showToast('Error: '+data.description,'err');
+    }
+  })
+  .catch(function(e){showToast('Error: '+e.message,'err');});
 }
 
 function saveConfigToSB(){
@@ -1850,12 +1859,6 @@ function bindDrag(container){
     });
   });
 }
-function dataURLtoBlob(dataUrl){
-  var arr=dataUrl.split(",");var mime=arr[0].match(/:(.*?);/)[1];
-  var bstr=atob(arr[1]);var n=bstr.length;var u8=new Uint8Array(n);
-  while(n--){u8[n]=bstr.charCodeAt(n);}
-  return new Blob([u8],{type:mime});
-}
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
   t.className='toast show'+(type?' '+type:'');
@@ -1871,17 +1874,18 @@ load();
       <div class="tg-preview-label" style="margin-bottom:6px">Mensaje</div>
       <textarea class="tg-preview-textarea" id="tg-preview-text"></textarea>
     </div>
-    <div id="tg-img-section" style="display:none">
-      <div class="tg-preview-label" style="margin-bottom:6px">Screenshot</div>
-      <img id="tg-preview-thumb" style="width:100%;max-height:160px;object-fit:cover;border-radius:8px;border:1px solid var(--border);display:block;margin-bottom:8px" src="" alt=""/>
-      <label style="display:flex;align-items:center;gap:8px;font-size:14px;cursor:pointer;color:var(--text2)">
-        <input type="checkbox" id="tg-include-img" checked/> Incluir screenshot en el mensaje
-      </label>
+    <div>
+      <div class="tg-preview-label" style="margin-bottom:6px">Screenshot (opcional)</div>
+      <div class="tg-preview-screen">
+        <img id="tg-preview-thumb" class="tg-preview-thumb" style="display:none"/>
+        <label class="btn sm" style="cursor:pointer;font-size:13px;padding:5px 12px">📎 Adjuntar<input type="file" id="tg-preview-file" accept="image/*" style="display:none"/></label>
+        <span id="tg-preview-fname" style="font-size:13px;color:var(--text3)"></span>
+      </div>
     </div>
-    <div class="tg-preview-footer">
+    <div class="tg-preview-actions">
       <button class="btn sm" onclick="closeTgPreview()">Cancelar</button>
-      <button class="btn sm" onclick="confirmTgSend(true)" style="background:var(--surface3)">👁 Test</button>
-      <button class="btn primary sm" onclick="confirmTgSend(false)">✈ Sigmundur</button>
+      <button class="btn sm" onclick="confirmTgSend(true)" style="border-color:#2AABEE;color:#2AABEE">👁 Test (yo)</button>
+      <button class="btn sm primary" onclick="confirmTgSend(false)">✈ Enviar a Sigmundur</button>
     </div>
   </div>
 </div>
