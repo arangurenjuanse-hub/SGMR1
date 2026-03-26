@@ -3,46 +3,6 @@
 // Data: load, save, Supabase sync
 // ═══════════════════════════════════
 
-function load(){
-  try{const d=ls('sgmr_rows');if(d)rows=JSON.parse(d);}catch(e){}
-  try{var _sd=ls('sgmr_sites');if(_sd){kbSites=JSON.parse(_sd);sites=kbSites;}}catch(e){}
-  try{var _pd=ls('sgmr_kb_partners');if(_pd)kbPartners=JSON.parse(_pd);}catch(e){}
-  try{var _cd=ls('sgmr_kb_cats');if(_cd)kbCatTypes=JSON.parse(_cd);}catch(e){}
-
-  // Use preset keys if no saved ones
-  anthropicKey=ls('sgmr_akey')||PRESET_AKEY;
-  sbUrl=ls('sgmr_sb_url')||PRESET_SBURL;
-  sbKey=ls('sgmr_sb_key')||PRESET_SBKEY;
-
-  document.getElementById('cfg-apikey').value=anthropicKey;
-  document.getElementById('cfg-url').value=sbUrl;
-  document.getElementById('cfg-key').value=sbKey;
-
-  buildSiteFilter();loadConfigFromSB();
-  renderList();updateStats();
-  setPreset(5,document.querySelector('.preset[data-d="5"]'));
-  const _claxonGreetings = [
-  '😴 Hola. Acá estoy, como siempre. Nadie me preguntó si quería, pero igual. ¿Qué necesitás?',
-  '🥱 Buenís. Arranco con lo mínimo indispensable de energía. ¿En qué andamos?',
-  '💤 Me agarrás recién. No estaba durmiendo, estaba... procesando. ¿Qué hay?',
-  '🤖 Sistemas online. Motivación: en construcción. ¿Qué me tirás?',
-  '☕️ Si me traerês un café sería otro panorama. Pero bueno, acá estamos. Dale.',
-  '😒 Otro día laboral sin feriado a la vista. Qué emocionante todo. ¿Qué necesitás?',
-  '🏖️ Sabés lo que me gustaría estar haciendo ahora? No importa. ¿En qué te ayudo?',
-  '😎 Buenas. Estaba ocupado no haciendo nada hasta que llegaste. ¿Qué onda?',
-  '💼 Acá estoy, presente en cuerpo. El espíritu lo negociamos después. ¿Qué me tenés?',
-  '😑 Hola. Sigo acá. Nadie me dio de baja todavía. Misterioso. ¿Qué necesitás?',
-  '⏰ No sé qué hora es, tampoco sé por qué me importaría. ¿En qué andamos?',
-  '🙈 Estaba pensando en nada y la verdad que me venía bien. Pero dale, ¿qué pasó?',
-  '🦷 Hola. Puntual como siempre, aunque nadie me lo pide. ¿Qué hacés?',
-  '💡 Prendí las luces. Costó cara esa energía. Que sirva para algo. Contame.',
-  '😬 No me preguntés cómo estoy que te cuento la verdad y se pone incómodo. Mejor tirá algo.',
-];
-addBotMsg(_claxonGreetings[Math.floor(Math.random()*_claxonGreetings.length)]);
-  if(sbUrl&&sbKey)loadSB();
-  loadTodos();
-}
-
 async function loadSB(){
   try{
     const r=await fetch(`${sbUrl}/rest/v1/anotaciones?order=created_at.asc`,{headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`}});
@@ -53,6 +13,27 @@ async function loadSB(){
       ls('sgmr_rows',JSON.stringify(rows));buildSiteFilter();renderList();updateStats();
     }
   }catch(e){}
+}
+
+async function saveSB(row){
+  if(!sbUrl||!sbKey)return false;
+  try{
+    var payload={fecha:row.fecha,tipo:row.tipo,sitio:row.sitio,texto:row.texto,partner:row.partner||'',estado:row.estado,nombre:row.nombre||'',tg_sent:row.tgSent||false};
+    var res=await fetch(sbUrl+'/rest/v1/anotaciones',{method:'POST',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(payload)});
+    if(!res.ok)return false;
+    var data=await res.json();
+    if(data&&data[0])row.id=data[0].id;
+    if(row.screenshot&&row.id){
+      uploadScreenshot(row.screenshot,row.id,function(url){
+        if(url){
+          row.screenshot_url=url;
+          fetch(sbUrl+'/rest/v1/anotaciones?id=eq.'+row.id,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json'},body:JSON.stringify({screenshot_url:url})});
+          ls('sgmr_rows',JSON.stringify(rows));
+        }
+      });
+    }
+    return true;
+  }catch(e){return false;}
 }
 
 function saveTodos(){
