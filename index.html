@@ -1061,7 +1061,7 @@ async function send(){
   const inp=document.getElementById('msg');
   const text=inp.value.trim(),imgs=[...pendingImgs];
   if(!text&&!imgs.length)return;
-  let userHtml='';imgs.forEach(img=>{userHtml+=`<img src="${img.dataUrl}"/>\n`;});
+  let userHtml='';(imgs||[]).forEach(img=>{userHtml+=`<img src="${img.dataUrl}"/>\n`;});
   if(text)userHtml+=esc(text);
   addUserMsg(userHtml);
   inp.value='';inp.style.height='auto';pendingImgs=[];renderStrip();
