@@ -1077,7 +1077,18 @@ async function send(){
 
 async function callAI(text,imgs){
   const kbCtx=buildkbCtx();
-  const sys="You are Claxon, an annotation management assistant for casino/crypto affiliate websites. ALWAYS respond ONLY with valid JSON. NEVER respond with free text. SITUATION: you help manage notes, problems, reminders and changes across multiple sites. CONTEXT:\n"+kbCtx+";\nRESPOND ONLY with this JSON format: {\"action\":\"annotate\"|\"ask\"|\"answer\", \"tipo\":\"Problem\"|\"Reminder\"|\"Change/Comment\", \"sitio\":\"site name\", \"partner\":\"partner name\", \"texto\":\"short description in English\", \"notas\":\"additional notes\", \"respuesta\":\"response if action is ask or answer\"}";
+  const sys='You are Claxon, an annotation management assistant for casino/crypto affiliate websites. ALWAYS respond ONLY with valid JSON. NEVER respond with free text. CONTEXT:\n'+kbCtx+'\nRESPOND ONLY with this JSON: {"action":"annotate"|"ask"|"answer","tipo":"Problem"|"Reminder"|"Change/Comment","sitio":"site name","partner":"partner name","texto":"short description","notas":"additional notes","respuesta":"response if ask/answer"}';
+  const userContent=[];
+  if(imgs&&imgs.length)imgs.forEach(function(img){userContent.push({type:'image',source:{type:'base64',media_type:img.type,data:img.data}});});
+  userContent.push({type:'text',text:text});
+  chatHistory.push({role:'user',content:userContent});
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'x-api-key':anthropicKey,'anthropic-version':'2023-06-01','Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,system:sys,messages:chatHistory})
+  });
+  const d=await res.json();
+  const raw=(d.content&&d.content[0]&&d.content[0].text)||'{"action":"answer","respuesta":"Error connecting"}';
   chatHistory.push({role:'assistant',content:[{type:'text',text:raw}]});
   return JSON.parse(raw.replace(/```json|```/g,'').trim());
 }
