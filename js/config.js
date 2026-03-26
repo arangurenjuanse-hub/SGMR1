@@ -1,6 +1,6 @@
 // ═══════════════════════════════════
-// SGMR - config.js  
-// Global variables and helper utilities
+// SGMR - config.js
+// Global variables, constants, helpers
 // ═══════════════════════════════════
 
 /* ── DEFAULT DATA ── */
@@ -41,9 +41,3 @@ function buildKBContext(){
 }
 
 /* ── LOAD ── */
-
-// Telegram tokens
-var _TG_SIG_TOKEN='8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
-var _TG_SIG_CHAT='832763879';
-var _TG_ME_TOKEN='8733472218:AAEherUtJPVxwhGpmlhRBaotePFbR9vbnGI';
-var _TG_ME_CHAT='1842693553';
