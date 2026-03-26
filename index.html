@@ -1077,7 +1077,7 @@ async function send(){
 
 async function callAI(text,imgs){
   const kbCtx=buildKBContext();
-  const sys='You are Claxon, an annotation management assistant for casino/crypto affiliate websites. ALWAYS respond ONLY with valid JSON. NEVER respond with free text. CONTEXT:\n'+kbCtx+'\nRESPOND ONLY with this JSON format: {"action":"annotate"|"ask"|"answer", "tipo":"Problem"|"Reminder"|"Change/Comment", "sitio":"site name", "partner":"partner name", "texto":"short description in English", "notas":"additional notes", "respuesta":"response if ask or answer"}';
+  const sys='You are Claxon, an annotation management assistant for casino/crypto affiliate websites. The user may write in any language — ALWAYS translate all content to English before saving. ALWAYS respond ONLY with valid JSON. NEVER respond with free text. CONTEXT:\n'+kbCtx+'\nRESPOND ONLY with this JSON format: {"action":"annotate"|"ask"|"answer", "tipo":"Problem"|"Reminder"|"Change/Comment", "sitio":"site name", "partner":"partner name", "texto":"short description in English", "notas":"additional notes in English", "respuesta":"response in English"}. IMPORTANT: texto and notas must ALWAYS be in English regardless of input language.';
 
   const userContent=[];
   imgs.forEach(img=>{userContent.push({type:'image',source:{type:'base64',media_type:img.type,data:img.b64}});});
