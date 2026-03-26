@@ -795,7 +795,7 @@ function fmtDay(str){const d=parseDate(str);if(isNaN(d.getTime()))return str;con
 function toInputDate(d){return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
 
 /* ── KNOWLEDGE BASE context ── */
-function buildKBContext(){
+function buildkbCtx(){
   let ctx='';
   if(kbPartners.length){ctx+='\nPARTNERS (alias → nombre real):\n'+kbPartners.map(x=>`  "${x.alias}" → "${x.full}"`).join('\n');}
   if(kbSites.length){ctx+='\nSITIOS (alias → nombre real):\n'+kbSites.map(x=>`  "${x.alias}" → "${x.full}"`).join('\n');}
@@ -1076,8 +1076,8 @@ async function send(){
 }
 
 async function callAI(text,imgs){
-  const kbCtx=buildKBContext();
-  const sys="You are Claxon, an annotation management assistant for casino/crypto affiliate websites. ALWAYS respond ONLY with valid JSON. NEVER respond with free text. SITUATION: you help manage notes, problems, reminders and changes across multiple sites. CONTEXT:\n"+KBContext+";\nRESPOND ONLY with this JSON format: {\"action\":\"annotate\"|\"ask\"|\"answer\", \"tipo\":\"Problem\"|\"Reminder\"|\"Change/Comment\", \"sitio\":\"site name\", \"partner\":\"partner name\", \"texto\":\"short description in English\", \"notas\":\"additional notes\", \"respuesta\":\"response if action is ask or answer\"}";
+  const kbCtx=buildkbCtx();
+  const sys="You are Claxon, an annotation management assistant for casino/crypto affiliate websites. ALWAYS respond ONLY with valid JSON. NEVER respond with free text. SITUATION: you help manage notes, problems, reminders and changes across multiple sites. CONTEXT:\n"+kbCtx+";\nRESPOND ONLY with this JSON format: {\"action\":\"annotate\"|\"ask\"|\"answer\", \"tipo\":\"Problem\"|\"Reminder\"|\"Change/Comment\", \"sitio\":\"site name\", \"partner\":\"partner name\", \"texto\":\"short description in English\", \"notas\":\"additional notes\", \"respuesta\":\"response if action is ask or answer\"}";
   chatHistory.push({role:'assistant',content:[{type:'text',text:raw}]});
   return JSON.parse(raw.replace(/```json|```/g,'').trim());
 }
