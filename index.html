@@ -1,5 +1,5 @@
-<!-- v1774487428641 -->
 <!DOCTYPE html>
+<!-- v1774220211555 -->
 <html lang="es">
 <head>
 <meta charset="UTF-8"/>
@@ -795,7 +795,7 @@ function fmtDay(str){const d=parseDate(str);if(isNaN(d.getTime()))return str;con
 function toInputDate(d){return`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;}
 
 /* ── KNOWLEDGE BASE context ── */
-function buildkbCtx(){
+function buildKBContext(){
   let ctx='';
   if(kbPartners.length){ctx+='\nPARTNERS (alias → nombre real):\n'+kbPartners.map(x=>`  "${x.alias}" → "${x.full}"`).join('\n');}
   if(kbSites.length){ctx+='\nSITIOS (alias → nombre real):\n'+kbSites.map(x=>`  "${x.alias}" → "${x.full}"`).join('\n');}
@@ -851,8 +851,8 @@ async function loadSB(){
     if(!r.ok)return;
     const data=await r.json();
     if(Array.isArray(data)&&data.length>0){
-      var _ssLookup={};try{var _lsR=ls("sgmr_rows");if(_lsR)JSON.parse(_lsR).forEach(function(x){if(x.screenshot)_ssLookup[x.id]=x.screenshot;});}catch(e){}rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,tgSent:r.tg_sent||false,tgSentAt:r.tg_sent_at||null,screenshot:_ssLookup[r.id]||null}));
-      ls('sgmr_rows',JSON.stringify(rows));buildSiteFilter();loadSBScreenshots(function(){renderList();updateStats();});
+      var _ssLookup={};try{var _lsR=ls("sgmr_rows");if(_lsR)JSON.parse(_lsR).forEach(function(x){if(x.screenshot)_ssLookup[x.id]=x.screenshot;});}catch(e){}rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,screenshot:_ssLookup[r.id]||null}));
+      ls('sgmr_rows',JSON.stringify(rows));buildSiteFilter();renderList();updateStats();
     }
   }catch(e){}
 }
@@ -877,7 +877,7 @@ async function uploadScreenshot(base64,rowId,cb){
 async function saveSB(row){
   if(!sbUrl||!sbKey)return false;
   try{
-    var payload={fecha:row.fecha,tipo:row.tipo,sitio:row.sitio,texto:row.texto,partner:row.partner||'',estado:row.estado,tg_sent:row.tgSent||false,tg_sent_at:row.tgSentAt||null,nombre:row.nombre||'',tg_sent:row.tgSent||false};
+    var payload={fecha:row.fecha,tipo:row.tipo,sitio:row.sitio,texto:row.texto,partner:row.partner||'',estado:row.estado,nombre:row.nombre||'',tg_sent:row.tgSent||false};
     var res=await fetch(sbUrl+'/rest/v1/anotaciones',{method:'POST',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(payload)});
     if(!res.ok)return false;
     var data=await res.json();
@@ -1076,19 +1076,40 @@ async function send(){
 }
 
 async function callAI(text,imgs){
-  const kbCtx=buildkbCtx();
-  const sys='You are Claxon, an annotation management assistant for casino/crypto affiliate websites. ALWAYS respond ONLY with valid JSON. NEVER respond with free text. CONTEXT:\n'+kbCtx+'\nRESPOND ONLY with this JSON: {"action":"annotate"|"ask"|"answer","tipo":"Problem"|"Reminder"|"Change/Comment","sitio":"site name","partner":"partner name","texto":"short description","notas":"additional notes","respuesta":"response if ask/answer"}';
+  const kbCtx=buildKBContext();
+  const sys=`Sos un asistente de gestión de anotaciones para sitios web de casino/crypto. SIEMPRE respondés SOLO con JSON válido. NUNCA respondés con texto libre.
+
+SITIOS DISPONIBLES: ${sites.join(', ')}
+${kbCtx}
+
+ANOTACIONES RECIENTES (últimas 40):
+${JSON.stringify(rows.slice(-40).map(r=>({fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado})))}
+
+REGLAS ABSOLUTAS:
+1. SIEMPRE respondés con uno de estos 3 JSON y nada más:
+   - Para anotar: {"action":"annotate","tipo":"Problema|Recordatorio|Cambio/Comentario","sitio":"nombre exacto","texto":"descripcion","partner":"partner o vacio","estado":"Pendiente"}
+   - Para preguntar algo: {"action":"ask","pregunta":"pregunta corta"}
+   - Para responder consultas: {"action":"answer","respuesta":"texto de respuesta"}
+2. Cuando ves una imagen: SIEMPRE creás una anotación. Describí lo que ves en "texto". Si no sabés el sitio usá "General".
+3. El texto junto a la imagen (ej: "7 stars - crypto bonus bet") indica el partner y/o sitio.
+4. Usá la base de conocimiento para resolver aliases.
+5. Inferí el tipo: error/falla/pago=Problema, tarea/pendiente=Recordatorio, nota/cambio=Cambio/Comentario.
+6. NUNCA escribas texto fuera del JSON. NUNCA uses markdown. SOLO JSON.`;
+
   const userContent=[];
-  if(imgs&&imgs.length)imgs.forEach(function(img){userContent.push({type:'image',source:{type:'base64',media_type:img.type,data:img.data}});});
-  userContent.push({type:'text',text:text});
+  imgs.forEach(img=>{userContent.push({type:'image',source:{type:'base64',media_type:img.type,data:img.b64}});});
+  userContent.push({type:'text',text:text||'Analizá esta imagen.'});
   chatHistory.push({role:'user',content:userContent});
-  const res=await fetch('https://api.anthropic.com/v1/messages',{
+  if(chatHistory.length>14)chatHistory=chatHistory.slice(-14);
+
+  const res=await fetch('https://sgmr.arangurenjuanse.workers.dev/',{
     method:'POST',
-    headers:{'x-api-key':anthropicKey,'anthropic-version':'2023-06-01','Content-Type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
-    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:500,system:sys,messages:chatHistory})
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({apiKey:anthropicKey,payload:{model:'claude-sonnet-4-20250514',max_tokens:600,system:sys,messages:chatHistory}})
   });
-  const d=await res.json();
-  const raw=(d.content&&d.content[0]&&d.content[0].text)||'{"action":"answer","respuesta":"Error connecting"}';
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
+  const data=await res.json();
+  const raw=data.content?.find(c=>c.type==='text')?.text||'{}';
   chatHistory.push({role:'assistant',content:[{type:'text',text:raw}]});
   return JSON.parse(raw.replace(/```json|```/g,'').trim());
 }
@@ -1118,8 +1139,7 @@ async function confirmSave(){
   const r=pendingConfirm;pendingConfirm=null;
   var autoTipo=r.tipo;if(!autoTipo||autoTipo==='Cambio/Comentario'){var txt=(r.texto||r.sitio||'').toLowerCase();if(txt.indexOf('problem')>-1||txt.indexOf('error')>-1||txt.indexOf('fall')>-1||txt.indexOf('issue')>-1||txt.indexOf('bug')>-1)autoTipo='Problema';else if(txt.indexOf('recordar')>-1||txt.indexOf('reminder')>-1||txt.indexOf('pending')>-1||txt.indexOf('pendiente')>-1)autoTipo='Recordatorio';else autoTipo=autoTipo||'Cambio/Comentario';}var autoNombre=r.texto?r.texto.slice(0,40):r.sitio;const row={fecha:nowFecha(),tipo:autoTipo,sitio:r.sitio,texto:r.texto,partner:r.partner||'',estado:r.estado||'Pendiente',nombre:autoNombre,tgSent:false};
   if(window._lastPastedImage){row.screenshot=window._lastPastedImage;window._lastPastedImage=null;}
-  const saved=await saveSB(row); rows.push(row);
-  if(row.screenshot)saveSBScreenshot(row.id,row.screenshot);ls('sgmr_rows',JSON.stringify(rows));
+  const saved=await saveSB(row); rows.push(row);ls('sgmr_rows',JSON.stringify(rows));
   buildSiteFilter();renderList();updateStats();
   addBotMsg(`✅ Guardado en <strong>${esc(row.sitio)}</strong>${saved?' y sincronizado en Supabase':' (guardado local)'}.`);
   showToast('Anotación guardada','ok');
@@ -1688,7 +1708,7 @@ function sendTelegram(idx,_x){
   window._tgPendingIdx=idx;
   window._tgPendingRow=rows[idx];
   var r=rows[idx];if(!r)return;
-  var fecha=r.fecha||new Date().toLocaleDateString("en-US");
+  var fecha=r.fecha||new Date().toLocaleDateString("es-AR");
   var note=r.summary||r.texto||"-";
   var msg="SGMR Notification\n\nDate: "+fecha+"\nSite: "+(r.sitio||"-")+"\nPartner: "+(r.partner||"-")+"\nCategory: "+(r.tipo||"-")+"\nNote: "+note;
   var ta=document.getElementById("tg-preview-text");
@@ -1696,8 +1716,13 @@ function sendTelegram(idx,_x){
   var imgSection=document.getElementById("tg-img-section");
   var thumb=document.getElementById("tg-preview-thumb");
   var chk=document.getElementById("tg-include-img");
-  if(r.screenshot&&imgSection&&thumb){thumb.src=r.screenshot;imgSection.style.display="block";if(chk)chk.checked=true;}
-  else if(imgSection){imgSection.style.display="none";}
+  if(r.screenshot&&imgSection&&thumb){
+    thumb.src=r.screenshot;
+    imgSection.style.display="block";
+    if(chk)chk.checked=true;
+  }else if(imgSection){
+    imgSection.style.display="none";
+  }
   var overlay=document.getElementById("tg-preview-overlay");
   if(overlay)overlay.classList.add("open");
 }
@@ -1708,25 +1733,24 @@ function closeTgPreview(){
 }
 function confirmTgSend(isTest){
   var idx=window._tgPendingIdx;
-  if(idx==null||idx===undefined)return;
+  if(idx==null)return;
   var ta=document.getElementById("tg-preview-text");
   var msg=ta?ta.value:"";if(!msg)return;
   var chk=document.getElementById("tg-include-img");
   var useImg=chk&&chk.checked&&window._tgPendingRow&&window._tgPendingRow.screenshot;
-  var botToken=isTest?"8733472218:AAEherUtJPVxwhGpmlhRBaotePFbR9vbnGI":"8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10";
-  var chatId=isTest?"1842693553":"832763879";
-  var base="https://api.telegram.org/bot"+botToken+"/";
+  var chatId=isTest?"832763879":"832763879";
   closeTgPreview();
+  var bot="https://api.telegram.org/bot8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10/";
   if(useImg){
     var blob=dataURLtoBlob(window._tgPendingRow.screenshot);
     var fd=new FormData();
     fd.append("chat_id",chatId);fd.append("caption",msg);fd.append("photo",blob,"screenshot.jpg");
-    fetch(base+"sendPhoto",{method:"POST",body:fd})
+    fetch(bot+"sendPhoto",{method:"POST",body:fd})
     .then(function(r){return r.json();}).then(function(data){
       if(data.ok){_markSent(idx,isTest);}else{showToast("Error: "+data.description,"err");}
     }).catch(function(e){showToast("Error: "+e.message,"err");});
   }else{
-    fetch(base+"sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},
+    fetch(bot+"sendMessage",{method:"POST",headers:{"Content-Type":"application/json"},
       body:JSON.stringify({chat_id:chatId,text:msg})})
     .then(function(r){return r.json();}).then(function(data){
       if(data.ok){_markSent(idx,isTest);}else{showToast("Error: "+data.description,"err");}
@@ -1831,45 +1855,6 @@ function dataURLtoBlob(dataUrl){
   var bstr=atob(arr[1]);var n=bstr.length;var u8=new Uint8Array(n);
   while(n--){u8[n]=bstr.charCodeAt(n);}
   return new Blob([u8],{type:mime});
-}
-
-function compressImage(dataUrl,cb){
-  var img=new Image();
-  img.onload=function(){
-    var c2=document.createElement('canvas');
-    var MAX=800,w=img.width,h=img.height;
-    if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
-    if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
-    c2.width=w;c2.height=h;
-    c2.getContext('2d').drawImage(img,0,0,w,h);
-    cb(c2.toDataURL('image/jpeg',0.5));
-  };
-  img.src=dataUrl;
-}
-function saveSBScreenshot(rowId,dataUrl){
-  if(!sbUrl||!sbKey||!dataUrl||!rowId)return;
-  compressImage(dataUrl,function(compressed){
-    fetch(sbUrl+'/rest/v1/screenshots',{
-      method:'POST',
-      headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates,return=minimal'},
-      body:JSON.stringify({id:String(rowId),data:compressed})
-    }).catch(function(){});
-  });
-}
-function loadSBScreenshots(onDone){
-  if(!sbUrl||!sbKey){onDone();return;}
-  fetch(sbUrl+'/rest/v1/screenshots?select=id,data',{
-    headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
-  }).then(function(r){return r.json();}).then(function(data){
-    if(data&&data.length){
-      data.forEach(function(s){
-        var idx=rows.findIndex(function(r){return String(r.id)===String(s.id);});
-        if(idx>=0)rows[idx].screenshot=s.data;
-      });
-      ls('sgmr_rows',JSON.stringify(rows));
-    }
-    onDone();
-  }).catch(function(){onDone();});
 }
 function showToast(msg,type){
   const t=document.getElementById('toast');t.textContent=msg;
