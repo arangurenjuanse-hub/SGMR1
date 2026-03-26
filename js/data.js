@@ -1,12 +1,7 @@
-// ═══════════════════════════════════════
-
+// ═══════════════════════════════════
 // SGMR - data.js
-
-// Data loading and saving (localStorage + Supabase)
-
-// ═══════════════════════════════════════
-
-
+// Data: load, save, Supabase sync
+// ═══════════════════════════════════
 
 function load(){
   try{const d=ls('sgmr_rows');if(d)rows=JSON.parse(d);}catch(e){}
@@ -60,27 +55,6 @@ async function loadSB(){
   }catch(e){}
 }
 
-function saveSB(row){
-  if(!sbUrl||!sbKey)return false;
-  try{
-    var payload={fecha:row.fecha,tipo:row.tipo,sitio:row.sitio,texto:row.texto,partner:row.partner||'',estado:row.estado,nombre:row.nombre||'',tg_sent:row.tgSent||false};
-    var res=await fetch(sbUrl+'/rest/v1/anotaciones',{method:'POST',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(payload)});
-    if(!res.ok)return false;
-    var data=await res.json();
-    if(data&&data[0])row.id=data[0].id;
-    if(row.screenshot&&row.id){
-      uploadScreenshot(row.screenshot,row.id,function(url){
-        if(url){
-          row.screenshot_url=url;
-          fetch(sbUrl+'/rest/v1/anotaciones?id=eq.'+row.id,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json'},body:JSON.stringify({screenshot_url:url})});
-          ls('sgmr_rows',JSON.stringify(rows));
-        }
-      });
-    }
-    return true;
-  }catch(e){return false;}
-}
-
 function saveTodos(){
   ls('sgmr_todos',JSON.stringify(todos));
   if(sbUrl&&sbKey){
@@ -107,6 +81,24 @@ function loadTodos(){
       }
     }).catch(function(){});
   }
+}
+
+function deleteTodo(id){
+  if(!confirm('Eliminar tarea?'))return;
+  todos=todos.filter(function(x){return x.id!==id;});
+  saveTodos();
+  if(sbUrl&&sbKey){
+    fetch(sbUrl+'/rest/v1/todos?id=eq.'+id,{
+      method:'DELETE',
+      headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
+    }).catch(function(){});
+  }
+  renderTodo();
+}
+
+async function patchSB(row){
+  if(!sbUrl||!sbKey||!row.id)return;
+  try{await fetch(`${sbUrl}/rest/v1/anotaciones?id=eq.${row.id}`,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`,'Content-Type':'application/json'},body:JSON.stringify({estado:row.estado})});}catch(e){}
 }
 
 function loadConfigFromSB(){
@@ -140,22 +132,4 @@ function saveConfigToSB(){
       body:JSON.stringify({key:p.key,value:p.value,updated_at:new Date().toISOString()})
     }).catch(function(){});
   });
-}
-
-function deleteTodo(id){
-  if(!confirm('Eliminar tarea?'))return;
-  todos=todos.filter(function(x){return x.id!==id;});
-  saveTodos();
-  if(sbUrl&&sbKey){
-    fetch(sbUrl+'/rest/v1/todos?id=eq.'+id,{
-      method:'DELETE',
-      headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}
-    }).catch(function(){});
-  }
-  renderTodo();
-}
-
-async function patchSB(row){
-  if(!sbUrl||!sbKey||!row.id)return;
-  try{await fetch(`${sbUrl}/rest/v1/anotaciones?id=eq.${row.id}`,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`,'Content-Type':'application/json'},body:JSON.stringify({estado:row.estado})});}catch(e){}
 }
