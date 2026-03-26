@@ -1,7 +1,7 @@
-// ═══════════════════════════════════════
-// SGMR - config.js
-// Global variables, constants, localStorage helpers
-// ═══════════════════════════════════════
+// ═══════════════════════════════════
+// SGMR - config.js  
+// Global variables and helper utilities
+// ═══════════════════════════════════
 
 /* ── DEFAULT DATA ── */
 const DEFAULT_SITES=['Crypto Casino Zone','Crypto Bonus Bet','Top Royal Casinos','Sushi Casinos','Lucky Crypto Bonus','Neon Bonuses','Best Casino Vault','Crypto Bonus Dragon','Bonusinos','Top Legit Casinos','General'];
@@ -41,3 +41,9 @@ function buildKBContext(){
 }
 
 /* ── LOAD ── */
+
+// Telegram tokens
+var _TG_SIG_TOKEN='8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
+var _TG_SIG_CHAT='832763879';
+var _TG_ME_TOKEN='8733472218:AAEherUtJPVxwhGpmlhRBaotePFbR9vbnGI';
+var _TG_ME_CHAT='1842693553';
