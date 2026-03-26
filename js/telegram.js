@@ -1,24 +1,7 @@
-// ═══════════════════════════════════════
-
+// ═══════════════════════════════════
 // SGMR - telegram.js
-
-// Telegram integration: preview, send, photo
-
-// ═══════════════════════════════════════
-
-
-
-// Bot tokens and chat IDs
-
-var _TG_SIG_TOKEN = "8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10";
-
-var _TG_SIG_CHAT  = "832763879";
-
-var _TG_ME_TOKEN  = "8733472218:AAEherUtJPVxwhGpmlhRBaotePFbR9vbnGI";
-
-var _TG_ME_CHAT   = "1842693553";
-
-
+// Telegram: preview, send, photo
+// ═══════════════════════════════════
 
 function sendTelegram(idx){
   var r=rows[idx];
