@@ -1,4 +1,22 @@
-// ═══════════════════════════════════
+function _markSent(idx,isTest){
+  if(!isTest){
+    rows[idx].tgSent=true;
+    rows[idx].tgSentAt=new Date().toISOString();
+    ls('sgmr_rows',JSON.stringify(rows));
+    // Update Supabase
+    if(sbUrl&&sbKey){
+      var rowId=rows[idx].id;
+      var sentAt=rows[idx].tgSentAt;
+      fetch(sbUrl+'/rest/v1/anotaciones?id=eq.'+rowId,{
+        method:'PATCH',
+        headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json'},
+        body:JSON.stringify({tg_sent:true,tg_sent_at:sentAt})
+      }).catch(function(){});
+    }
+    renderList();updateStats();
+  }
+  showToast(isTest?'Test enviado':'Enviado a Sigmundur','ok');
+}// ═══════════════════════════════════
 // SGMR - telegram.js
 // Telegram: preview, send, photo
 // ═══════════════════════════════════
