@@ -1,12 +1,7 @@
-// ═══════════════════════════════════════
-
+// ═══════════════════════════════════
 // SGMR - ui.js
-
-// All UI rendering: lists, panels, config, modals
-
-// ═══════════════════════════════════════
-
-
+// UI rendering: lists, panels, config, modals
+// ═══════════════════════════════════
 
 function renderList(){
   const tipoF=filterTipo,sitioF=document.getElementById('f-sitio').value,estadoF=document.getElementById('f-estado').value;
