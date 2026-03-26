@@ -1061,7 +1061,7 @@ async function send(){
   const inp=document.getElementById('msg');
   const text=inp.value.trim(),imgs=[...pendingImgs];
   if(!text&&!imgs.length)return;
-  let userHtml='';imgs.forEach(img=>{userHtml+=`<img src="${img.dataUrl}"/>\n`;});
+  let userHtml='';(imgs||[]).forEach(img=>{userHtml+=`<img src="${img.dataUrl}"/>\n`;});
   if(text)userHtml+=esc(text);
   addUserMsg(userHtml);
   inp.value='';inp.style.height='auto';pendingImgs=[];renderStrip();
@@ -1105,7 +1105,7 @@ REGLAS ABSOLUTAS:
   const res=await fetch('https://sgmr.arangurenjuanse.workers.dev/',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({apiKey:anthropicKey,payload:{model:'claude-sonnet-4-20250514',max_tokens:600,system:sys,messages:chatHistory}})
+    body:JSON.stringify({apiKey:anthropicKey,payload:{model:'claude-haiku-4-5-20251001',max_tokens:600,system:sys,messages:chatHistory}})
   });
   if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`HTTP ${res.status}`);}
   const data=await res.json();
