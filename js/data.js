@@ -80,7 +80,7 @@ function deleteTodo(id){
 
 async function patchSB(row){
   if(!sbUrl||!sbKey||!row.id)return;
-  try{await fetch(`${sbUrl}/rest/v1/anotaciones?id=eq.${row.id}`,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`,'Content-Type':'application/json'},body:JSON.stringify({estado:row.estado})});}catch(e){}
+  try{await fetch(`${sbUrl}/rest/v1/anotaciones?id=eq.${row.id}`,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`,'Content-Type':'application/json'},body:JSON.stringify({estado:row.estado,tg_sent:row.tgSent||false,tg_sent_at:row.tgSentAt||null})});}catch(e){}
 }
 
 function loadConfigFromSB(){
