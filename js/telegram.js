@@ -78,7 +78,7 @@ function confirmTgSend(test){
   var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
   var payload={chat_id:CHAT,text:htmlMsg,parse_mode:'HTML'};
   if(!test&&rows[idx]&&rows[idx].id){
-    payload.reply_markup={inline_keyboard:[[{text:'OK '+String.fromCodePoint(9989),callback_data:'ok_'+rows[idx].id}]]};
+    payload.reply_markup={inline_keyboard:[[{text:'OK \u2705',callback_data:'ok_'+rows[idx].id}]]};
   }
   fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
     .then(function(res){return res.json();})
@@ -87,7 +87,7 @@ function confirmTgSend(test){
         if(!test){rows[idx].tgSent=true;ls('sgmr_rows',JSON.stringify(rows));patchSB(rows[idx]);renderList();}
         closeTgPreview();
         showToast(test?'Test enviado a vos':'Enviado a Sigmundur','ok');
-      } else {
+      }else{
         showToast('Error: '+data.description,'err');
       }
     })
