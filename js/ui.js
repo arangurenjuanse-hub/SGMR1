@@ -553,7 +553,7 @@ function saveCfg(){
   anthropicKey=document.getElementById('cfg-apikey').value.trim();
   sbUrl=document.getElementById('cfg-url').value.trim();
   sbKey=document.getElementById('cfg-key').value.trim();
-  ls('sgmr_akey',anthropicKey);ls('sgmr_sb_url',sbUrl);ls('sgmr_sb_key',sbKey);
+  ls('sgmr_akey',anthropicKey);ls('sgmr_sb_url',sbUrl);ls('sgmr_sb_key',sbKey);var _prx=document.getElementById('cfg-proxy');if(_prx){PROXY=_prx.value.trim();ls('sgmr_proxy',PROXY);}
   closeCfg();showToast('Config guardada','ok');
   if(sbUrl&&sbKey)loadSB();
 
