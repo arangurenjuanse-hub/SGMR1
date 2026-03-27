@@ -1,13 +1,15 @@
+// ═══════════════════════════════════
 // SGMR - data.js
 // Data: load, save, Supabase sync
+// ═══════════════════════════════════
 
 async function loadSB(){
   try{
-    const r=await fetch(sbUrl+'/rest/v1/anotaciones?order=created_at.asc',{headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey}});
+    const r=await fetch(`${sbUrl}/rest/v1/anotaciones?order=created_at.asc`,{headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`}});
     if(!r.ok)return;
     const data=await r.json();
     if(Array.isArray(data)&&data.length>0){
-      rows=data.map(function(r){return{id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,tgSent:r.tg_sent||false,tgSentAt:r.tg_sent_at||null,tgRead:r.tg_read||false,screenshot:_ssLookup[r.id]||null};});
+      rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,tgSent:r.tg_sent||false,tgSentAt:r.tg_sent_at||null,screenshot:_ssLookup[r.id]||null}));
       ls('sgmr_rows',JSON.stringify(rows));buildSiteFilter();renderList();updateStats();
     }
   }catch(e){}
@@ -77,13 +79,7 @@ function deleteTodo(id){
 
 async function patchSB(row){
   if(!sbUrl||!sbKey||!row.id)return;
-  try{
-    await fetch(sbUrl+'/rest/v1/anotaciones?id=eq.'+row.id,{
-      method:'PATCH',
-      headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json'},
-      body:JSON.stringify({estado:row.estado})
-    });
-  }catch(e){}
+  try{await fetch(`${sbUrl}/rest/v1/anotaciones?id=eq.${row.id}`,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':`Bearer ${sbKey}`,'Content-Type':'application/json'},body:JSON.stringify({estado:row.estado})});}catch(e){}
 }
 
 function loadConfigFromSB(){
