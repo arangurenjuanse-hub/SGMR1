@@ -1,3 +1,4 @@
+var _ssLookup = {};
 // ═══════════════════════════════════
 // SGMR - data.js
 // Data: load, save, Supabase sync
