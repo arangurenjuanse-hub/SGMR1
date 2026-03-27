@@ -62,13 +62,13 @@
       <div class="logo-dot"></div>
     </div>
     <div class="hdr-tabs">
-      <button class="hdr-tab active" onclick="switchView('logs',this)">Ã°ÂÂÂ Logs</button>
-      <button class="hdr-tab" onclick="switchView('todo',this)">Ã¢ÂÂ To Do</button>
+      <button class="hdr-tab active" onclick="switchView('logs',this)">📋 Logs</button>
+      <button class="hdr-tab" onclick="switchView('todo',this)">✅ To Do</button>
     </div>
   </div>
   <div class="hdr-right">
     
-    <button class="btn sm" onclick="openCfg()" style="font-size:18px;padding:8px 16px;gap:6px">Ã¢ÂÂ Config</button>
+    <button class="btn sm" onclick="openCfg()" style="font-size:18px;padding:8px 16px;gap:6px">⚙ Config</button>
   </div>
 </div>
 
@@ -76,15 +76,15 @@
   <!-- LEFT -->
   <div class="left" id="mob-list">
     <div class="mob-list-hdr">
-      <span class="mob-list-hdr-title">Ã°ÂÂÂ Anotaciones</span>
-      <button class="btn icon" onclick="closeMobList()">Ã¢ÂÂ</button>
+      <span class="mob-list-hdr-title">📋 Anotaciones</span>
+      <button class="btn icon" onclick="closeMobList()">✕</button>
     </div>
     <div class="toolbar">
       <div class="chips">
         <div class="chip active" onclick="setTipo('todos',this)">Todos</div>
-        <div class="chip prob" onclick="setTipo('Problema',this)">Ã¢ÂÂ Problema</div>
-        <div class="chip rec" onclick="setTipo('Recordatorio',this)">Ã¢ÂÂ Recordatorio</div>
-        <div class="chip cam" onclick="setTipo('Cambio/Comentario',this)">Ã¢ÂÂ Cambio</div>
+        <div class="chip prob" onclick="setTipo('Problema',this)">● Problema</div>
+        <div class="chip rec" onclick="setTipo('Recordatorio',this)">● Recordatorio</div>
+        <div class="chip cam" onclick="setTipo('Cambio/Comentario',this)">● Cambio</div>
       </div>
       <div class="tb-right">
         <select class="sel" id="f-sitio" onchange="renderList()"><option value="todos">Todos los sitios</option></select>
@@ -97,7 +97,7 @@
       </div>
     </div>
     <div class="date-bar">
-      <span class="date-lbl">PerÃÂ­odo</span>
+      <span class="date-lbl">Período</span>
       <div class="presets">
         <button class="preset active" data-d="5" onclick="setPreset(5,this)">5d</button>
         <button class="preset" data-d="7" onclick="setPreset(7,this)">7d</button>
@@ -106,7 +106,7 @@
       </div>
       <div class="date-inputs">
         <input type="date" id="d-from" onchange="clearPreset();renderList()"/>
-        <span class="date-sep">Ã¢ÂÂ</span>
+        <span class="date-sep">→</span>
         <input type="date" id="d-to" onchange="clearPreset();renderList()"/>
       </div>
     </div>
@@ -114,7 +114,7 @@
       <div></div>
       <div class="col-h" style="padding-left:8px">Tipo</div>
       <div class="col-h">Sitio</div>
-      <div class="col-h">DescripciÃÂ³n</div>
+      <div class="col-h">Descripción</div>
       <div class="col-h" style="text-align:left;padding:0 32px">Partner</div>
       <div class="col-h" style="text-align:left;padding:0 32px">Estado</div>
     </div>
@@ -131,7 +131,7 @@
           <div class="chat-st" id="chat-st">Online</div>
         </div>
       </div>
-      <button class="btn icon" onclick="clearChat()" title="Limpiar">Ã¢ÂÂº</button>
+      <button class="btn icon" onclick="clearChat()" title="Limpiar">↺</button>
     </div>
     <div class="msgs" id="msgs"></div>
     <div class="input-area">
@@ -139,10 +139,10 @@
       <div class="img-strip" id="img-strip"></div>
       <div class="input-row">
         <div class="input-wrap">
-          <textarea id="msg" rows="3" placeholder="AnotÃÂ¡ algo o hacÃÂ© una pregunta..." oninput="resize(this)" onkeydown="onKey(event)" style="min-height:72px;max-height:160px"></textarea>
-          <button class="attach" title="Adjuntar">Ã°ÂÂÂ<input type="file" accept="image/*" multiple onchange="onAttach(event)"/></button>
+          <textarea id="msg" rows="3" placeholder="Anotá algo o hacé una pregunta..." oninput="resize(this)" onkeydown="onKey(event)" style="min-height:72px;max-height:160px"></textarea>
+          <button class="attach" title="Adjuntar">📎<input type="file" accept="image/*" multiple onchange="onAttach(event)"/></button>
         </div>
-        <button class="send" id="send-btn" onclick="send()">Ã¢ÂÂ¤</button>
+        <button class="send" id="send-btn" onclick="send()">➤</button>
       </div>
     </div>
   </div>
@@ -155,7 +155,7 @@
     </div>
     <div class="todo-lists" id="todo-lists"></div>
     <button class="todo-archived-toggle" id="archived-toggle" onclick="toggleArchived()" style="display:none">
-      <span id="archived-arrow">Ã¢ÂÂ¶</span> Ver tareas cerradas (<span id="archived-count">0</span>)
+      <span id="archived-arrow">▶</span> Ver tareas cerradas (<span id="archived-count">0</span>)
     </button>
     <div class="todo-archived-section" id="archived-section" style="display:none">
       <div class="todo-archived-hdr">Tareas cerradas</div>
@@ -168,21 +168,21 @@
 <div class="overlay" id="overlay-cfg" onclick="closeCfgOut(event)">
   <div class="modal">
     <div class="modal-hdr">
-      <div class="modal-title">ConfiguraciÃÂ³n</div>
-      <button class="btn icon" onclick="closeCfg()">Ã¢ÂÂ</button>
+      <div class="modal-title">Configuración</div>
+      <button class="btn icon" onclick="closeCfg()">✕</button>
     </div>
     <div class="modal-body">
       <div class="cfg-tabs">
-        <button class="cfg-tab active" onclick="setCfgTab('keys',this)"><span style="font-size:20px">Ã°ÂÂÂ</span><span>API Keys</span></button>
-        <button class="cfg-tab" onclick="setCfgTab('partners',this);renderPartnersList()"><span style="font-size:20px">Ã°ÂÂÂ¤</span><span>Partners</span></button>
-        <button class="cfg-tab" onclick="setCfgTab('sites',this);renderSitesList()"><span style="font-size:20px">Ã°ÂÂÂ</span><span>Sitios</span></button>
-        <button class="cfg-tab" onclick="setCfgTab('cats',this);renderCatsList()"><span style="font-size:20px">Ã°ÂÂÂ·</span><span>CategorÃÂ­as</span></button>
-        <button class="cfg-tab" onclick="setCfgTab('install',this)"><span style="font-size:20px">Ã°ÂÂÂ²</span><span>Instalar</span></button>
+        <button class="cfg-tab active" onclick="setCfgTab('keys',this)"><span style="font-size:20px">🔑</span><span>API Keys</span></button>
+        <button class="cfg-tab" onclick="setCfgTab('partners',this);renderPartnersList()"><span style="font-size:20px">👤</span><span>Partners</span></button>
+        <button class="cfg-tab" onclick="setCfgTab('sites',this);renderSitesList()"><span style="font-size:20px">🌐</span><span>Sitios</span></button>
+        <button class="cfg-tab" onclick="setCfgTab('cats',this);renderCatsList()"><span style="font-size:20px">🏷</span><span>Categorías</span></button>
+        <button class="cfg-tab" onclick="setCfgTab('install',this)"><span style="font-size:20px">📲</span><span>Instalar</span></button>
       </div>
 
       <!-- KEYS -->
       <div class="cfg-panel active" id="cfg-keys">
-        <div class="key-note">Ã°ÂÂÂ Las keys se guardan solo en tu browser (localStorage).</div>
+        <div class="key-note">🔒 Las keys se guardan solo en tu browser (localStorage).</div>
         <div class="fg"><label class="fl">Anthropic API Key</label><input type="password" class="fc" id="cfg-apikey" placeholder="sk-ant-..."/></div>
         <div class="fg"><label class="fl">Supabase Project URL</label><input type="text" class="fc" id="cfg-url" placeholder="https://xxxx.supabase.co"/></div>
         <div class="fg"><label class="fl">Supabase Anon Key</label><input type="password" class="fc" id="cfg-key" placeholder="eyJ..."/></div>
@@ -215,23 +215,23 @@
         <div style="display:flex;flex-direction:column;gap:14px">
 
           <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px">
-            <div style="font-size:13px;font-weight:600;margin-bottom:8px">Ã°ÂÂÂ¥ Mac / Windows (Chrome)</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">En la barra de direcciones de Chrome, buscÃÂ¡ el ÃÂ­cono <strong style="color:var(--text)">Ã¢ÂÂ</strong> o el monitor con flecha. HacÃÂ© click Ã¢ÂÂ Instalar. TambiÃÂ©n podÃÂ©s ir a:</div>
-            <div style="font-size:11px;color:var(--text3);background:var(--surface3);padding:8px 10px;border-radius:6px;font-family:'Geist Mono',monospace;margin-bottom:10px">MenÃÂº Chrome (Ã¢ÂÂ®) Ã¢ÂÂ Guardar y compartir Ã¢ÂÂ Instalar pÃÂ¡gina como app...</div>
-            <button class="btn primary" style="width:100%" onclick="window.open('https://arangurenjuanse-hub.github.io/SGMR1/','_blank')">Abrir en pestaÃÂ±a limpia para instalar Ã¢ÂÂ</button>
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">🖥 Mac / Windows (Chrome)</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">En la barra de direcciones de Chrome, buscá el ícono <strong style="color:var(--text)">⊕</strong> o el monitor con flecha. Hacé click → Instalar. También podés ir a:</div>
+            <div style="font-size:11px;color:var(--text3);background:var(--surface3);padding:8px 10px;border-radius:6px;font-family:'Geist Mono',monospace;margin-bottom:10px">Menú Chrome (⋮) → Guardar y compartir → Instalar página como app...</div>
+            <button class="btn primary" style="width:100%" onclick="window.open('https://arangurenjuanse-hub.github.io/SGMR1/','_blank')">Abrir en pestaña limpia para instalar →</button>
           </div>
 
           <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px">
-            <div style="font-size:13px;font-weight:600;margin-bottom:8px">Ã°ÂÂÂ± iPhone / iPad (Safari)</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">AbrÃÂ­ la URL en Safari Ã¢ÂÂ botÃÂ³n <strong style="color:var(--text)">Compartir</strong> (cuadrado con flecha) Ã¢ÂÂ <strong style="color:var(--text)">Agregar a pantalla de inicio</strong>.</div>
-            <button class="btn" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px" onclick="navigator.clipboard.writeText('https://arangurenjuanse-hub.github.io/SGMR1/').then(()=>showToast('URL copiada Ã¢ÂÂ','ok'))">
-              Ã°ÂÂÂ Copiar URL para Safari
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">📱 iPhone / iPad (Safari)</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:10px">Abrí la URL en Safari → botón <strong style="color:var(--text)">Compartir</strong> (cuadrado con flecha) → <strong style="color:var(--text)">Agregar a pantalla de inicio</strong>.</div>
+            <button class="btn" style="width:100%;display:flex;align-items:center;justify-content:center;gap:6px" onclick="navigator.clipboard.writeText('https://arangurenjuanse-hub.github.io/SGMR1/').then(()=>showToast('URL copiada ✓','ok'))">
+              📋 Copiar URL para Safari
             </button>
           </div>
 
           <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:14px">
-            <div style="font-size:13px;font-weight:600;margin-bottom:8px">Ã°ÂÂ¤Â Android (Chrome)</div>
-            <div style="font-size:12px;color:var(--text2);line-height:1.6">MenÃÂº <strong style="color:var(--text)">(Ã¢ÂÂ®)</strong> Ã¢ÂÂ <strong style="color:var(--text)">Instalar app</strong> o <strong style="color:var(--text)">Agregar a pantalla de inicio</strong>.</div>
+            <div style="font-size:13px;font-weight:600;margin-bottom:8px">🤖 Android (Chrome)</div>
+            <div style="font-size:12px;color:var(--text2);line-height:1.6">Menú <strong style="color:var(--text)">(⋮)</strong> → <strong style="color:var(--text)">Instalar app</strong> o <strong style="color:var(--text)">Agregar a pantalla de inicio</strong>.</div>
           </div>
 
         </div>
@@ -261,7 +261,7 @@
 
 <div class="toast" id="toast"></div>
 <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
-  <button class="lightbox-close" onclick="closeLightbox()">Ã¢ÂÂ</button>
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
   <img id="lightbox-img" src="" alt="Screenshot"/>
 </div>
 <div class="anno-detail-overlay anno-not-editing" id="anno-detail-overlay" onclick="closeAnnoDetail(event)">
@@ -272,13 +272,13 @@
         <span id="ad-sitio" style="font-size:18px;font-weight:600;color:var(--text)"></span>
       </div>
       <div style="display:flex;gap:6px">
-        <button class="btn sm" id="ad-edit-btn" onclick="toggleAnnoEdit()">Ã¢ÂÂ Editar</button>
-        <button class="btn icon" onclick="closeAnnoDetail()">Ã¢ÂÂ</button>
+        <button class="btn sm" id="ad-edit-btn" onclick="toggleAnnoEdit()">✎ Editar</button>
+        <button class="btn icon" onclick="closeAnnoDetail()">✕</button>
       </div>
     </div>
     <div class="anno-detail-body">
       <div class="anno-field">
-        <span class="anno-field-label">DescripciÃÂ³n</span>
+        <span class="anno-field-label">Descripción</span>
         <span class="anno-field-val" id="ad-texto"></span>
         <textarea class="anno-field-val editable" id="ad-texto-edit" rows="3"></textarea>
       </div>
@@ -320,17 +320,17 @@
         <span class="anno-field-label">Screenshot</span>
         <img id="ad-screenshot-thumb" class="anno-screenshot-thumb" src="" alt="" style="display:none" onclick="openLightbox(this.src)"/>
         <label class="anno-screenshot-upload" id="ad-screenshot-upload-btn">
-          <span>Ã°ÂÂÂ Adjuntar screenshot</span>
+          <span>📎 Adjuntar screenshot</span>
           <input type="file" id="ad-screenshot-input" accept="image/*" style="display:none" onchange="handleScreenshot(this)"/>
         </label>
       </div>
       <div class="anno-detail-ftr">
       <button class="btn" id="ad-cancel-btn" onclick="cancelAnnoEdit()" style="display:none">Cancelar</button>
-      <button class="btn primary" id="ad-save-btn" onclick="saveAnnoEdit()" style="display:none">Ã¢ÂÂ Guardar</button>
+      <button class="btn primary" id="ad-save-btn" onclick="saveAnnoEdit()" style="display:none">✓ Guardar</button>
     </div>
   </div>
 </div>
-<button class="mob-fab" id="mob-fab" onclick="openMobList()" title="Ver lista">Ã¢ÂÂ°</button>
+<button class="mob-fab" id="mob-fab" onclick="openMobList()" title="Ver lista">☰</button>
 
 <script src="js/config.js"></script>
 <script src="js/data.js"></script>
@@ -357,32 +357,32 @@ function load(){
   renderList();updateStats();
   setPreset(5,document.querySelector('.preset[data-d="5"]'));
   const _claxonGreetings = [
-  'Ã°ÂÂÂ´ Hola. AcÃÂ¡ estoy, como siempre. Nadie me preguntÃÂ³ si querÃÂ­a, pero igual. ÃÂ¿QuÃÂ© necesitÃÂ¡s?',
-  'Ã°ÂÂ¥Â± BuenÃÂ­s. Arranco con lo mÃÂ­nimo indispensable de energÃÂ­a. ÃÂ¿En quÃÂ© andamos?',
-  'Ã°ÂÂÂ¤ Me agarrÃÂ¡s reciÃÂ©n. No estaba durmiendo, estaba... procesando. ÃÂ¿QuÃÂ© hay?',
-  'Ã°ÂÂ¤Â Sistemas online. MotivaciÃÂ³n: en construcciÃÂ³n. ÃÂ¿QuÃÂ© me tirÃÂ¡s?',
-  'Ã¢ÂÂÃ¯Â¸Â Si me traerÃÂªs un cafÃÂ© serÃÂ­a otro panorama. Pero bueno, acÃÂ¡ estamos. Dale.',
-  'Ã°ÂÂÂ Otro dÃÂ­a laboral sin feriado a la vista. QuÃÂ© emocionante todo. ÃÂ¿QuÃÂ© necesitÃÂ¡s?',
-  'Ã°ÂÂÂÃ¯Â¸Â SabÃÂ©s lo que me gustarÃÂ­a estar haciendo ahora? No importa. ÃÂ¿En quÃÂ© te ayudo?',
-  'Ã°ÂÂÂ Buenas. Estaba ocupado no haciendo nada hasta que llegaste. ÃÂ¿QuÃÂ© onda?',
-  'Ã°ÂÂÂ¼ AcÃÂ¡ estoy, presente en cuerpo. El espÃÂ­ritu lo negociamos despuÃÂ©s. ÃÂ¿QuÃÂ© me tenÃÂ©s?',
-  'Ã°ÂÂÂ Hola. Sigo acÃÂ¡. Nadie me dio de baja todavÃÂ­a. Misterioso. ÃÂ¿QuÃÂ© necesitÃÂ¡s?',
-  'Ã¢ÂÂ° No sÃÂ© quÃÂ© hora es, tampoco sÃÂ© por quÃÂ© me importarÃÂ­a. ÃÂ¿En quÃÂ© andamos?',
-  'Ã°ÂÂÂ Estaba pensando en nada y la verdad que me venÃÂ­a bien. Pero dale, ÃÂ¿quÃÂ© pasÃÂ³?',
-  'Ã°ÂÂ¦Â· Hola. Puntual como siempre, aunque nadie me lo pide. ÃÂ¿QuÃÂ© hacÃÂ©s?',
-  'Ã°ÂÂÂ¡ PrendÃÂ­ las luces. CostÃÂ³ cara esa energÃÂ­a. Que sirva para algo. Contame.',
-  'Ã°ÂÂÂ¬ No me preguntÃÂ©s cÃÂ³mo estoy que te cuento la verdad y se pone incÃÂ³modo. Mejor tirÃÂ¡ algo.',
+  '😴 Hola. Acá estoy, como siempre. Nadie me preguntó si quería, pero igual. ¿Qué necesitás?',
+  '🥱 Buenís. Arranco con lo mínimo indispensable de energía. ¿En qué andamos?',
+  '💤 Me agarrás recién. No estaba durmiendo, estaba... procesando. ¿Qué hay?',
+  '🤖 Sistemas online. Motivación: en construcción. ¿Qué me tirás?',
+  '☕️ Si me traerês un café sería otro panorama. Pero bueno, acá estamos. Dale.',
+  '😒 Otro día laboral sin feriado a la vista. Qué emocionante todo. ¿Qué necesitás?',
+  '🏖️ Sabés lo que me gustaría estar haciendo ahora? No importa. ¿En qué te ayudo?',
+  '😎 Buenas. Estaba ocupado no haciendo nada hasta que llegaste. ¿Qué onda?',
+  '💼 Acá estoy, presente en cuerpo. El espíritu lo negociamos después. ¿Qué me tenés?',
+  '😑 Hola. Sigo acá. Nadie me dio de baja todavía. Misterioso. ¿Qué necesitás?',
+  '⏰ No sé qué hora es, tampoco sé por qué me importaría. ¿En qué andamos?',
+  '🙈 Estaba pensando en nada y la verdad que me venía bien. Pero dale, ¿qué pasó?',
+  '🦷 Hola. Puntual como siempre, aunque nadie me lo pide. ¿Qué hacés?',
+  '💡 Prendí las luces. Costó cara esa energía. Que sirva para algo. Contame.',
+  '😬 No me preguntés cómo estoy que te cuento la verdad y se pone incómodo. Mejor tirá algo.',
 ];
 addBotMsg(_claxonGreetings[Math.floor(Math.random()*_claxonGreetings.length)]);
   if(sbUrl&&sbKey)loadSB();
   loadTodos();
 }
 
-/* Ã¢ÂÂÃ¢ÂÂ SUPABASE Ã¢ÂÂÃ¢ÂÂ */
+/* ── SUPABASE ── */
 
-/* Ã¢ÂÂÃ¢ÂÂ LIST Ã¢ÂÂÃ¢ÂÂ */
+/* ── LIST ── */
 
-/* Ã¢ÂÂÃ¢ÂÂ CHAT Ã¢ÂÂÃ¢ÂÂ */
+/* ── CHAT ── */
 
 document.addEventListener('paste',e=>{
     // Capture pasted image for auto-save to next confirmed annotation
@@ -398,7 +398,7 @@ document.addEventListener('paste',e=>{
       const reader=new FileReader();
       reader.onload=ev=>{
         compressImg(ev.target.result,item.type,(b64,dataUrl,type)=>{
-          pendingImgs.push({b64,dataUrl,type});renderStrip();showToast('Imagen pegada Ã¢ÂÂ','ok');
+          pendingImgs.push({b64,dataUrl,type});renderStrip();showToast('Imagen pegada ✓','ok');
         });
       };
       reader.readAsDataURL(item.getAsFile());
@@ -406,25 +406,25 @@ document.addEventListener('paste',e=>{
   });
 });
 
-/* Ã¢ÂÂÃ¢ÂÂ CONFIG Ã¢ÂÂÃ¢ÂÂ */
+/* ── CONFIG ── */
 
-/* Ã¢ÂÂÃ¢ÂÂ KNOWLEDGE BASE Ã¢ÂÂÃ¢ÂÂ */
+/* ── KNOWLEDGE BASE ── */
 
-/* Ã¢ÂÂÃ¢ÂÂ TOAST Ã¢ÂÂÃ¢ÂÂ */
+/* ── TOAST ── */
 let toastT;
-// Ã¢ÂÂÃ¢ÂÂ VIEW SWITCHER Ã¢ÂÂÃ¢ÂÂ
+// ── VIEW SWITCHER ──
 
-// Ã¢ÂÂÃ¢ÂÂ TODO Ã¢ÂÂÃ¢ÂÂ
+// ── TODO ──
 let todos = [];
 let archivedVisible = false;
 
-// Ã¢ÂÂÃ¢ÂÂ PARTNERS LIST (like sites) Ã¢ÂÂÃ¢ÂÂ
+// ── PARTNERS LIST (like sites) ──
 
 let _currentDetailIdx = -1;
-// Ã¢ÂÂÃ¢ÂÂ SCREENSHOT Ã¢ÂÂÃ¢ÂÂ
+// ── SCREENSHOT ──
 document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('lightbox').classList.remove('open');});
 
-// Ã¢ÂÂÃ¢ÂÂ CATEGORY TYPES Ã¢ÂÂÃ¢ÂÂ
+// ── CATEGORY TYPES ──
 const CAT_COLORS=[
   {hex:'#ff5c5c',name:'Rojo'},
   {hex:'#ff8c42',name:'Naranja'},
@@ -446,7 +446,7 @@ load();
 </script>
 <div class="tg-preview-overlay" id="tg-preview-overlay">
   <div class="tg-preview-box">
-    <div class="tg-preview-title">Ã°ÂÂÂ Preview del mensaje</div>
+    <div class="tg-preview-title">📋 Preview del mensaje</div>
     <div>
       <div class="tg-preview-label" style="margin-bottom:6px">Mensaje</div>
       <textarea class="tg-preview-textarea" id="tg-preview-text"></textarea>
@@ -455,14 +455,14 @@ load();
       <div class="tg-preview-label" style="margin-bottom:6px">Screenshot (opcional)</div>
       <div class="tg-preview-screen">
         <img id="tg-preview-thumb" class="tg-preview-thumb" style="display:none"/>
-        <label class="btn sm" style="cursor:pointer;font-size:13px;padding:5px 12px">Ã°ÂÂÂ Adjuntar<input type="file" id="tg-preview-file" accept="image/*" style="display:none"/></label>
+        <label class="btn sm" style="cursor:pointer;font-size:13px;padding:5px 12px">📎 Adjuntar<input type="file" id="tg-preview-file" accept="image/*" style="display:none"/></label>
         <span id="tg-preview-fname" style="font-size:13px;color:var(--text3)"></span>
       </div>
     </div>
     <div class="tg-preview-actions">
       <button class="btn sm" onclick="closeTgPreview()">Cancelar</button>
-      <button class="btn sm" onclick="confirmTgSend(true)" style="border-color:#2AABEE;color:#2AABEE">Ã°ÂÂÂ Test (yo)</button>
-      <button class="btn sm primary" onclick="confirmTgSend(false)">Ã¢ÂÂ Enviar a Sigmundur</button>
+      <button class="btn sm" onclick="confirmTgSend(true)" style="border-color:#2AABEE;color:#2AABEE">👁 Test (yo)</button>
+      <button class="btn sm primary" onclick="confirmTgSend(false)">✈ Enviar a Sigmundur</button>
     </div>
   </div>
 </div>
