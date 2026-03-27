@@ -423,7 +423,7 @@ function renderList(){
       const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
       const ecls=r.estado==='En proceso'?'en-proceso':r.estado==='Listo'?'listo':'';
       const row=document.createElement('div');row.className=`anno-row ${cls}`;row.onclick=(e)=>{if(e.target.closest('.kb-rm,.etag'))return;openAnnoDetail(idx);};
-      row.innerHTML=`<div class="row-bar" style="background:${getTipoColor(r.tipo)||''};opacity:.9"></div><div class="rc"><span class="rtype ${cls}" style="background:${getTipoColor(r.tipo)}22;color:${getTipoColor(r.tipo)};border-color:${getTipoColor(r.tipo)}55">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c" style="display:flex;gap:4px"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(${idx},false)" title="${r.tgSent?'Enviado':'Enviar a Sigmundur'}">${r.tgRead?'✅ OK':r.tgSent?'&#10003; Sent':'&#9992; TG'}</button><button class="tg-btn" onclick="sendTelegram(${idx},true)" title="Test: enviar a mi mismo" style="font-size:11px;opacity:.6">&#128272;</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
+      row.innerHTML=`<div class="row-bar" style="background:${getTipoColor(r.tipo)||''};opacity:.9"></div><div class="rc"><span class="rtype ${cls}" style="background:${getTipoColor(r.tipo)}22;color:${getTipoColor(r.tipo)};border-color:${getTipoColor(r.tipo)}55">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c" style="display:flex;gap:4px"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(${idx},false)" title="${r.tgSent?'Enviado':'Enviar a Sigmundur'}">${r.tgSent?'&#10003; Sent':'&#9992; TG'}</button><button class="tg-btn" onclick="sendTelegram(${idx},true)" title="Test: enviar a mi mismo" style="font-size:11px;opacity:.6">&#128272;</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
       sec.appendChild(row);
     });
     scroll.appendChild(sec);
@@ -553,7 +553,7 @@ function saveCfg(){
   anthropicKey=document.getElementById('cfg-apikey').value.trim();
   sbUrl=document.getElementById('cfg-url').value.trim();
   sbKey=document.getElementById('cfg-key').value.trim();
-  ls('sgmr_akey',anthropicKey);ls('sgmr_sb_url',sbUrl);ls('sgmr_sb_key',sbKey);var _prx=document.getElementById('cfg-proxy');if(_prx){PROXY=_prx.value.trim();ls('sgmr_proxy',PROXY);}
+  ls('sgmr_akey',anthropicKey);ls('sgmr_sb_url',sbUrl);ls('sgmr_sb_key',sbKey);
   closeCfg();showToast('Config guardada','ok');
   if(sbUrl&&sbKey)loadSB();
 
