@@ -77,7 +77,7 @@ function confirmTgSend(test){
   var BOT=test?'8290249003:AAGT4vDIM6XnExlqex7a7_k2JkmCzulXw18':'8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
   var CHAT=test?'1842693553':'832763879';
   var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:htmlMsg,parse_mode:'HTML'})})
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(test?{chat_id:CHAT,text:htmlMsg,parse_mode:'HTML'}:{chat_id:CHAT,text:htmlMsg,parse_mode:'HTML',reply_markup:{inline_keyboard:[[{text:'OK ✅',callback_data:'ok_'+(rows[idx]&&rows[idx].id?rows[idx].id:'')}]]}})})
   .then(function(res){return res.json();})
   .then(function(data){
     if(data.ok){
