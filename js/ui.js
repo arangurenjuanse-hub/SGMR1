@@ -1,7 +1,7 @@
-// \u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090
+// ═══════════════════════════════════
 // SGMR - ui.js
 // UI: rendering, panels, config, modals
-// \u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090\u00e2\u0095\u0090
+// ═══════════════════════════════════
 
 function addCatType(){
   const name=document.getElementById('cat-name-inp')?.value.trim();
@@ -25,7 +25,7 @@ function addKB(type){
   document.getElementById(type==='partners'?'p-alias':type==='sites'?'s-alias':'c-alias').value='';
   document.getElementById(type==='partners'?'p-full':type==='sites'?'s-full':'c-full').value='';
   if(type==='sites'){sites.push(full);ls('sgmr_sites',JSON.stringify(sites));buildSiteFilter();}
-  renderKB();showToast(`Agregado: ${alias} \u00e2\u0086\u0092 ${full}`,'ok');
+  renderKB();showToast(`Agregado: ${alias} → ${full}`,'ok');
 }
 
 function addPartner(){
@@ -115,7 +115,7 @@ function cancelAnnoEdit(){
 }
 
 function clearAll(){
-  if(!confirm('\u00c2\u00bfLimpiar todos los datos locales?'))return;
+  if(!confirm('¿Limpiar todos los datos locales?'))return;
   rows=[];sites=[...DEFAULT_SITES];
   ls('sgmr_rows','[]');ls('sgmr_sites',JSON.stringify(sites));
   buildSiteFilter();renderList();updateStats();showToast('Datos eliminados');
@@ -158,9 +158,9 @@ function compressImg(dataUrl,type,cb){
   };img.src=dataUrl;
 }
 
-function confirmCancel(){pendingConfirm=null;addBotMsg('Ok, no guard\u00c3\u00a9 nada. \u00c2\u00bfAlgo m\u00c3\u00a1s?');}
+function confirmCancel(){pendingConfirm=null;addBotMsg('Ok, no guardé nada. ¿Algo más?');}
 
-function confirmEdit(){addBotMsg('Decime qu\u00c3\u00a9 quer\u00c3\u00a9s cambiar (tipo, sitio, descripci\u00c3\u00b3n o partner).');}
+function confirmEdit(){addBotMsg('Decime qué querés cambiar (tipo, sitio, descripción o partner).');}
 
 async function confirmSave(){
   if(!pendingConfirm)return;
@@ -169,8 +169,8 @@ async function confirmSave(){
   if(window._lastPastedImage){row.screenshot=window._lastPastedImage;window._lastPastedImage=null;}
   const saved=await saveSB(row); rows.push(row);ls('sgmr_rows',JSON.stringify(rows));
   buildSiteFilter();renderList();updateStats();
-  addBotMsg(`\u00e2\u009c\u0085 Guardado en <strong>${esc(row.sitio)}</strong>${saved?' y sincronizado en Supabase':' (guardado local)'}.`);
-  showToast('Anotaci\u00c3\u00b3n guardada','ok');
+  addBotMsg(`✅ Guardado en <strong>${esc(row.sitio)}</strong>${saved?' y sincronizado en Supabase':' (guardado local)'}.`);
+  showToast('Anotación guardada','ok');
 }
 
 async function cycleEstado(idx){
@@ -252,7 +252,7 @@ function handleScreenshot(input){
       rows[_currentDetailIdx].screenshot=dataUrl;
       ls('sgmr_rows',JSON.stringify(rows));
       showScreenshotThumb(dataUrl);
-      showToast('Screenshot guardado \u00e2\u009c\u0093','ok');
+      showToast('Screenshot guardado ✓','ok');
     }
   };
   reader.readAsDataURL(file);
@@ -283,7 +283,7 @@ function openAnnoDetail(idx){
   document.getElementById('ad-sitio').textContent=r.sitio||'';
   document.getElementById('ad-texto').textContent=r.texto||'';
   document.getElementById('ad-texto-edit').value=r.texto||'';
-  document.getElementById('ad-partner').textContent=r.partner||'\u00e2\u0080\u0094';
+  document.getElementById('ad-partner').textContent=r.partner||'—';
   document.getElementById('ad-partner-edit').value=r.partner||'';
   document.getElementById('ad-estado').textContent=r.estado||'';
   document.getElementById('ad-estado-edit').value=r.estado||'Pendiente';
@@ -374,8 +374,8 @@ function renderCatsList(){
       <div style="width:14px;height:14px;border-radius:50%;background:${cat.color};flex-shrink:0;box-shadow:0 0 6px ${cat.color}88"></div>
       <span class="kb-full" id="cattxt_${i}" style="flex:1;font-size:16px">${cat.name}</span>
       <div style="display:flex;gap:4px">
-        <button class="kb-rm" style="color:var(--text3);font-size:14px;padding:2px 6px;border:1px solid var(--border);border-radius:4px;background:var(--surface2)" onclick="editCatType(${i})">\u00e2\u009c\u008e</button>
-        <button class="kb-rm" onclick="removeCatType(${i})">\u00e2\u009c\u0095</button>
+        <button class="kb-rm" style="color:var(--text3);font-size:14px;padding:2px 6px;border:1px solid var(--border);border-radius:4px;background:var(--surface2)" onclick="editCatType(${i})">✎</button>
+        <button class="kb-rm" onclick="removeCatType(${i})">✕</button>
       </div>
     </div>`).join('')
   :'<div style="font-size:16px;color:var(--text3);padding:6px 0">Sin tipos configurados.</div>';
@@ -386,7 +386,7 @@ function renderKB(){
   ['partners','sites','cats'].forEach(type=>{
     const store=type==='partners'?kbPartners:type==='sites'?kbSites:kbCats;
     const el=document.getElementById('kb-'+type);if(!el)return;
-    el.innerHTML=store.length?store.map((x,i)=>`<div class="kb-item"><span class="kb-alias">${esc(x.alias)}</span><span class="kb-arrow">\u00e2\u0086\u0092</span><span class="kb-full">${esc(x.full)}</span><button class="kb-rm" onclick="removeKB('${type}',${i})">\u00e2\u009c\u0095</button></div>`).join(''):'';
+    el.innerHTML=store.length?store.map((x,i)=>`<div class="kb-item"><span class="kb-alias">${esc(x.alias)}</span><span class="kb-arrow">→</span><span class="kb-full">${esc(x.full)}</span><button class="kb-rm" onclick="removeKB('${type}',${i})">✕</button></div>`).join(''):'';
   });
 }
 
@@ -410,7 +410,7 @@ function renderList(){
   const dates=Object.keys(groups).sort((a,b)=>parseDate(b)-parseDate(a));
 
   const scroll=document.getElementById('anno-scroll');scroll.innerHTML='';
-  if(!filtered.length){scroll.innerHTML='<div class="empty-st"><big>\u00f0\u009f\u0093\u008b</big><span>Sin anotaciones</span></div>';updateStats(filtered);return;}
+  if(!filtered.length){scroll.innerHTML='<div class="empty-st"><big>📋</big><span>Sin anotaciones</span></div>';updateStats(filtered);return;}
 
   dates.forEach(dk=>{
     const grp=groups[dk];
@@ -423,7 +423,7 @@ function renderList(){
       const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
       const ecls=r.estado==='En proceso'?'en-proceso':r.estado==='Listo'?'listo':'';
       const row=document.createElement('div');row.className=`anno-row ${cls}`;row.onclick=(e)=>{if(e.target.closest('.kb-rm,.etag'))return;openAnnoDetail(idx);};
-      row.innerHTML=`<div class="row-bar" style="background:${getTipoColor(r.tipo)||''};opacity:.9"></div><div class="rc"><span class="rtype ${cls}" style="background:${getTipoColor(r.tipo)}22;color:${getTipoColor(r.tipo)};border-color:${getTipoColor(r.tipo)}55">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c" style="display:flex;gap:4px"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(${idx},false)" title="${r.tgSent?'Enviado':'Enviar a Sigmundur'}">${r.tgRead?'\u00e2\u009c\u0085 OK':r.tgSent?'&#10003; Sent':'&#9992; TG'}</button><button class="tg-btn" onclick="sendTelegram(${idx},true)" title="Test: enviar a mi mismo" style="font-size:11px;opacity:.6">&#128272;</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
+      row.innerHTML=`<div class="row-bar" style="background:${getTipoColor(r.tipo)||''};opacity:.9"></div><div class="rc"><span class="rtype ${cls}" style="background:${getTipoColor(r.tipo)}22;color:${getTipoColor(r.tipo)};border-color:${getTipoColor(r.tipo)}55">${esc(r.tipo==='Cambio/Comentario'?'Cambio':r.tipo)}</span></div><div class="rc rsite" title="${esc(r.sitio)}">${esc(r.sitio)}</div><div class="rc rtxt" title="${esc(r.texto)}">${esc(r.texto)}</div><div class="rc rpartner">${r.partner?esc(r.partner):''}</div><div class="rc restado-c" style="display:flex;gap:4px"><button class="tg-btn ${r.tgSent?'tg-sent':''}" onclick="sendTelegram(${idx},false)" title="${r.tgSent?'Enviado':'Enviar a Sigmundur'}">${r.tgRead?'✅ OK':r.tgSent?'&#10003; Sent':'&#9992; TG'}</button><button class="tg-btn" onclick="sendTelegram(${idx},true)" title="Test: enviar a mi mismo" style="font-size:11px;opacity:.6">&#128272;</button></div><div class="rc" style="display:flex;justify-content:center"><button class="kb-rm" title="Eliminar" onclick="deleteRow(${idx})">&#x2715;</button></div>`;
       sec.appendChild(row);
     });
     scroll.appendChild(sec);
@@ -465,7 +465,7 @@ function renderSitesList(){
 
 function renderStrip(){
   const s=document.getElementById('img-strip');s.innerHTML='';
-  pendingImgs.forEach((img,i)=>{const d=document.createElement('div');d.className='img-thumb';d.innerHTML=`<img src="${img.dataUrl}"/><button class="img-rm" onclick="rmImg(${i})">\u00e2\u009c\u0095</button>`;s.appendChild(d);});
+  pendingImgs.forEach((img,i)=>{const d=document.createElement('div');d.className='img-thumb';d.innerHTML=`<img src="${img.dataUrl}"/><button class="img-rm" onclick="rmImg(${i})">✕</button>`;s.appendChild(d);});
 }
 
 function renderTodo(){
@@ -484,7 +484,7 @@ function renderTodo(){
   list.innerHTML='';
 
   if(active.length===0){
-    list.innerHTML='<div style="color:var(--text3);font-size:16px;padding:20px 0;text-align:center">Sin tareas pendientes \u00f0\u009f\u008e\u0089</div>';
+    list.innerHTML='<div style="color:var(--text3);font-size:16px;padding:20px 0;text-align:center">Sin tareas pendientes 🎉</div>';
   } else {
     Object.entries(groups).forEach(([wk,items])=>{
       const grp=document.createElement('div');
@@ -496,10 +496,10 @@ function renderTodo(){
         const d=new Date(t.created);
         const dateStr=d.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
         row.innerHTML=`
-          <div class="todo-check${t.done?' done':''}" onclick="toggleTodo(${t.id})">${t.done?'\u00e2\u009c\u0093':''}</div>
+          <div class="todo-check${t.done?' done':''}" onclick="toggleTodo(${t.id})">${t.done?'✓':''}</div>
           <span class="todo-text${t.done?' done':''}">${t.text}</span>
           <span class="todo-date">${dateStr}</span>
-          <button class="todo-del" onclick="deleteTodo(${t.id})">\u00e2\u009c\u0095</button>`;
+          <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>`;
         grp.appendChild(row);
       });
       list.appendChild(grp);
@@ -519,10 +519,10 @@ function renderTodo(){
     const d=new Date(t.closedAt||t.created);
     const dateStr=d.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
     row.innerHTML=`
-      <div class="todo-check done" onclick="toggleTodo(${t.id})" title="Reabrir">\u00e2\u009c\u0093</div>
+      <div class="todo-check done" onclick="toggleTodo(${t.id})" title="Reabrir">✓</div>
       <span class="todo-text done">${t.text}</span>
       <span class="todo-date">${dateStr}</span>
-      <button class="todo-del" onclick="deleteTodo(${t.id})">\u00e2\u009c\u0095</button>`;
+      <button class="todo-del" onclick="deleteTodo(${t.id})">✕</button>`;
     archList.appendChild(row);
   });
 }
@@ -542,7 +542,7 @@ async function saveAnnoEdit(){
     try{await fetch(sbUrl+'/rest/v1/anotaciones?id=eq.'+r.id,{method:'PATCH',headers:{'apikey':sbKey,'Authorization':'Bearer '+sbKey,'Content-Type':'application/json'},body:JSON.stringify({texto:r.texto,partner:r.partner,estado:r.estado,tipo:r.tipo})});}catch(e){}
   }
   cancelAnnoEdit();
-  renderList();updateStats();showToast('Guardado \u00e2\u009c\u0093','ok');
+  renderList();updateStats();showToast('Guardado ✓','ok');
   // Re-open with updated data
   setTimeout(()=>openAnnoDetail(_currentDetailIdx),100);
 }
@@ -583,15 +583,15 @@ function setTipo(t,el){filterTipo=t;document.querySelectorAll('.chip').forEach(c
 
 function showCC(r){
   const cls=r.tipo==='Problema'?'prob':r.tipo==='Recordatorio'?'rec':'cam';
-  addBotMsg(`\u00c2\u00bfGuardo esta anotaci\u00c3\u00b3n?<div class="cc">
+  addBotMsg(`¿Guardo esta anotación?<div class="cc">
     <div class="cc-row"><span class="cc-k">tipo</span><span class="cc-v"><span class="rtype ${cls}" style="display:inline-block">${esc(r.tipo)}</span></span></div>
     <div class="cc-row"><span class="cc-k">sitio</span><span class="cc-v">${esc(r.sitio)}</span></div>
     <div class="cc-row"><span class="cc-k">texto</span><span class="cc-v">${esc(r.texto)}</span></div>
     ${r.partner?`<div class="cc-row"><span class="cc-k">partner</span><span class="cc-v">${esc(r.partner)}</span></div>`:''}
     <div class="cc-acts">
-      <button class="cc-btn ok" onclick="confirmSave()">\u00e2\u009c\u0093 Guardar</button>
-      <button class="cc-btn" onclick="confirmCancel()">\u00e2\u009c\u0095 Cancelar</button>
-      <button class="cc-btn" onclick="confirmEdit()">\u00e2\u009c\u008f Editar</button>
+      <button class="cc-btn ok" onclick="confirmSave()">✓ Guardar</button>
+      <button class="cc-btn" onclick="confirmCancel()">✕ Cancelar</button>
+      <button class="cc-btn" onclick="confirmEdit()">✏ Editar</button>
     </div>
   </div>`);
 }
@@ -601,10 +601,10 @@ function showScreenshotThumb(src){
   const btn=document.getElementById('ad-screenshot-upload-btn');
   if(src){
     thumb.src=src;thumb.style.display='block';
-    btn.querySelector('span').textContent='\u00f0\u009f\u0093\u008e Cambiar screenshot';
+    btn.querySelector('span').textContent='📎 Cambiar screenshot';
   } else {
     thumb.style.display='none';
-    btn.querySelector('span').textContent='\u00f0\u009f\u0093\u008e Adjuntar screenshot';
+    btn.querySelector('span').textContent='📎 Adjuntar screenshot';
   }
 }
 
@@ -640,7 +640,7 @@ function toggleAnnoEdit(){
 function toggleArchived(){
   archivedVisible=!archivedVisible;
   document.getElementById('archived-section').style.display=archivedVisible?'block':'none';
-  document.getElementById('archived-arrow').textContent=archivedVisible?'\u00e2\u0096\u00bc':'\u00e2\u0096\u00b6';
+  document.getElementById('archived-arrow').textContent=archivedVisible?'▼':'▶';
 }
 
 function toggleTodo(id){
@@ -684,5 +684,5 @@ function weekKey(dateStr){
   const mon=new Date(d);mon.setDate(d.getDate()-day+1);
   const sun=new Date(mon);sun.setDate(mon.getDate()+6);
   const fmt=x=>x.toLocaleDateString('es-AR',{day:'numeric',month:'short'});
-  return fmt(mon)+' \u00e2\u0080\u0093 '+fmt(sun);
+  return fmt(mon)+' – '+fmt(sun);
 }
