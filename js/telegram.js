@@ -1,11 +1,9 @@
-// SGMR - telegram.js
-// Telegram: preview, send, photo
-
 function _markSent(idx,isTest){
   if(!isTest){
     rows[idx].tgSent=true;
     rows[idx].tgSentAt=new Date().toISOString();
     ls('sgmr_rows',JSON.stringify(rows));
+    // Update Supabase
     if(sbUrl&&sbKey){
       var rowId=rows[idx].id;
       var sentAt=rows[idx].tgSentAt;
@@ -18,7 +16,10 @@ function _markSent(idx,isTest){
     renderList();updateStats();
   }
   showToast(isTest?'Test enviado':'Enviado a Sigmundur','ok');
-}
+}// ═══════════════════════════════════
+// SGMR - telegram.js
+// Telegram: preview, send, photo
+// ═══════════════════════════════════
 
 function sendTelegram(idx){
   var r=rows[idx];
@@ -76,20 +77,16 @@ function confirmTgSend(test){
   var BOT=test?'8290249003:AAGT4vDIM6XnExlqex7a7_k2JkmCzulXw18':'8606033239:AAGsqsxOaKSbW8UwjcobnoQSEzQAW6SWD10';
   var CHAT=test?'1842693553':'832763879';
   var url='https://api.telegram.org/bot'+BOT+'/sendMessage';
-  var payload={chat_id:CHAT,text:htmlMsg,parse_mode:'HTML'};
-  if(!test&&rows[idx]&&rows[idx].id){
-    payload.reply_markup={inline_keyboard:[[{text:'OK \u2705',callback_data:'ok_'+rows[idx].id}]]};
-  }
-  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-    .then(function(res){return res.json();})
-    .then(function(data){
-      if(data.ok){
-        if(!test){rows[idx].tgSent=true;ls('sgmr_rows',JSON.stringify(rows));patchSB(rows[idx]);renderList();}
-        closeTgPreview();
-        showToast(test?'Test enviado a vos':'Enviado a Sigmundur','ok');
-      }else{
-        showToast('Error: '+data.description,'err');
-      }
-    })
-    .catch(function(e){showToast('Error: '+e.message,'err');});
+  fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:CHAT,text:htmlMsg,parse_mode:'HTML'})})
+  .then(function(res){return res.json();})
+  .then(function(data){
+    if(data.ok){
+      if(!test){rows[idx].tgSent=true;ls('sgmr_rows',JSON.stringify(rows));patchSB(rows[idx]);renderList();}
+      closeTgPreview();
+      showToast(test?'Test enviado a vos':'Enviado a Sigmundur','ok');
+    } else {
+      showToast('Error: '+data.description,'err');
+    }
+  })
+  .catch(function(e){showToast('Error: '+e.message,'err');});
 }
