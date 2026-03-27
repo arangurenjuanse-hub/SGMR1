@@ -9,7 +9,7 @@ async function loadSB(){
     if(!r.ok)return;
     const data=await r.json();
     if(Array.isArray(data)&&data.length>0){
-      rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,tgSent:r.tg_sent||false,tgSentAt:r.tg_sent_at||null,screenshot:_ssLookup[r.id]||null}));
+      rows=data.map(r=>({id:r.id,fecha:r.fecha,tipo:r.tipo,sitio:r.sitio,texto:r.texto,partner:r.partner,estado:r.estado,tgSent:r.tg_sent||false,tgSentAt:r.tg_sent_at||null,tgRead:r.tg_read||false,screenshot:_ssLookup[r.id]||null}));
       ls('sgmr_rows',JSON.stringify(rows));buildSiteFilter();renderList();updateStats();
     }
   }catch(e){}
